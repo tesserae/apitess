@@ -14,3 +14,5 @@ build/
 *.egg-info/
 
 *.swp
+
+mkdocs-site/site/*
