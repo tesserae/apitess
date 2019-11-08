@@ -97,10 +97,8 @@ As noted earlier, the original Tesserae algorithm considers two spans to match w
 
 |Feature|Description|
 |---|---|
-|`"lemma"`|Match by dictionary headword.|
-|`"semantic"`|TODO:  Figure out what semantic means.|
-|`"sound"`|Match by phonetic trigrams.|
-|`"word"`|Match by exact word.|
+|`"lemmata"`|Match by dictionary headword.|
+|`"form"`|Match by exact word.|
 
 ### Distance Basis
 

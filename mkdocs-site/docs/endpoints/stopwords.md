@@ -16,9 +16,12 @@ The following fields may be used in a URL query to specify the parameters by whi
 
 |Field Name|Field Value|
 |---|---|
-|`feature`|A string specifying the linguistic feature by which frequencies are calculated; `lemma` is the default.|
+|`feature`|A string specifying the linguistic feature by which frequencies are calculated; `lemmata` is the default.|
 |`list_size`|An integer specifying the number of stopwords to include in the stopwords list. `10` is the default.|
-|`works`|A percent-encoded string of the form `<object_id 1>,<object_id 2>,...`, specifying which works are used to determine feature frequencies.  Alternatively, a string matching one of the languages in the Tesserae database will compute feature frequencies from the corpus of works in that language.|
+|`language`|A string specifying one of the languages in the Tesserae database; all works in that language will be used to determine feature frequencies.|
+|`works`|A percent-encoded string of the form `<object_id 1>,<object_id 2>,...`, specifying which works are used to determine feature frequencies.|
+
+In the case that both `works` and `language` are specified, the `language` option will take precedence.
 
 ### Response
 
