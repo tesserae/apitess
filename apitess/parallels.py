@@ -1,6 +1,7 @@
 """The family of /parallels/ endpoints"""
 import gzip
 import os
+import queue
 import uuid
 
 from bson.objectid import ObjectId
@@ -38,27 +39,6 @@ def _validate_units(specs, name):
         if units != 'line' and units != 'phrase':
             result.append('{} has unrecognized units: {}'.format(name, units))
     return result
-
-
-def _queue_search(results_id, connection, source_text, target_text, received):
-    """Queue up search for processing"""
-    matcher = SparseMatrixSearch(connection)
-    received_method = received['method']
-    # TODO actually queue up
-    matches, match_set = matcher.match(
-        texts=[source_text, target_text],
-        unit_type=received['source']['units'],
-        feature=received_method['feature'],
-        stopwords=received_method['stopwords'],
-        frequency_basis=received_method['freq_basis'],
-        max_distance=received_method['max_distance'],
-        distance_metric=received_method['distance_basis']
-    )
-    connection.insert(match_set)
-    connection.insert(matches)
-    results_pair = tesserae.db.entities.ResultsPair(match_set_id=match_set.id,
-            results_id=results_id)
-    connection.insert(results_pair)
 
 
 @bp.route('/', methods=('POST',))
@@ -134,7 +114,22 @@ def submit_search():
     # we want the final '/' on the URL
     response.headers['Location'] = os.path.join(bp.url_prefix, results_id, '')
 
-    _queue_search(results_id, flask.g.db, source_text, target_text, received)
+    try:
+        flask.g.searcher.queue_search(results_id, method['name'], {
+            'texts': [source_text, target_text],
+            'unit_type': received['source']['units'],
+            'feature': method['feature'],
+            'stopwords': method['stopwords'],
+            'frequency_basis': method['freq_basis'],
+            'max_distance': method['max_distance'],
+            'distance_metric': method['distance_basis']
+        })
+    except queue.Full:
+        return apitess.error.error(
+            500,
+            data=received,
+            message=('The search request could not be added to the queue. '
+                'Please try again in a few minutes'))
     return response
 
 
@@ -142,7 +137,7 @@ def submit_search():
 def retrieve_results(results_id):
     # get search results
     results_pair_found = flask.g.db.find(
-        tesserae.db.entities.ResultsPair.collection,
+        tesserae.db.entities.ResultsStatus.collection,
         results_id=results_id
     )
     if not results_pair_found:

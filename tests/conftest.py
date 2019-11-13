@@ -7,17 +7,29 @@ import flask
 import apitess
 from tesserae.db.entities import Text
 from tesserae.utils import ingest_text
+from tesserae.utils.search import AsynchronousSearcher
+
+db_config = {
+    'MONGO_HOSTNAME': 'localhost',
+    'MONGO_PORT': 27017,
+    'MONGO_USER': None,
+    'MONGO_PASSWORD': None,
+    'DB_NAME': 'test_apitess',
+}
+
+db_cred = {
+    'host': db_config['MONGO_HOSTNAME'],
+    'port': db_config['MONGO_PORT'],
+    'user': db_config['MONGO_USER'],
+    'password': db_config['MONGO_PASSWORD'],
+    'db': db_config['DB_NAME']
+}
 
 
 @pytest.fixture(scope='session')
 def app():
-    cur_app = apitess.create_app({
-        'MONGO_HOSTNAME': 'localhost',
-        'MONGO_PORT': 27017,
-        'MONGO_USER': None,
-        'MONGO_PASSWORD': None,
-        'DB_NAME': 'test_apitess',
-    })
+    a_searcher = AsynchronousSearcher(1, db_cred)
+    cur_app = apitess.create_app(a_searcher, db_config)
 
     with cur_app.test_request_context():
         # initialize database for testing
@@ -26,6 +38,8 @@ def app():
             flask.g.db.connection.drop_collection(coll_name)
 
     yield cur_app
+
+    a_searcher.cleanup()
 
 
 @pytest.fixture(scope='session')
@@ -58,15 +72,26 @@ def _get_text_metadata():
     ]
 
 
+db_populated_config = {
+    'MONGO_HOSTNAME': 'localhost',
+    'MONGO_PORT': 27017,
+    'MONGO_USER': None,
+    'MONGO_PASSWORD': None,
+    'DB_NAME': 'test_apitess_populated',
+}
+
+db_populated_cred = {
+    'host': db_populated_config['MONGO_HOSTNAME'],
+    'port': db_populated_config['MONGO_PORT'],
+    'user': db_populated_config['MONGO_USER'],
+    'password': db_populated_config['MONGO_PASSWORD'],
+    'db': db_populated_config['DB_NAME']
+}
+
 @pytest.fixture(scope='session')
 def populated_app():
-    cur_app = apitess.create_app({
-        'MONGO_HOSTNAME': 'localhost',
-        'MONGO_PORT': 27017,
-        'MONGO_USER': None,
-        'MONGO_PASSWORD': None,
-        'DB_NAME': 'test_apitess_populated',
-    })
+    a_searcher = AsynchronousSearcher(1, db_populated_cred)
+    cur_app = apitess.create_app(a_searcher, db_populated_config)
 
     with cur_app.test_request_context():
         # initialize populated database for testing
@@ -79,6 +104,8 @@ def populated_app():
             text_id = str(ingest_text(flask.g.db, cur_text))
 
     yield cur_app
+
+    a_searcher.cleanup()
 
 
 @pytest.fixture(scope='session')

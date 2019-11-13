@@ -15,11 +15,11 @@ def _load_config(app, test_config):
         app.config.from_mapping(test_config)
 
 
-def _connect_database(app):
-    """Initiate connection with MongoDB
+def _register_before_request(app, async_searcher):
+    """Make database and searcher available to app
 
     From this point forward, before_request exposes access to the database via
-    g.db.
+    g.db and to the searcher via g.searcher.
     """
     # http://librelist.com/browser/flask/2013/8/21/flask-pymongo-and-blueprint/#811dd1b119757bc09d28425a5bda86d9
     db = tesserae.db.TessMongoConnection(app.config['MONGO_HOSTNAME'],
@@ -29,6 +29,7 @@ def _connect_database(app):
     @app.before_request
     def before_request():
         flask.g.db = db
+        flask.g.searcher = async_searcher
 
 
 def _register_blueprints(app):
@@ -38,12 +39,23 @@ def _register_blueprints(app):
     app.register_blueprint(texts.bp)
 
 
-def create_app(test_config=None):
-    """Create and configure flask application"""
+def create_app(async_searcher, test_config=None):
+    """Create and configure flask application
+
+    Parameters
+    ----------
+    async_searcher : tesserae.utils.search.AsynchronousSearcher
+        interface through which searches can be scheduled
+    test_config : dict or None
+        configuration options for database connection; if None, looks for a
+        'config.py' in the same directory as the main script that calls this
+        function
+
+    """
     app = flask.Flask(__name__, instance_relative_config=True)
 
     _load_config(app, test_config)
-    _connect_database(app)
+    _register_before_request(app, async_searcher)
     _register_blueprints(app)
 
     return app

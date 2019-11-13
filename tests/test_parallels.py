@@ -30,7 +30,15 @@ def test_search(populated_app, populated_client):
     assert response.status_code == 201
     assert 'Location' in response.headers
     results_id = response.headers['Location'].split('/')[-2]
-    # TODO wait for appropriate time until search is complete
+    # wait until search completes
+    with populated_app.test_request_context():
+        populated_app.preprocess_request()
+        found = []
+        while not found:
+            found = flask.g.db.find(
+                    tesserae.db.entities.ResultsStatus.collection,
+                    results_id=results_id)
+            time.sleep(1)
     with populated_app.test_request_context():
         retrieve_endpoint = flask.url_for('parallels.retrieve_results',
                 results_id=results_id)
