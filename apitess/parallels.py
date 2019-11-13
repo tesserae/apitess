@@ -1,13 +1,14 @@
 """The family of /parallels/ endpoints"""
 import gzip
 import os
+import queue
 import uuid
 
 from bson.objectid import ObjectId
 import flask
 
 import tesserae.db.entities
-from tesserae.matchers import AggregationMatcher
+from tesserae.matchers.sparse_encoding import SparseMatrixSearch
 import apitess.errors
 
 bp = flask.Blueprint('parallels', __name__, url_prefix='/parallels')
@@ -40,24 +41,6 @@ def _validate_units(specs, name):
     return result
 
 
-def _queue_search(results_id, connection, received):
-    """Queue up search for processing"""
-    matcher = AggregationMatcher(connection)
-    received_method = received['method']
-    matches, match_set = matcher.match(
-        texts=[received['source']['object_id'], received['target']['object_id']],
-        unit_type=[received['source']['units'], received['target']['units']],
-        feature=received_method['feature'],
-        stopwords_list=received_method['stopwords'],
-        frequency_basis=received_method['freq_basis'],
-        max_distance=received_method['max_distance'],
-        distance_metric=received_method['distance_basis']
-    )
-    results_pair = tesserae.db.entities.ResultsPair(match_set_id=match_set.id,
-            results_id=results_id)
-    connection.insert(results_pair)
-
-
 @bp.route('/', methods=('POST',))
 def submit_search():
     """Run a Tesserae search"""
@@ -83,6 +66,24 @@ def submit_search():
             400,
             data=received,
             message='The following errors were found in source and target unit specifications:\n{}'.format('\n\t'.join(errors)))
+
+    source_object_id = source['object_id']
+    target_object_id = target['object_id']
+    results = flask.g.db.find(tesserae.db.entities.Text.collection,
+            _id=[ObjectId(source_object_id), ObjectId(target_object_id)])
+    results = {str(t.id): t for t in results}
+    errors = []
+    if source_object_id not in results:
+        errors.append(source_object_id)
+    if target_object_id not in results:
+        errors.append(target_object_id)
+    if errors:
+        return apitess.errors.error(
+            400,
+            data=received,
+            message='Unable to find the following object_id(s) among the texts in the database:\n\t{}'.format('\n\t'.join(errors)))
+    source_text = results[source_object_id]
+    target_text = results[target_object_id]
 
     method_requireds = {
         'original': {
@@ -113,33 +114,51 @@ def submit_search():
     # we want the final '/' on the URL
     response.headers['Location'] = os.path.join(bp.url_prefix, results_id, '')
 
-    _queue_search(results_id, flask.g.db, received)
+    try:
+        flask.g.searcher.queue_search(results_id, method['name'], {
+            'texts': [source_text, target_text],
+            'unit_type': received['source']['units'],
+            'feature': method['feature'],
+            'stopwords': method['stopwords'],
+            'frequency_basis': method['freq_basis'],
+            'max_distance': method['max_distance'],
+            'distance_metric': method['distance_basis']
+        })
+    except queue.Full:
+        return apitess.error.error(
+            500,
+            data=received,
+            message=('The search request could not be added to the queue. '
+                'Please try again in a few minutes'))
     return response
 
 
 @bp.route('/<results_id>/')
 def retrieve_results(results_id):
     # get search results
-    found = flask.g.db.find(
-        tesserae.db.entities.ResultsPair.collection,
+    results_pair_found = flask.g.db.find(
+        tesserae.db.entities.ResultsStatus.collection,
         results_id=results_id
     )
-    if not found:
-        response = flask.Response()
+    if not results_pair_found:
+        response = flask.Response('Could not find results_id')
         response.status_code = 404
         return response
-    params = found[0].parameters
 
-    found = flask.g.db.find(
+    match_set_found = flask.g.db.find(
         tesserae.db.entities.MatchSet.collection,
-        _id=ObjectId(found[0]['match_set_id'])
+        _id=ObjectId(results_pair_found[0].match_set_id)
     )
-    if not found:
-        response = flask.Response()
+    if not match_set_found:
+        response = flask.Response('Could not find MatchSet')
         response.status_code = 404
         return response
+    params = match_set_found[0].parameters
 
-    matches = flask.g.db.get_search_matches(found[0].id)
+    # matches = flask.g.db.get_search_matches(match_set_found[0].id)
+    matches = flask.g.db.find(tesserae.db.entities.Match.collection,
+            match_set=ObjectId(match_set_found[0].id))
+    matches = [m.json_encode() for m in matches]
     response = flask.Response(
         response=gzip.compress(flask.json.dumps({
             'data': params,

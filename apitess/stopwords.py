@@ -2,19 +2,88 @@
 import json
 import os
 
+from bson.objectid import ObjectId
 import flask
 
 import apitess.errors
 import tesserae.db.entities
+from tesserae.matchers.sparse_encoding import SparseMatrixSearch
 
 bp = flask.Blueprint('stopwords', __name__, url_prefix='/stopwords')
+
+
+def indices_to_tokens(connection, stopword_indices, feature):
+    results = connection.find(
+        tesserae.db.entities.Feature.collection,
+        index=[int(i) for i in stopword_indices],
+        feature=feature)
+    results = {f.index: f.token for f in results}
+    return [results[i] for i in stopword_indices]
 
 
 @bp.route('/')
 def query_stopwords():
     """Build a stopwords list"""
-    # TODO
-    return flask.jsonify({})
+    if len(flask.request.args) == 0:
+        # default response when no arguments are given
+        return flask.jsonify({'stopwords': []})
+
+    feature = flask.request.args.get('feature', 'lemmata')
+    list_size = flask.request.args.get('list_size', 10)
+    try:
+        list_size = int(list_size)
+    except ValueError:
+        return apitess.errors.error(
+                400,
+                data={k: v for k, v in flask.request.args.items()},
+                message='"list_size" must be an integer')
+
+    searcher = SparseMatrixSearch(flask.g.db)
+    # language takes precedence over works
+    language = flask.request.args.get('language', None)
+    if language:
+        stopword_indices = searcher.create_stoplist(list_size, feature,
+                language)
+        if len(stopword_indices) == 0:
+            return apitess.errors.error(
+                    400,
+                    data={k: v for k, v in flask.request.args.items()},
+                    message='No stopwords found for feature "{}" in language "{}".'.format(feature, language))
+        return flask.jsonify(
+                {'stopwords': indices_to_tokens(flask.g.db, stopword_indices,
+                    feature)})
+
+    works = flask.request.args.get('works', None)
+    if works:
+        if ',' in works:
+            works = works.split(',')
+        else:
+            works = [works]
+        text_results = flask.g.db.find(
+            tesserae.db.entities.Text.collection,
+            _id=[ObjectId(w) for w in works])
+        if len(text_results) != len(works):
+            # figure out which works were not found in the database and report
+            found = {str(r.id) for r in text_results}
+            not_found = []
+            for work in works:
+                if work not in found:
+                    not_found.append(work)
+                return apitess.errors.error(
+                        400,
+                        data={k: v for k, v in flask.request.args.items()},
+                        message='The following works could not be found in the database: {}'.format(not_found))
+        stopword_indices = searcher.create_stoplist(list_size, feature,
+                text_results[0].language, basis=[str(t.id) for t in text_results])
+        return flask.jsonify(
+                {'stopwords': indices_to_tokens(flask.g.db, stopword_indices,
+                    feature)})
+
+    # if we get here, then we didn't get enough information
+    return apitess.errors.error(
+            400,
+            data={k: v for k, v in flask.request.args.items()},
+            message='Insufficient information was given to calculate a stopwords list (Perhaps you forgot to specify "language" or "works").')
 
 
 @bp.route('/lists/')

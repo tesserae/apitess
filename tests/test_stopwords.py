@@ -7,9 +7,31 @@ import werkzeug.datastructures
 import tesserae.db.entities
 
 
-def test_stopwords(client):
-    # TODO fill this in
-    assert False
+def test_stopwords_default(app, client):
+    with app.test_request_context():
+        endpoint = flask.url_for('stopwords.query_stopwords')
+    response = client.get(endpoint)
+    assert response.status_code == 200
+    data = response.get_json()
+    assert 'stopwords' in data
+    assert isinstance(data['stopwords'], list)
+    # default response should be empty list
+    assert len(data['stopwords']) == 0
+
+
+def test_stopwords_from_work(populated_app, populated_client):
+    with populated_app.test_request_context():
+        populated_app.preprocess_request()
+        found_texts = flask.g.db.find(tesserae.db.entities.Text.collection)
+        endpoint = flask.url_for('stopwords.query_stopwords',
+                works=[str(found_texts[0].id)], list_size=2)
+    response = populated_client.get(endpoint)
+    assert response.status_code == 200
+    data = response.get_json()
+    assert 'stopwords' in data
+    assert isinstance(data['stopwords'], list)
+    # default response should be empty list
+    assert len(data['stopwords']) == 2
 
 
 def test_stopwords_lists(app, client):
