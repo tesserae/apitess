@@ -7,6 +7,7 @@ nav:
 - 'Endpoints':
     - '/parallels/': 'endpoints/parallels.md'
     - '/parallels/&ltuuid&gt/': 'endpoints/parallels-uuid.md'
+    - '/parallels/status/&ltuuid&gt/': 'endpoints/parallels-status-uuid.md'
     - '/stopwords/': 'endpoints/stopwords.md'
     - '/stopwords/lists/': 'endpoints/stopwords-lists.md'
     - '/stopwords/lists/&lt;name&gt;/': 'endpoints/stopwords-lists-name.md'

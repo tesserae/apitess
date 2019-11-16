@@ -133,21 +133,35 @@ def submit_search():
     return response
 
 
-@bp.route('/<results_id>/')
-def retrieve_results(results_id):
-    # get search results
-    results_pair_found = flask.g.db.find(
+@bp.route('/status/<results_id>/')
+def retrieve_status(results_id):
+    results_status_found = flask.g.db.find(
         tesserae.db.entities.ResultsStatus.collection,
         results_id=results_id
     )
-    if not results_pair_found:
+    if not results_status_found:
+        response = flask.Response('Could not find results_id')
+        response.status_code = 404
+        return response
+    status = results_status_found[0]
+    return flask.jsonify(results_id=status.results_id, status=status.status,
+            message=status.msg)
+
+@bp.route('/<results_id>/')
+def retrieve_results(results_id):
+    # get search results
+    results_status_found = flask.g.db.find(
+        tesserae.db.entities.ResultsStatus.collection,
+        results_id=results_id
+    )
+    if not results_status_found:
         response = flask.Response('Could not find results_id')
         response.status_code = 404
         return response
 
     match_set_found = flask.g.db.find(
         tesserae.db.entities.MatchSet.collection,
-        _id=ObjectId(results_pair_found[0].match_set_id)
+        _id=ObjectId(results_status_found[0].match_set_id)
     )
     if not match_set_found:
         response = flask.Response('Could not find MatchSet')
