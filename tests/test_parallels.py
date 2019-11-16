@@ -10,6 +10,7 @@ import tesserae.db.entities
 
 
 def test_search(populated_app, populated_client):
+    # request a search
     with populated_app.test_request_context():
         populated_app.preprocess_request()
         found_texts = flask.g.db.find(tesserae.db.entities.Text.collection)
@@ -30,15 +31,26 @@ def test_search(populated_app, populated_client):
     assert response.status_code == 201
     assert 'Location' in response.headers
     results_id = response.headers['Location'].split('/')[-2]
+
     # wait until search completes
     with populated_app.test_request_context():
         populated_app.preprocess_request()
-        found = []
-        while not found:
-            found = flask.g.db.find(
-                    tesserae.db.entities.ResultsStatus.collection,
-                    results_id=results_id)
-            time.sleep(1)
+        status_endpoint = flask.url_for('parallels.retrieve_status',
+                results_id=results_id)
+    response = populated_client.get(status_endpoint)
+    while response.status_code == 404:
+        response = populated_client.get(status_endpoint)
+        time.sleep(1)
+    assert response.status_code == 200
+    status = response.get_json()['status']
+    assert status != tesserae.db.entities.ResultsStatus.FAILED
+    while status != tesserae.db.entities.ResultsStatus.DONE:
+        response = populated_client.get(status_endpoint)
+        status = response.get_json()['status']
+        assert status != tesserae.db.entities.ResultsStatus.FAILED
+        time.sleep(1)
+
+    # make sure we can retrieve results
     with populated_app.test_request_context():
         retrieve_endpoint = flask.url_for('parallels.retrieve_results',
                 results_id=results_id)
