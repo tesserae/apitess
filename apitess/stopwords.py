@@ -12,10 +12,11 @@ from tesserae.matchers.sparse_encoding import SparseMatrixSearch
 bp = flask.Blueprint('stopwords', __name__, url_prefix='/stopwords')
 
 
-def indices_to_tokens(connection, stopword_indices, feature):
+def indices_to_tokens(connection, stopword_indices, language, feature):
     results = connection.find(
         tesserae.db.entities.Feature.collection,
         index=[int(i) for i in stopword_indices],
+        language=language,
         feature=feature)
     results = {f.index: f.token for f in results}
     return [results[i] for i in stopword_indices]
@@ -51,7 +52,7 @@ def query_stopwords():
                     message='No stopwords found for feature "{}" in language "{}".'.format(feature, language))
         return flask.jsonify(
                 {'stopwords': indices_to_tokens(flask.g.db, stopword_indices,
-                    feature)})
+                    language, feature)})
 
     works = flask.request.args.get('works', None)
     if works:
@@ -77,7 +78,7 @@ def query_stopwords():
                 text_results[0].language, basis=[str(t.id) for t in text_results])
         return flask.jsonify(
                 {'stopwords': indices_to_tokens(flask.g.db, stopword_indices,
-                    feature)})
+                    language, feature)})
 
     # if we get here, then we didn't get enough information
     return apitess.errors.error(
