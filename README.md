@@ -13,6 +13,9 @@ pages are written in Markdown.  For more information on how to edit the files
 in the `mkdocs-site` directory in order to make particular changes to the
 documentation, see https://www.mkdocs.org/.
 
+In order to build the mkdocs site, you will need to install `mkdocs` and
+`python-markdown-math` via pip.
+
 ### Development
 
 To run a development server to serve this flask application, you can use the

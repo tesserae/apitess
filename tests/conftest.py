@@ -28,18 +28,19 @@ db_cred = {
 
 @pytest.fixture(scope='session')
 def app():
-    a_searcher = AsynchronousSearcher(1, db_cred)
-    cur_app = apitess.create_app(a_searcher, db_config)
+    try:
+        a_searcher = AsynchronousSearcher(1, db_cred)
+        cur_app = apitess.create_app(a_searcher, db_config)
 
-    with cur_app.test_request_context():
-        # initialize database for testing
-        cur_app.preprocess_request()
-        for coll_name in flask.g.db.connection.list_collection_names():
-            flask.g.db.connection.drop_collection(coll_name)
+        with cur_app.test_request_context():
+            # initialize database for testing
+            cur_app.preprocess_request()
+            for coll_name in flask.g.db.connection.list_collection_names():
+                flask.g.db.connection.drop_collection(coll_name)
 
-    yield cur_app
-
-    a_searcher.cleanup()
+        yield cur_app
+    finally:
+        a_searcher.cleanup()
 
 
 @pytest.fixture(scope='session')
@@ -69,6 +70,26 @@ def _get_text_metadata():
             'path': str(Path(__file__).resolve().parent.joinpath(
                 'ztest.phar.tess')),
         },
+        {
+            'cts_urn': 'urn:cts:greekLit:tlg0012.tlg001',
+            'title': 'ziliad',
+            'author': 'zhomer',
+            'language': 'greek',
+            'year': -750,
+            'unit_types': ['line', 'phrase'],
+            'path': str(Path(__file__).resolve().parent.joinpath(
+                'ztest.il.tess')),
+        },
+        {
+            'cts_urn': 'urn:cts:greekLit:tlg0059.tlg023.perseus-grc2',
+            'title': 'zgorgias',
+            'author': 'zplato',
+            'language': 'greek',
+            'year': -283,
+            'unit_types': ['line', 'phrase'],
+            'path': str(Path(__file__).resolve().parent.joinpath(
+                'ztest.gorg.tess')),
+        },
     ]
 
 
@@ -90,22 +111,23 @@ db_populated_cred = {
 
 @pytest.fixture(scope='session')
 def populated_app():
-    a_searcher = AsynchronousSearcher(1, db_populated_cred)
-    cur_app = apitess.create_app(a_searcher, db_populated_config)
+    try:
+        a_searcher = AsynchronousSearcher(1, db_populated_cred)
+        cur_app = apitess.create_app(a_searcher, db_populated_config)
 
-    with cur_app.test_request_context():
-        # initialize populated database for testing
-        cur_app.preprocess_request()
-        for coll_name in flask.g.db.connection.list_collection_names():
-            flask.g.db.connection.drop_collection(coll_name)
-        texts_to_add = _get_text_metadata()
-        for t in texts_to_add:
-            cur_text = Text.json_decode(t)
-            text_id = str(ingest_text(flask.g.db, cur_text))
+        with cur_app.test_request_context():
+            # initialize populated database for testing
+            cur_app.preprocess_request()
+            for coll_name in flask.g.db.connection.list_collection_names():
+                flask.g.db.connection.drop_collection(coll_name)
+            texts_to_add = _get_text_metadata()
+            for t in texts_to_add:
+                cur_text = Text.json_decode(t)
+                text_id = str(ingest_text(flask.g.db, cur_text))
 
-    yield cur_app
-
-    a_searcher.cleanup()
+        yield cur_app
+    finally:
+        a_searcher.cleanup()
 
 
 @pytest.fixture(scope='session')

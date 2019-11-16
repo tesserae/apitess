@@ -1,5 +1,6 @@
 import json
 import os
+import unicodedata
 
 import flask
 import werkzeug.datastructures
@@ -30,8 +31,45 @@ def test_stopwords_from_work(populated_app, populated_client):
     data = response.get_json()
     assert 'stopwords' in data
     assert isinstance(data['stopwords'], list)
-    # default response should be empty list
     assert len(data['stopwords']) == 2
+
+
+def test_stopwords_language(populated_app, populated_client):
+    # check that Latin stopwords doesn't have Greek in it
+    with populated_app.test_request_context():
+        populated_app.preprocess_request()
+        found_texts = flask.g.db.find(tesserae.db.entities.Text.collection)
+        endpoint_latin = flask.url_for('stopwords.query_stopwords',
+                language='latin', list_size=10)
+    response_latin = populated_client.get(endpoint_latin)
+    assert response_latin.status_code == 200
+    data_latin = response_latin.get_json()
+    assert 'stopwords' in data_latin
+    assert isinstance(data_latin['stopwords'], list)
+    assert len(data_latin['stopwords']) == 10
+    for w in data_latin['stopwords']:
+        for c in w:
+            name = unicodedata.name(c)
+            if 'LETTER' in name:
+                assert 'LATIN' in name
+
+    # check that Greek stopwords doesn't have Latin in it
+    with populated_app.test_request_context():
+        populated_app.preprocess_request()
+        found_texts = flask.g.db.find(tesserae.db.entities.Text.collection)
+        endpoint_greek = flask.url_for('stopwords.query_stopwords',
+                language='greek', list_size=10)
+    response_greek = populated_client.get(endpoint_greek)
+    assert response_greek.status_code == 200
+    data_greek = response_greek.get_json()
+    assert 'stopwords' in data_greek
+    assert isinstance(data_greek['stopwords'], list)
+    assert len(data_greek['stopwords']) == 10
+    for w in data_greek['stopwords']:
+        for c in w:
+            name = unicodedata.name(c)
+            if 'LETTER' in name:
+                assert 'GREEK' in name
 
 
 def test_stopwords_lists(app, client):
