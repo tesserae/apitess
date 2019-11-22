@@ -10,6 +10,7 @@ import flask
 import tesserae.db.entities
 from tesserae.matchers.sparse_encoding import SparseMatrixSearch
 from tesserae.utils.retrieve import get_results
+from tesserae.utils.search import check_cache
 import apitess.errors
 
 bp = flask.Blueprint('parallels', __name__, url_prefix='/parallels')
@@ -107,6 +108,15 @@ def submit_search():
             400,
             data=received,
             message='The specified method is missing the following required key(s): {}'.format(', '.join(missing)))
+
+    results_id = check_cache(flask.g.db, source, target, method)
+    if results_id:
+        response = flask.Response()
+        response.status_code = 303
+        response.status = '303 See Other'
+        # we want the final '/' on the URL
+        response.headers['Location'] = os.path.join(bp.url_prefix, results_id, '')
+        return response
 
     response = flask.Response()
     response.status_code = 201

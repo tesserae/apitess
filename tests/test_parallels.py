@@ -42,12 +42,14 @@ def test_search(populated_app, populated_client):
         response = populated_client.get(status_endpoint)
         time.sleep(1)
     assert response.status_code == 200
-    status = response.get_json()['status']
-    assert status != tesserae.db.entities.ResultsStatus.FAILED
+    data = response.get_json()
+    status = data['status']
+    assert status != tesserae.db.entities.ResultsStatus.FAILED, data['message']
     while status != tesserae.db.entities.ResultsStatus.DONE:
         response = populated_client.get(status_endpoint)
-        status = response.get_json()['status']
-        assert status != tesserae.db.entities.ResultsStatus.FAILED
+        data = response.get_json()
+        status = data['status']
+        assert status != tesserae.db.entities.ResultsStatus.FAILED, data['message']
         time.sleep(1)
 
     # make sure we can retrieve results
@@ -59,6 +61,13 @@ def test_search(populated_app, populated_client):
     data = flask.json.loads(gzip.decompress(response.get_data()).decode('utf-8'))
     assert 'parallels' in data
     assert len(data['parallels']) > 0
+
+    # make sure search results were cached
+    response = populated_client.post(submit_endpoint,
+            data=json.dumps(search_query), headers=headers)
+    assert response.status_code == 303
+    assert 'Location' in response.headers
+    assert results_id == response.headers['Location'].split('/')[-2]
 
 
 def test_bad_feature_search(populated_app, populated_client):
