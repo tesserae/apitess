@@ -9,6 +9,7 @@ import flask
 
 import tesserae.db.entities
 from tesserae.matchers.sparse_encoding import SparseMatrixSearch
+from tesserae.utils.retrieve import get_results
 import apitess.errors
 
 bp = flask.Blueprint('parallels', __name__, url_prefix='/parallels')
@@ -122,7 +123,8 @@ def submit_search():
             'stopwords': method['stopwords'],
             'frequency_basis': method['freq_basis'],
             'max_distance': method['max_distance'],
-            'distance_metric': method['distance_basis']
+            'distance_metric': method['distance_basis'],
+            'min_score': 0
         })
     except queue.Full:
         return apitess.error.error(
@@ -169,10 +171,8 @@ def retrieve_results(results_id):
         return response
     params = match_set_found[0].parameters
 
-    # matches = flask.g.db.get_search_matches(match_set_found[0].id)
-    matches = flask.g.db.find(tesserae.db.entities.Match.collection,
-            match_set=ObjectId(match_set_found[0].id))
-    matches = [m.json_encode() for m in matches]
+    matches = [m.get_json_serializable()
+            for m in get_results(flask.g.db, ObjectId(match_set_found[0].id))]
     response = flask.Response(
         response=gzip.compress(flask.json.dumps({
             'data': params,

@@ -56,6 +56,9 @@ def test_search(populated_app, populated_client):
                 results_id=results_id)
     response = populated_client.get(retrieve_endpoint)
     assert response.status_code == 200
+    data = flask.json.loads(gzip.decompress(response.get_data()).decode('utf-8'))
+    assert 'parallels' in data
+    assert len(data['parallels']) > 0
 
 
 def test_bad_feature_search(populated_app, populated_client):
