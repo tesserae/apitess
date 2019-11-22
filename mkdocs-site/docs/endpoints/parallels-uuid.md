@@ -27,7 +27,7 @@ A JSON object in the `"parallels"` list of the successful response data payload 
 |---|---|
 |`"source"`|A string representing the text span used as the source in this parallel.|
 |`"target"`|A string representing the text span used as the target in this parallel.|
-|`"match_tokens"`|A list of strings, where each string is a token found in both the source span and the target span.|
+|`"match_features"`|A list of strings, where each string represents a feature found in both the source span and the target span.|
 |`"score"`|A number representing the score assigned to the pair of text spans.|
 |`"source_raw"`|The string making up the text span specified by the value of `"source"`.|
 |`"target_raw"`|The string making up the text span specified by the value of `"target"`.|
