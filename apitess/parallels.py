@@ -159,6 +159,7 @@ def retrieve_status(results_id):
     return flask.jsonify(results_id=status.results_id, status=status.status,
             message=status.msg)
 
+
 @bp.route('/<results_id>/')
 def retrieve_results(results_id):
     # get search results
@@ -169,6 +170,11 @@ def retrieve_results(results_id):
     if not results_status_found:
         response = flask.Response('Could not find results_id')
         response.status_code = 404
+        return response
+    if results_status_found[0].status != tesserae.db.entities.ResultsStatus.DONE:
+        response = flask.Response(
+                'Unable to retrieve results; check /status/ endpoint.')
+        reponse.status_code = 404
         return response
 
     match_set_found = flask.g.db.find(
