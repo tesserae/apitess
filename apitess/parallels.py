@@ -148,7 +148,7 @@ def submit_search():
 @bp.route('/status/<results_id>/')
 def retrieve_status(results_id):
     results_status_found = flask.g.db.find(
-        tesserae.db.entities.ResultsStatus.collection,
+        tesserae.db.entities.Search.collection,
         results_id=results_id
     )
     if not results_status_found:
@@ -164,31 +164,23 @@ def retrieve_status(results_id):
 def retrieve_results(results_id):
     # get search results
     results_status_found = flask.g.db.find(
-        tesserae.db.entities.ResultsStatus.collection,
+        tesserae.db.entities.Search.collection,
         results_id=results_id
     )
     if not results_status_found:
         response = flask.Response('Could not find results_id')
         response.status_code = 404
         return response
-    if results_status_found[0].status != tesserae.db.entities.ResultsStatus.DONE:
+    if results_status_found[0].status != tesserae.db.entities.Search.DONE:
         response = flask.Response(
                 'Unable to retrieve results; check /status/ endpoint.')
         reponse.status_code = 404
         return response
 
-    match_set_found = flask.g.db.find(
-        tesserae.db.entities.MatchSet.collection,
-        _id=ObjectId(results_status_found[0].match_set_id)
-    )
-    if not match_set_found:
-        response = flask.Response('Could not find MatchSet')
-        response.status_code = 404
-        return response
-    params = match_set_found[0].parameters
+    params = results_status_found[0].parameters
 
     matches = [m.get_json_serializable()
-            for m in get_results(flask.g.db, ObjectId(match_set_found[0].id))]
+            for m in get_results(flask.g.db, results_id)]
     response = flask.Response(
         response=gzip.compress(flask.json.dumps({
             'data': params,

@@ -44,12 +44,12 @@ def test_search(populated_app, populated_client):
     assert response.status_code == 200
     data = response.get_json()
     status = data['status']
-    assert status != tesserae.db.entities.ResultsStatus.FAILED, data['message']
-    while status != tesserae.db.entities.ResultsStatus.DONE:
+    assert status != tesserae.db.entities.Search.FAILED, data['message']
+    while status != tesserae.db.entities.Search.DONE:
         response = populated_client.get(status_endpoint)
         data = response.get_json()
         status = data['status']
-        assert status != tesserae.db.entities.ResultsStatus.FAILED, data['message']
+        assert status != tesserae.db.entities.Search.FAILED, data['message']
         time.sleep(1)
 
     # make sure we can retrieve results
@@ -108,11 +108,11 @@ def test_bad_feature_search(populated_app, populated_client):
     assert response.status_code == 200
     data = response.get_json()
     status = data['status']
-    while status != tesserae.db.entities.ResultsStatus.FAILED:
+    while status != tesserae.db.entities.Search.FAILED:
         response = populated_client.get(status_endpoint)
         data = response.get_json()
         status = data['status']
         time.sleep(1)
-    assert status == tesserae.db.entities.ResultsStatus.FAILED
+    assert status == tesserae.db.entities.Search.FAILED
     assert 'message' in data
     assert f'"{bad_feature}"' in data['message']
