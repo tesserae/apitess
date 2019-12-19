@@ -25,12 +25,12 @@ A JSON object in the `"parallels"` list of the successful response data payload 
 
 |Key|Value|
 |---|---|
-|`"source"`|A string representing the text span used as the source in this parallel.|
-|`"target"`|A string representing the text span used as the target in this parallel.|
-|`"match_features"`|A list of strings, where each string represents a feature found in both the source span and the target span.|
+|`"source_tag"`|A string representing the text span used as the source in this parallel.|
+|`"target_tag"`|A string representing the text span used as the target in this parallel.|
+|`"matched_features"`|A list of strings, where each string represents a feature found in both the source span and the target span.|
 |`"score"`|A number representing the score assigned to the pair of text spans.|
-|`"source_raw"`|The string making up the text span specified by the value of `"source"`.|
-|`"target_raw"`|The string making up the text span specified by the value of `"target"`.|
+|`"source_snippet"`|The string making up the text span specified by the value of `"source"`.|
+|`"target_snippet"`|The string making up the text span specified by the value of `"target"`.|
 |`"highlight"`|Information to highlight areas on the source and target spans used to determine the score.|
 
 > NB:  A successful response body will be compressed with gzip.

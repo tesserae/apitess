@@ -179,8 +179,7 @@ def retrieve_results(results_id):
 
     params = results_status_found[0].parameters
 
-    matches = [m.get_json_serializable()
-            for m in get_results(flask.g.db, results_id)]
+    matches = [m for m in get_results(flask.g.db, results_id)]
     response = flask.Response(
         response=gzip.compress(flask.json.dumps({
             'data': params,
