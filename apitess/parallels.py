@@ -115,7 +115,8 @@ def submit_search():
         response.status_code = 303
         response.status = '303 See Other'
         # we want the final '/' on the URL
-        response.headers['Location'] = os.path.join(bp.url_prefix, results_id, '')
+        response.headers['Location'] = os.path.join(
+                flask.request.base_url, results_id, '')
         return response
 
     response = flask.Response()
@@ -123,7 +124,8 @@ def submit_search():
     response.status = '201 Created'
     results_id = uuid.uuid4().hex
     # we want the final '/' on the URL
-    response.headers['Location'] = os.path.join(bp.url_prefix, results_id, '')
+    response.headers['Location'] = os.path.join(
+            flask.request.base_url, results_id, '')
 
     try:
         flask.g.searcher.queue_search(results_id, method['name'], {
