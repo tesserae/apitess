@@ -137,7 +137,7 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
         response.status_code = 201
         response.status = '201 Created'
         response.headers['Content-Location'] = os.path.join(
-            bp.url_prefix, percent_encoded_object_id, '')
+            flask.request.base_url, percent_encoded_object_id, '')
         response.headers['Content-Type'] = 'application/json; charset=utf-8'
         response.set_data(flask.json.dumps(received).encode('utf-8'))
         return response
