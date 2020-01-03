@@ -9,6 +9,8 @@ import flask
 
 import tesserae.db.entities
 from tesserae.matchers.sparse_encoding import SparseMatrixSearch
+from tesserae.utils.retrieve import get_results
+from tesserae.utils.search import check_cache
 import apitess.errors
 
 bp = flask.Blueprint('parallels', __name__, url_prefix='/parallels')
@@ -107,6 +109,15 @@ def submit_search():
             data=received,
             message='The specified method is missing the following required key(s): {}'.format(', '.join(missing)))
 
+    results_id = check_cache(flask.g.db, source, target, method)
+    if results_id:
+        response = flask.Response()
+        response.status_code = 303
+        response.status = '303 See Other'
+        # we want the final '/' on the URL
+        response.headers['Location'] = os.path.join(bp.url_prefix, results_id, '')
+        return response
+
     response = flask.Response()
     response.status_code = 201
     response.status = '201 Created'
@@ -122,7 +133,8 @@ def submit_search():
             'stopwords': method['stopwords'],
             'frequency_basis': method['freq_basis'],
             'max_distance': method['max_distance'],
-            'distance_metric': method['distance_basis']
+            'distance_metric': method['distance_basis'],
+            'min_score': 0
         })
     except queue.Full:
         return apitess.error.error(
@@ -136,7 +148,7 @@ def submit_search():
 @bp.route('/status/<results_id>/')
 def retrieve_status(results_id):
     results_status_found = flask.g.db.find(
-        tesserae.db.entities.ResultsStatus.collection,
+        tesserae.db.entities.Search.collection,
         results_id=results_id
     )
     if not results_status_found:
@@ -147,32 +159,27 @@ def retrieve_status(results_id):
     return flask.jsonify(results_id=status.results_id, status=status.status,
             message=status.msg)
 
+
 @bp.route('/<results_id>/')
 def retrieve_results(results_id):
     # get search results
     results_status_found = flask.g.db.find(
-        tesserae.db.entities.ResultsStatus.collection,
+        tesserae.db.entities.Search.collection,
         results_id=results_id
     )
     if not results_status_found:
         response = flask.Response('Could not find results_id')
         response.status_code = 404
         return response
-
-    match_set_found = flask.g.db.find(
-        tesserae.db.entities.MatchSet.collection,
-        _id=ObjectId(results_status_found[0].match_set_id)
-    )
-    if not match_set_found:
-        response = flask.Response('Could not find MatchSet')
-        response.status_code = 404
+    if results_status_found[0].status != tesserae.db.entities.Search.DONE:
+        response = flask.Response(
+                'Unable to retrieve results; check /status/ endpoint.')
+        reponse.status_code = 404
         return response
-    params = match_set_found[0].parameters
 
-    # matches = flask.g.db.get_search_matches(match_set_found[0].id)
-    matches = flask.g.db.find(tesserae.db.entities.Match.collection,
-            match_set=ObjectId(match_set_found[0].id))
-    matches = [m.json_encode() for m in matches]
+    params = results_status_found[0].parameters
+
+    matches = [m for m in get_results(flask.g.db, results_id)]
     response = flask.Response(
         response=gzip.compress(flask.json.dumps({
             'data': params,
