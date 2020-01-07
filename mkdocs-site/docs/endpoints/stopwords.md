@@ -41,7 +41,7 @@ On failure, the data payload contains error information in a JSON object with th
 Request:
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/stopwords/?works=latin"
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/stopwords/?language=latin"
 ```
 
 Response:
@@ -62,7 +62,7 @@ HTTP/1.1 200 OK
 Request:
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/stopwords/?works=latin&list_size=20"
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/stopwords/?language=latin&list_size=20"
 ```
 
 Response:
@@ -79,6 +79,8 @@ HTTP/1.1 200 OK
 ```
 
 #### Get the 15 Highest Frequency Lemmata in Two Specific Texts
+
+Assume that `5c6c69f042facf59122418f6` and `5c6c69f042facf59122418f8` are object IDs of texts in the database.
 
 Request:
 

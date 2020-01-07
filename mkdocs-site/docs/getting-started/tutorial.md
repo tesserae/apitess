@@ -40,4 +40,4 @@ This URL asks the TIS API for texts that have both "vergil" as an author and "ge
 
 To become more familiar with the concepts introduced in this tutorial, you might want to play around with the query strings.  For example, how might you ask the TIS API to GET texts by Aristotle?
 
-When you feel comfortable with the materail presented here, you could continue to the [advanced tutorial](advanced-tutorial.md).  Or if you feel brave, you could continue your exploration of the `/texts/` endpoint by reading [its documentation](../endpoints/texts.md).
+When you feel comfortable with the material presented here, you could continue to the [advanced tutorial](advanced-tutorial.md).  Or if you feel brave, you could continue your exploration of the `/texts/` endpoint by reading [its documentation](../endpoints/texts.md).
