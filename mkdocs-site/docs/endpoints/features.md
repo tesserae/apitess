@@ -1,6 +1,6 @@
-# `/featuresets/`
+# `/features/`
 
-The `/featuresets/` endpoint interacts with Tesserae's database of feature sets, which are bundles of features computed from tokens found in the literary works Tesserae has processed.  Thus, a feature set includes such features as the exact word form and the possible lemmata of a given token.  (Given that a token is an instance of a given word, the exact word form matches the word which a token is an instance of.)
+The `/features/` endpoint interacts with Tesserae's database of feature sets, which are bundles of features computed from tokens found in the literary works Tesserae has processed.  Thus, a feature set includes such features as the exact word form and the possible lemmata of a given token.  (Given that a token is an instance of a given word, the exact word form matches the word which a token is an instance of.)
 
 ## GET
 
@@ -19,7 +19,7 @@ The following fields may be used in a URL query to filter the response:
 
 ### Response
 
-On success, the response includes a JSON data payload consisting of a JSON object with the key `"featuresets"`, associated with an array of JSON objects.  The JSON objects in the array, in turn, contain the following keys:
+On success, the response includes a JSON data payload consisting of a JSON object with the key `"features"`, associated with an array of JSON objects.  The JSON objects in the array, in turn, contain the following keys:
 
 |Key|Value|
 |---|---|
@@ -31,18 +31,18 @@ On success, the response includes a JSON data payload consisting of a JSON objec
 
 #### Search by One Field
 
-```
-curl -i -X GET "https://tesserae.caset.buffalo.edu/featuresets/?form=leges"
+```bash
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/features/?form=leges"
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 200 OK
 ...
 
 {
-  "featuresets": [
+  "features": [
     {
       "form": "leges",
       "lemmata": ["lego", "lex"],
@@ -54,17 +54,17 @@ HTTP/1.1 200 OK
 
 #### Search for Word Not Present in Database
 
-```
-curl -i -X GET "https://tesserae.caset.buffalo.edu/featuresets/?lemma=xlwbnd"
+```bash
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/features/?lemma=xlwbnd"
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 200 OK
 ...
 
 {
-  "featuresets": []
+  "features": []
 }
 ```

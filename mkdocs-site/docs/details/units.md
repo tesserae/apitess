@@ -5,7 +5,7 @@ This page details the concept of textual units and describes JSON objects permit
 ## Summary by Example
 
 Assuming that `5c6c69f042facf59122418f8` is the identifier for the _Aeneid_, the following JSON specifies all of the _Aeneid_ by split by lines:
-```
+```json
 {
   "object_id": "5c6c69f042facf59122418f8",
   "units": "line"
@@ -13,7 +13,7 @@ Assuming that `5c6c69f042facf59122418f8` is the identifier for the _Aeneid_, the
 ```
 
 Assuming that `5c6c69f042facf59122418f8` is the identifier for the _Aeneid_, the following JSON specifies all of the _Aeneid_ by split by phrases:
-```
+```json
 {
   "object_id": "5c6c69f042facf59122418f8",
   "units": "phrase"

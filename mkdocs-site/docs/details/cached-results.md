@@ -14,8 +14,8 @@ Additionally, items retrieved more often from cache are more likely to remain in
 
 ## Problems with Results as Resource
 
-Although it is also possible to directly query for the results using the [`/parallels/<uuid>/`](../endpoints/parallels-uuid.md) endpoint, this is discouraged.  Because expired results are purged, they no longer exist as resources.  As a result, it is possible to receive a 404 error for results obtained in the past.  For this reason, it is recommended that API users re-submit Tesserae searches.  If the results are still in cache, the redirect response will come almost immediately; otherwise, the redirect response will come after the results are computed.  In either case, the URL provided for the redirect is guaranteed to contain the search results.
+Although it is also possible to directly query for the results using the [`/parallels/<uuid>/`](../endpoints/parallels-uuid.md) endpoint, this is discouraged.  Because results are occasionally purged, they may no longer exist as resources.  As a result, it is possible to receive a 404 error for results obtained in the past.  For this reason, it is recommended that API users re-submit Tesserae searches.  If the results are still in cache, the redirect response will come almost immediately; otherwise, the redirect response will come after the results are computed.  In either case, the URL provided for the redirect is guaranteed to contain the search results.
 
 ## Compression of Results
 
-Because we have chosen to use CTS URNs as the basis of indexing into texts, redundant information is especially abundant in the Tesserae search request and in the search results.  For this reason, we recommend that communication of search requests and results utilize the gzip compression algorithm to reduce the size of transferred information.
+Because there may be many matches within a search result and redundant information can be present, search results utilize the gzip compression algorithm to reduce the size of transferred information.

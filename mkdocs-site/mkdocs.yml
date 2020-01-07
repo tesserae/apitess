@@ -1,9 +1,10 @@
-site_name: Tesserae API (Pre-Alpha!)
+site_name: TIS API (Beta)
 nav:
 - 'Home': 'index.md'
 - 'Getting Started':
     - 'Tutorial': 'getting-started/tutorial.md'
-      # - 'CTS URNs': 'getting-started/cts-urns.md'
+    - 'Advanced Tutorial': 'getting-started/advanced-tutorial.md'
+    - 'Example Workflow': 'getting-started/workflow.md'
 - 'Endpoints':
     - '/parallels/': 'endpoints/parallels.md'
     - '/parallels/&ltuuid&gt/': 'endpoints/parallels-uuid.md'
@@ -13,8 +14,7 @@ nav:
     - '/stopwords/lists/&lt;name&gt;/': 'endpoints/stopwords-lists-name.md'
     - '/texts/': 'endpoints/texts.md'
     - '/texts/&lt;object_id&gt;/': 'endpoints/texts-objid.md'
-    - '/featuresets/': 'endpoints/featuresets.md'
-      # - '/texts/&lt;cts_urn&gt;/units/': 'endpoints/texts-cts_urn-units.md'
+      # - '/features/': 'endpoints/features.md'
 - 'Details':
     - 'Cached Results': 'details/cached-results.md'
     - 'Scoring Methods': 'details/methods.md'

@@ -38,13 +38,13 @@ On success, the response includes a JSON data payload consisting of a JSON objec
 
 Request:
 
-```
-curl -i -X GET "https://tesserae.caset.buffalo.edu/texts/?author=Vergil"
+```bash
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/texts/?author=Vergil"
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 200 OK
 ...
 
@@ -63,13 +63,13 @@ HTTP/1.1 200 OK
 
 Request:
 
-```
-curl -i -X GET "https://tesserae.caset.buffalo.edu/texts/?after=100&language=latin"
+```bash
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/texts/?after=100&language=latin"
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 200 OK
 ...
 
@@ -90,13 +90,13 @@ HTTP/1.1 200 OK
 
 Request:
 
-```
-curl -i -X GET "https://tesserae.caset.buffalo.edu/texts/?language=Klingon"
+```bash
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/texts/?language=Klingon"
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 200 OK
 ...
 
@@ -143,8 +143,8 @@ On failure, the data payload contains error information in a JSON object with th
 
 Request:
 
-```
-curl -i -X POST "https://tesserae.caset.buffalo.edu/texts/" -d '{ \
+```bash
+curl -i -X POST "https://tess-new.caset.buffalo.edu/api/texts/" -d '{ \
   "author": "Lucan", \
   "is_prose": false, \
   "path": "https://raw.githubusercontent.com/tesserae/tesserae/master/texts/la/lucan.bellum_civile.tess" \
@@ -156,7 +156,7 @@ curl -i -X POST "https://tesserae.caset.buffalo.edu/texts/" -d '{ \
 
 Response:
 
-```
+```http
 HTTP/1.1 201 Created
 ...
 Content-Location: /texts/5c6c69f042facf59122418f6/
@@ -177,8 +177,8 @@ Content-Location: /texts/5c6c69f042facf59122418f6/
 
 Request:
 
-```
-curl -i -X POST "https://tesserae.caset.buffalo.edu/texts/" -d '{ \
+```bash
+curl -i -X POST "https://tess-new.caset.buffalo.edu/api/texts/" -d '{ \
   "author": "Lucan", \
   "is_prose": false, \
   "path": "https://raw.githubusercontent.com/tesserae/tesserae/master/texts/la/lucan.bellum_civile.tess" \
@@ -189,7 +189,7 @@ curl -i -X POST "https://tesserae.caset.buffalo.edu/texts/" -d '{ \
 
 Response:
 
-```
+```http
 HTTP/1.1 400 Bad Request
 ...
 
@@ -209,8 +209,8 @@ HTTP/1.1 400 Bad Request
 
 Request:
 
-```
-curl -i -X POST "https://tesserae.caset.buffalo.edu/texts/" -d '{ \
+```bash
+curl -i -X POST "https://tess-new.caset.buffalo.edu/api/texts/" -d '{ \
   "author": "Lucan", \
   "object_id": "DEADBEEFDEADBEEFDEADBEEF", \
   "is_prose": false, \
@@ -223,7 +223,7 @@ curl -i -X POST "https://tesserae.caset.buffalo.edu/texts/" -d '{ \
 
 Response:
 
-```
+```http
 HTTP/1.1 400 Bad Request
 ...
 

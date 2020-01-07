@@ -41,13 +41,13 @@ Suppose that `5c6c69f042facf59122418f6` is the identifier associated with Lucan'
 
 Request:
 
-```
-curl -i -X GET "https://tesserae.caset.buffalo.edu/texts/5c6c69f042facf59122418f6/"
+```bash
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/texts/5c6c69f042facf59122418f6/"
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 200 OK
 ...
 
@@ -67,13 +67,13 @@ HTTP/1.1 200 OK
 
 Request:
 
-```
-curl -i -X GET "https://tesserae.caset.buffalo.edu/texts/badid/"
+```bash
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/texts/badid/"
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 400 Bad Request
 ...
 
@@ -89,13 +89,13 @@ Assume that no text in the database has the identifier "DEADBEEFDEADBEEFDEADBEEF
 
 Request:
 
-```
-curl -i -X GET "https://tesserae.caset.buffalo.edu/texts/DEADBEEFDEADBEEFDEADBEEF/"
+```bash
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/texts/DEADBEEFDEADBEEFDEADBEEF/"
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 404 Not Found
 ...
 
@@ -135,7 +135,7 @@ On failure, the data payload contains error information in a JSON object with th
 
 Assume that the following entry exists in the database:
 
-```
+```json
 {
   "author": "Lucan",
   "object_id": "5c6c69f042facf59122418f6",
@@ -150,15 +150,15 @@ Assume that the following entry exists in the database:
 
 Request:
 
-```
-curl -i -X PATCH "https://tesserae.caset.buffalo.edu/texts/5c6c69f042facf59122418f6/" -d '{ \
+```bash
+curl -i -X PATCH "https://tess-new.caset.buffalo.edu/api/texts/5c6c69f042facf59122418f6/" -d '{ \
   "title": "Pharsalia" \
 }'
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 200 OK
 ...
 
@@ -178,7 +178,7 @@ HTTP/1.1 200 OK
 
 Assume that the following entry exists in the database:
 
-```
+```json
 {
   "author": "Lucan",
   "object_id": "5c6c69f042facf59122418f6",
@@ -193,15 +193,15 @@ Assume that the following entry exists in the database:
 
 Request:
 
-```
-curl -i -X PATCH "https://tesserae.caset.buffalo.edu/texts/5c6c69f042facf59122418f6/" -d '{ \
+```bash
+curl -i -X PATCH "https://tess-new.caset.buffalo.edu/api/texts/5c6c69f042facf59122418f6/" -d '{ \
   "extras": {"alternate_title": "Pharsalia"} \
 }'
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 200 OK
 ...
 
@@ -223,15 +223,15 @@ HTTP/1.1 200 OK
 
 Request:
 
-```
-curl -i -X PATCH "https://tesserae.caset.buffalo.edu/texts/badid/" -d '{ \
+```bash
+curl -i -X PATCH "https://tess-new.caset.buffalo.edu/api/texts/badid/" -d '{ \
   "fail": "this example will" \
 }'
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 400 Bad Request
 ...
 
@@ -250,15 +250,15 @@ Assume that no text in the database has the identifier "DEADBEEFDEADBEEFDEADBEEF
 
 Request:
 
-```
-curl -i -X PATCH "https://tesserae.caset.buffalo.edu/texts/DEADBEEFDEADBEEFDEADBEEF/" -d '{ \
+```bash
+curl -i -X PATCH "https://tess-new.caset.buffalo.edu/api/texts/DEADBEEFDEADBEEFDEADBEEF/" -d '{ \
   "fail": "this example will" \
 }'
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 404 Not Found
 ...
 
@@ -298,7 +298,7 @@ On failure, the data payload contains error information in a JSON object with th
 
 Assume that the following entry exists in the database:
 
-```
+```json
 {
   "author": "Lucan",
   "object_id": "5c6c69f042facf59122418f6",
@@ -313,13 +313,13 @@ Assume that the following entry exists in the database:
 
 Request:
 
-```
-curl -i -X DELETE "https://tesserae.caset.buffalo.edu/texts/5c6c69f042facf59122418f6/"'
+```bash
+curl -i -X DELETE "https://tess-new.caset.buffalo.edu/api/texts/5c6c69f042facf59122418f6/"'
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 204 No Content
 ...
 ```
@@ -328,13 +328,13 @@ HTTP/1.1 204 No Content
 
 Request:
 
-```
-curl -i -X DELETE "https://tesserae.caset.buffalo.edu/texts/badid/"
+```bash
+curl -i -X DELETE "https://tess-new.caset.buffalo.edu/api/texts/badid/"
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 400 Bad Request
 ...
 
@@ -350,13 +350,13 @@ Assume that no text in the database has the identifier "DEADBEEFDEADBEEFDEADBEEF
 
 Request:
 
-```
-curl -i -X DELETE "https://tesserae.caset.buffalo.edu/texts/DEADBEEFDEADBEEFDEADBEEF/"
+```bash
+curl -i -X DELETE "https://tess-new.caset.buffalo.edu/api/texts/DEADBEEFDEADBEEFDEADBEEF/"
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 404 Not Found
 ...
 

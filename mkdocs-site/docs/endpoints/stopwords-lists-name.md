@@ -29,13 +29,13 @@ Suppose that `latin-lemma-10` is the name of one of the stopwords lists in the d
 
 Request:
 
-```
-curl -i -X GET "https://tesserae.caset.buffalo.edu/stopwords/lists/latin-lemma-10/"
+```bash
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/stopwords/lists/latin-lemma-10/"
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 200 OK
 ...
 
@@ -54,13 +54,13 @@ Suppose that `i-dont-exist` does not match any stopwords list names in the datab
 
 Request:
 
-```
-curl -i -X GET "https://tesserae.caset.buffalo.edu/stopwords/lists/i-dont-exist/"
+```bash
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/stopwords/lists/i-dont-exist/"
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 404 Not Found
 ...
 
@@ -100,13 +100,13 @@ Assume that a stopwords list named `already-exists` already exists in the databa
 
 Request:
 
-```
-curl -i -X DELETE "https://tesserae.caset.buffalo.edu/texts/already-exists"
+```bash
+curl -i -X DELETE "https://tess-new.caset.buffalo.edu/api/texts/already-exists"
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 204 No Content
 ...
 ```
@@ -117,13 +117,13 @@ Assume that there is no stopwords list named "i-dont-exist" in the database.
 
 Request:
 
-```
-curl -i -X DELETE "https://tesserae.caset.buffalo.edu/texts/i-dont-exist"
+```bash
+curl -i -X DELETE "https://tess-new.caset.buffalo.edu/api/texts/i-dont-exist"
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 404 Not Found
 ...
 

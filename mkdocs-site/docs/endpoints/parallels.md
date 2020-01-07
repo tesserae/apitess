@@ -43,8 +43,8 @@ On failure, the data payload contains error information in a JSON object with th
 
 Request:
 
-```
-curl -i -X POST "https://tesserae.caset.buffalo.edu/parallels/" -d '{ \
+```bash
+curl -i -X POST "https://tess-new.caset.buffalo.edu/api/parallels/" -d '{ \
   "source": { \
     "object_id": "5c6c69f042facf59122418f8", \
     "units": "line" \
@@ -69,7 +69,7 @@ curl -i -X POST "https://tesserae.caset.buffalo.edu/parallels/" -d '{ \
 
 Response:
 
-```
+```http
 HTTP/1.1 201 Created
 ...
 Content-Location: /parallels/some-uuid-for-results/

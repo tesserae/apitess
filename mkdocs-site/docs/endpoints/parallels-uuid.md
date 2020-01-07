@@ -45,13 +45,13 @@ Assume that the identifier `id1` is associated with a certain search result.
 
 Request:
 
-```
-curl -i -X GET "https://tesserae.caset.buffalo.edu/parallels/id1"
+```bash
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/parallels/id1"
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 200 OK
 ...
 Content-Encoding: gzip
@@ -66,13 +66,13 @@ Assume that the identifier `i-expired` is not associated with any search results
 
 Request:
 
-```
-curl -i -X GET "https://tesserae.caset.buffalo.edu/parallels/i-expired"
+```bash
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/parallels/i-expired"
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 404 Not Found
 ...
 ```
