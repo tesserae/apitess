@@ -225,7 +225,7 @@
      id="namedview166"
      showgrid="false"
      inkscape:zoom="1.7107438"
-     inkscape:cx="494.01678"
+     inkscape:cx="522.65929"
      inkscape:cy="127.6099"
      inkscape:window-x="0"
      inkscape:window-y="27"
@@ -368,7 +368,7 @@
            y="-201.09375"
            font-size="14.00"
            id="text139"
-           style="font-size:14px;font-family:Hack;text-anchor:middle;fill:#f2f2f2">/texts/&lt;cts_urn&gt;/</text>
+           style="font-size:14px;font-family:Hack;text-anchor:middle;fill:#f2f2f2">/texts/&lt;object_id&gt;/</text>
       </g>
     </g>
     <g
@@ -431,10 +431,10 @@
          y="-226.22162"
          id="text10105"><tspan
            sodipodi:role="line"
-           id="tspan10103"
            x="289.06903"
            y="-226.22162"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:20.01652908px;font-family:FreeSerif;-inkscape-font-specification:FreeSerif;fill:#666666;fill-opacity:1;stroke-width:0.75061989">texts</tspan></text>
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:20.01652908px;font-family:FreeSerif;-inkscape-font-specification:FreeSerif;fill:#666666;fill-opacity:1;stroke-width:0.75061989"
+           id="tspan942">text identifiers</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:30.02479362px;line-height:1.25;font-family:FreeSerif;-inkscape-font-specification:FreeSerif;letter-spacing:0px;word-spacing:0px;fill:#666666;fill-opacity:1;stroke:none;stroke-width:0.75061989;"
@@ -470,8 +470,8 @@
          inkscape:connector-curvature="0"
          sodipodi:nodetypes="cc" />
       <path
-         style="display:inline;fill:none;stroke:#888888;stroke-width:2.25185951;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker5487)"
-         d="m 337.3119,-231.01497 c 29.39347,6.34505 55.18585,21.4731 85.5598,47.82573"
+         style="display:inline;fill:none;stroke:#888888;stroke-width:2.25185943;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker5487)"
+         d="m 360.56661,-216.9744 62.30509,33.78516"
          id="path5429-2"
          inkscape:connector-curvature="0"
          sodipodi:nodetypes="cc" />

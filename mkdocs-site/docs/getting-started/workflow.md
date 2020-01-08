@@ -1,5 +1,9 @@
 # Example Workflow
 
-![Workflow Pattern](../img/chart_improved.svg)
+One way to imagine using the TIS API:
 
-TODO: fill in
+![Workflow Example](../img/usecase.svg)
+
+Same example, different visual:
+
+![Workflow Pattern](../img/chart_improved.svg)
