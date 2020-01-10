@@ -33,10 +33,12 @@ def _register_before_request(app, async_searcher):
 
 
 def _register_blueprints(app):
-    from . import parallels, stopwords, texts
+    from . import parallels, stopwords, texts, tokens, units
     app.register_blueprint(parallels.bp)
     app.register_blueprint(stopwords.bp)
     app.register_blueprint(texts.bp)
+    app.register_blueprint(tokens.bp)
+    # app.register_blueprint(units.bp)
 
 
 def create_app(async_searcher, test_config=None):
