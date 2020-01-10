@@ -8,19 +8,19 @@ import werkzeug.datastructures
 import tesserae.db.entities
 
 
-def test_query_texts(client):
-    response = client.get('/texts/')
+def test_query_texts(populated_client):
+    response = populated_client.get('/texts/')
     assert response.status_code == 200
     data = response.get_json()
     assert 'texts' in data and isinstance(data['texts'], list)
 
 
-def test_query_texts_with_fields(app, client):
+def test_query_texts_with_fields(populated_app, populated_client):
     year = 1
     lang = 'latin'
-    with app.test_request_context():
+    with populated_app.test_request_context():
         endpoint = flask.url_for('texts.query_texts', after=year, language=lang)
-    response = client.get(endpoint)
+    response = populated_client.get(endpoint)
     assert response.status_code == 200
     data = response.get_json()
     assert 'texts' in data and isinstance(data['texts'], list)

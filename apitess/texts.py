@@ -8,21 +8,12 @@ from bson.errors import InvalidId
 import flask
 
 import apitess.errors
+from apitess.utils import fix_id
 import tesserae.db.entities
 import tesserae.utils
 
 
 bp = flask.Blueprint('texts', __name__, url_prefix='/texts')
-
-
-def fix_id(entity_json):
-    """Replaces entity_json['id'] with entity_json['object_id']
-
-    Note that this updates entity_json in place
-    """
-    entity_json['object_id'] = entity_json['id']
-    del entity_json['id']
-    return entity_json
 
 
 @bp.route('/')
@@ -57,7 +48,7 @@ def query_texts():
             # Assuming that lower limit pre-dates all texts in database
             year=(-999999999999, before_val),
             **filters)
-    elif not before_val is None and after_val is not None:
+    elif before_val is None and after_val is not None:
         results = flask.g.db.find(
             tesserae.db.entities.Text.collection,
             # Assuming that upper limit post-dates all texts in database
