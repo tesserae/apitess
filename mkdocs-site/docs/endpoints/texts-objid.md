@@ -2,7 +2,7 @@
 
 The `/texts/<object_id>/` endpoint interacts with a specific literary work in Tesserae's database.
 
-Note that `<object_id>` is a placeholder to be replaced by an identifier refering to a specific text.  Throughout the rest of this page, `<object_id>` will continue to serve as a placeholder for a text's identifier.
+Note that `<object_id>` is a placeholder to be replaced by an identifier refering to a specific text (i.e., literary work).  Throughout the rest of this page, `<object_id>` will continue to serve as a placeholder for a text's identifier.
 
 ## GET
 

@@ -1,11 +1,13 @@
 """The family of /stopwords/ endpoints"""
 import json
 import os
+import urllib.parse
 
 from bson.objectid import ObjectId
 import flask
 
 import apitess.errors
+import apitess.utils
 import tesserae.db.entities
 from tesserae.matchers.sparse_encoding import SparseMatrixSearch
 
@@ -56,20 +58,19 @@ def query_stopwords():
 
     works = flask.request.args.get('works', None)
     if works:
-        if ',' in works:
-            works = works.split(',')
-        else:
-            works = [works]
+        oids, fails = apitess.utils.parse_works_arg(works)
+        if fails:
+            return apitess.errors.bad_object_ids(fails, flask.request.args)
         text_results = flask.g.db.find(
             tesserae.db.entities.Text.collection,
-            _id=[ObjectId(w) for w in works])
-        if len(text_results) != len(works):
+            _id=oids)
+        if len(text_results) != len(oids):
             # figure out which works were not found in the database and report
             found = {str(r.id) for r in text_results}
             not_found = []
-            for work in works:
-                if work not in found:
-                    not_found.append(work)
+            for obj_id in oids:
+                if obj_id not in found:
+                    not_found.append(obj_id)
                 return apitess.errors.error(
                         400,
                         data={k: v for k, v in flask.request.args.items()},

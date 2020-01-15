@@ -37,7 +37,7 @@ def _register_blueprints(app):
     app.register_blueprint(parallels.bp)
     app.register_blueprint(stopwords.bp)
     app.register_blueprint(texts.bp)
-    # app.register_blueprint(tokens.bp)
+    app.register_blueprint(tokens.bp)
     app.register_blueprint(units.bp)
     app.register_blueprint(features.bp)
 

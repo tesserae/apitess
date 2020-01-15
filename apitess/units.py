@@ -13,7 +13,7 @@ bp = flask.Blueprint('units', __name__, url_prefix='/units')
 
 @bp.route('/')
 def query_units():
-    """Consult database for text metadata"""
+    """Consult database for unit information"""
     alloweds = {'unit_type'}
     filters = {}
     for allowed in alloweds:

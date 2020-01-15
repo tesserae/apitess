@@ -13,7 +13,7 @@ bp = flask.Blueprint('features', __name__, url_prefix='/features')
 
 @bp.route('/')
 def query_features():
-    """Consult database for text metadata"""
+    """Consult database for feature information"""
     alloweds = {'language', 'feature', 'token'}
     filters = {}
     for allowed in alloweds:

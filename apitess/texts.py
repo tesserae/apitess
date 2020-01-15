@@ -64,21 +64,15 @@ def query_texts():
 @bp.route('/<object_id>/')
 def get_text(object_id):
     """Retrieve specific text's metadata"""
-    try:
-        object_id_obj = ObjectId(object_id)
-    except:
-        return apitess.errors.error(
-            400,
-            object_id=object_id,
-            message='Provided identifier ({}) is malformed.'.format(object_id))
+    results, failures = apitess.utils.make_object_ids([object_id])
+    if failures:
+        return apitess.errors.bad_object_id(object_id)
+    object_id_obj = results[0]
     found = flask.g.db.find(
         tesserae.db.entities.Text.collection,
         _id=object_id_obj)
     if not found:
-        return apitess.errors.error(
-            404,
-            object_id=object_id,
-            message='No text with the provided identifier ({}) was found in the database.'.format(object_id))
+        return apitess.errors.text_not_found_object_id(object_id)
     result = fix_id(found[0].json_encode())
     return flask.jsonify(result)
 
