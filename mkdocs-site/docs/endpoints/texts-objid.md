@@ -2,7 +2,7 @@
 
 The `/texts/<object_id>/` endpoint interacts with a specific literary work in Tesserae's database.
 
-Note that `<object_id>` is a placeholder to be replaced by an identifier refering to a specific text.  Throughout the rest of this page, `<object_id>` will continue to serve as a placeholder for a text's identifier.
+Note that `<object_id>` is a placeholder to be replaced by an identifier refering to a specific text (i.e., literary work).  Throughout the rest of this page, `<object_id>` will continue to serve as a placeholder for a text's identifier.
 
 ## GET
 
@@ -20,8 +20,6 @@ On success, the response includes a data payload consisting of a JSON object wit
 |---|---|
 |`"author"`|A string identifying the text's author.|
 |`"object_id"`|A string which uniquely identifies the text on the instance of Tesserae you queried.|
-|`"extras"`|A JSON object specified by the user.|
-|`"is_prose"`|A boolean value denoting whether the text is considered a prose work.|
 |`"language"`|A string identifying the composition language of the text.|
 |`"title"`|A string identifying the text's name.|
 |`"year"`|An integer representing the text's publication year; a negative integer corresponds to the BC era.|
@@ -41,24 +39,22 @@ Suppose that `5c6c69f042facf59122418f6` is the identifier associated with Lucan'
 
 Request:
 
-```
-curl -i -X GET "https://tesserae.caset.buffalo.edu/texts/5c6c69f042facf59122418f6/"
+```bash
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/texts/5c6c69f042facf59122418f6/"
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 200 OK
 ...
 
-{ 
-  "author": "Lucan",
+{
+  "author": "lucan",
   "object_id": "5c6c69f042facf59122418f6",
-  "extras": {},
-  "is_prose": false,
   "path": "https://raw.githubusercontent.com/tesserae/tesserae/master/texts/la/lucan.bellum_civile.tess",
   "language": "latin",
-  "title": "Bellum Civile",
+  "title": "bellum civile",
   "year": 65
 }
 ```
@@ -67,13 +63,13 @@ HTTP/1.1 200 OK
 
 Request:
 
-```
-curl -i -X GET "https://tesserae.caset.buffalo.edu/texts/badid/"
+```bash
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/texts/badid/"
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 400 Bad Request
 ...
 
@@ -89,13 +85,13 @@ Assume that no text in the database has the identifier "DEADBEEFDEADBEEFDEADBEEF
 
 Request:
 
-```
-curl -i -X GET "https://tesserae.caset.buffalo.edu/texts/DEADBEEFDEADBEEFDEADBEEF/"
+```bash
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/texts/DEADBEEFDEADBEEFDEADBEEF/"
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 404 Not Found
 ...
 
@@ -135,38 +131,34 @@ On failure, the data payload contains error information in a JSON object with th
 
 Assume that the following entry exists in the database:
 
-```
+```json
 {
-  "author": "Lucan",
+  "author": "lucan",
   "object_id": "5c6c69f042facf59122418f6",
-  "extras": {},
-  "is_prose": false,
   "path": "https://raw.githubusercontent.com/tesserae/tesserae/master/texts/la/lucan.bellum_civile.tess",
   "language": "latin",
-  "title": "Bellum Civile",
+  "title": "bellum civile",
   "year": 65
 }
 ```
 
 Request:
 
-```
-curl -i -X PATCH "https://tesserae.caset.buffalo.edu/texts/5c6c69f042facf59122418f6/" -d '{ \
+```bash
+curl -i -X PATCH "https://tess-new.caset.buffalo.edu/api/texts/5c6c69f042facf59122418f6/" -d '{ \
   "title": "Pharsalia" \
 }'
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 200 OK
 ...
 
 {
-  "author": "Lucan",
+  "author": "lucan",
   "object_id": "5c6c69f042facf59122418f6",
-  "extras": {},
-  "is_prose": false,
   "path": "https://raw.githubusercontent.com/tesserae/tesserae/master/texts/la/lucan.bellum_civile.tess",
   "language": "latin",
   "title": "Pharsalia",
@@ -178,43 +170,38 @@ HTTP/1.1 200 OK
 
 Assume that the following entry exists in the database:
 
-```
+```json
 {
-  "author": "Lucan",
+  "author": "lucan",
   "object_id": "5c6c69f042facf59122418f6",
-  "extras": {},
-  "is_prose": false,
   "path": "https://raw.githubusercontent.com/tesserae/tesserae/master/texts/la/lucan.bellum_civile.tess",
   "language": "latin",
-  "title": "Bellum Civile",
+  "title": "bellum civile",
   "year": 65
 }
 ```
 
 Request:
 
-```
-curl -i -X PATCH "https://tesserae.caset.buffalo.edu/texts/5c6c69f042facf59122418f6/" -d '{ \
-  "extras": {"alternate_title": "Pharsalia"} \
+```bash
+curl -i -X PATCH "https://tess-new.caset.buffalo.edu/api/texts/5c6c69f042facf59122418f6/" -d '{ \
+  "alternate_title": "Pharsalia" \
 }'
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 200 OK
 ...
 
 {
-  "author": "Lucan",
+  "author": "lucan",
   "object_id": "5c6c69f042facf59122418f6",
-  "extras": {
-    "alternate_title": "Pharsalia"
-  },
-  "is_prose": false,
+  "alternate_title": "Pharsalia"
   "path": "https://raw.githubusercontent.com/tesserae/tesserae/master/texts/la/lucan.bellum_civile.tess",
   "language": "latin",
-  "title": "Bellum Civile",
+  "title": "bellum civile",
   "year": 65
 }
 ```
@@ -223,15 +210,15 @@ HTTP/1.1 200 OK
 
 Request:
 
-```
-curl -i -X PATCH "https://tesserae.caset.buffalo.edu/texts/badid/" -d '{ \
+```bash
+curl -i -X PATCH "https://tess-new.caset.buffalo.edu/api/texts/badid/" -d '{ \
   "fail": "this example will" \
 }'
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 400 Bad Request
 ...
 
@@ -250,15 +237,15 @@ Assume that no text in the database has the identifier "DEADBEEFDEADBEEFDEADBEEF
 
 Request:
 
-```
-curl -i -X PATCH "https://tesserae.caset.buffalo.edu/texts/DEADBEEFDEADBEEFDEADBEEF/" -d '{ \
+```bash
+curl -i -X PATCH "https://tess-new.caset.buffalo.edu/api/texts/DEADBEEFDEADBEEFDEADBEEF/" -d '{ \
   "fail": "this example will" \
 }'
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 404 Not Found
 ...
 
@@ -298,28 +285,26 @@ On failure, the data payload contains error information in a JSON object with th
 
 Assume that the following entry exists in the database:
 
-```
+```json
 {
-  "author": "Lucan",
+  "author": "lucan",
   "object_id": "5c6c69f042facf59122418f6",
-  "extras": {},
-  "is_prose": false,
   "path": "https://raw.githubusercontent.com/tesserae/tesserae/master/texts/la/lucan.bellum_civile.tess",
   "language": "latin",
-  "title": "Bellum Civile",
+  "title": "bellum civile",
   "year": 65
 }
 ```
 
 Request:
 
-```
-curl -i -X DELETE "https://tesserae.caset.buffalo.edu/texts/5c6c69f042facf59122418f6/"'
+```bash
+curl -i -X DELETE "https://tess-new.caset.buffalo.edu/api/texts/5c6c69f042facf59122418f6/"'
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 204 No Content
 ...
 ```
@@ -328,13 +313,13 @@ HTTP/1.1 204 No Content
 
 Request:
 
-```
-curl -i -X DELETE "https://tesserae.caset.buffalo.edu/texts/badid/"
+```bash
+curl -i -X DELETE "https://tess-new.caset.buffalo.edu/api/texts/badid/"
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 400 Bad Request
 ...
 
@@ -350,13 +335,13 @@ Assume that no text in the database has the identifier "DEADBEEFDEADBEEFDEADBEEF
 
 Request:
 
-```
-curl -i -X DELETE "https://tesserae.caset.buffalo.edu/texts/DEADBEEFDEADBEEFDEADBEEF/"
+```bash
+curl -i -X DELETE "https://tess-new.caset.buffalo.edu/api/texts/DEADBEEFDEADBEEFDEADBEEF/"
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 404 Not Found
 ...
 

@@ -147,7 +147,7 @@ def submit_search():
     return response
 
 
-@bp.route('/status/<results_id>/')
+@bp.route('/<results_id>/status/')
 def retrieve_status(results_id):
     results_status_found = flask.g.db.find(
         tesserae.db.entities.Search.collection,

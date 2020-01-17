@@ -38,20 +38,20 @@ On success, the response includes a JSON data payload consisting of a JSON objec
 
 Request:
 
-```
-curl -i -X GET "https://tesserae.caset.buffalo.edu/texts/?author=Vergil"
+```bash
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/texts/?author=vergil"
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 200 OK
 ...
 
 {
   "texts": [
     {
-      "author": "Vergil",
+      "author": "vergil",
       ...
     },
     ...
@@ -63,13 +63,13 @@ HTTP/1.1 200 OK
 
 Request:
 
-```
-curl -i -X GET "https://tesserae.caset.buffalo.edu/texts/?after=100&language=latin"
+```bash
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/texts/?after=100&language=latin"
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 200 OK
 ...
 
@@ -90,13 +90,13 @@ HTTP/1.1 200 OK
 
 Request:
 
-```
-curl -i -X GET "https://tesserae.caset.buffalo.edu/texts/?language=Klingon"
+```bash
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/texts/?language=Klingon"
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 200 OK
 ...
 
@@ -143,32 +143,31 @@ On failure, the data payload contains error information in a JSON object with th
 
 Request:
 
-```
-curl -i -X POST "https://tesserae.caset.buffalo.edu/texts/" -d '{ \
-  "author": "Lucan", \
-  "is_prose": false, \
+```bash
+curl -i -X POST "https://tess-new.caset.buffalo.edu/api/texts/" -d '{ \
+  "author": "lucan", \
   "path": "https://raw.githubusercontent.com/tesserae/tesserae/master/texts/la/lucan.bellum_civile.tess" \
   "language": "latin", \
-  "title": "Bellum Civile", \
+  "title": "bellum civile", \
   "year": 65 \
 }'
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 201 Created
 ...
 Content-Location: /texts/5c6c69f042facf59122418f6/
 ...
 
 {
-  "author": "Lucan",
+  "author": "lucan",
   "object_id": "5c6c69f042facf59122418f6",
   "is_prose": false,
   "path": "https://raw.githubusercontent.com/tesserae/tesserae/master/texts/la/lucan.bellum_civile.tess"
   "language": "latin",
-  "title": "Bellum Civile",
+  "title": "bellum civile",
   "year": 65
 }
 ```
@@ -177,28 +176,26 @@ Content-Location: /texts/5c6c69f042facf59122418f6/
 
 Request:
 
-```
-curl -i -X POST "https://tesserae.caset.buffalo.edu/texts/" -d '{ \
-  "author": "Lucan", \
-  "is_prose": false, \
+```bash
+curl -i -X POST "https://tess-new.caset.buffalo.edu/api/texts/" -d '{ \
+  "author": "lucan", \
   "path": "https://raw.githubusercontent.com/tesserae/tesserae/master/texts/la/lucan.bellum_civile.tess" \
-  "title": "Bellum Civile", \
+  "title": "bellum civile", \
   "year": 65 \
 }'
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 400 Bad Request
 ...
 
 {
   "data": {
-    "author": "Lucan",
-    "is_prose": false,
+    "author": "lucan",
     "path": "https://raw.githubusercontent.com/tesserae/tesserae/master/texts/la/lucan.bellum_civile.tess"
-    "title": "Bellum Civile",
+    "title": "bellum civile",
     "year": 65
   },
   "message": "The request data payload is missing the following required key(s): language."
@@ -209,32 +206,30 @@ HTTP/1.1 400 Bad Request
 
 Request:
 
-```
-curl -i -X POST "https://tesserae.caset.buffalo.edu/texts/" -d '{ \
-  "author": "Lucan", \
+```bash
+curl -i -X POST "https://tess-new.caset.buffalo.edu/api/texts/" -d '{ \
+  "author": "lucan", \
   "object_id": "DEADBEEFDEADBEEFDEADBEEF", \
-  "is_prose": false, \
   "path": "https://raw.githubusercontent.com/tesserae/tesserae/master/texts/la/lucan.bellum_civile.tess" \
   "language": "latin", \
-  "title": "Bellum Civile", \
+  "title": "bellum civile", \
   "year": 65 \
 }'
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 400 Bad Request
 ...
 
 {
   "data": {
-    "author": "Lucan",
+    "author": "lucan",
     "object_id": "DEADBEEFDEADBEEFDEADBEEF"
-    "is_prose": false,
     "path": "https://raw.githubusercontent.com/tesserae/tesserae/master/texts/la/lucan.bellum_civile.tess"
     "language": "latin",
-    "title": "Bellum Civile",
+    "title": "bellum civile",
     "year": 65
   },
   "message": "The request data payload contains the following prohibited key(s): object_id."

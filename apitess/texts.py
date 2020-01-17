@@ -8,21 +8,12 @@ from bson.errors import InvalidId
 import flask
 
 import apitess.errors
+from apitess.utils import fix_id
 import tesserae.db.entities
 import tesserae.utils
 
 
 bp = flask.Blueprint('texts', __name__, url_prefix='/texts')
-
-
-def fix_id(entity_json):
-    """Replaces entity_json['id'] with entity_json['object_id']
-
-    Note that this updates entity_json in place
-    """
-    entity_json['object_id'] = entity_json['id']
-    del entity_json['id']
-    return entity_json
 
 
 @bp.route('/')
@@ -57,7 +48,7 @@ def query_texts():
             # Assuming that lower limit pre-dates all texts in database
             year=(-999999999999, before_val),
             **filters)
-    elif not before_val is None and after_val is not None:
+    elif before_val is None and after_val is not None:
         results = flask.g.db.find(
             tesserae.db.entities.Text.collection,
             # Assuming that upper limit post-dates all texts in database
@@ -73,21 +64,15 @@ def query_texts():
 @bp.route('/<object_id>/')
 def get_text(object_id):
     """Retrieve specific text's metadata"""
-    try:
-        object_id_obj = ObjectId(object_id)
-    except:
-        return apitess.errors.error(
-            400,
-            object_id=object_id,
-            message='Provided identifier ({}) is malformed.'.format(object_id))
+    results, failures = apitess.utils.make_object_ids([object_id])
+    if failures:
+        return apitess.errors.bad_object_id(object_id)
+    object_id_obj = results[0]
     found = flask.g.db.find(
         tesserae.db.entities.Text.collection,
         _id=object_id_obj)
     if not found:
-        return apitess.errors.error(
-            404,
-            object_id=object_id,
-            message='No text with the provided identifier ({}) was found in the database.'.format(object_id))
+        return apitess.errors.text_not_found_object_id(object_id)
     result = fix_id(found[0].json_encode())
     return flask.jsonify(result)
 

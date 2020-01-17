@@ -6,9 +6,9 @@ Stopwords lists are typically computed using frequency information.  The reasoni
 
 ## GET
 
-Requesting GET at `/stopwords/` provides a stopwords list.  How this stopwords list was created is dependent on the URL query fields used.
+Requesting GET at `/stopwords/` provides a JSON object containing a stopwords list.  How this stopwords list was created is dependent on the URL query fields used.
 
-By default, a GET at `/stopwords/` returns an empty list.
+By default, a GET at `/stopwords/` returns a JSON object containing an empty list.
 
 ### Request
 
@@ -40,13 +40,13 @@ On failure, the data payload contains error information in a JSON object with th
 
 Request:
 
-```
-curl -i -X GET "https://tesserae.caset.buffalo.edu/stopwords/?works=latin"
+```bash
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/stopwords/?language=latin"
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 200 OK
 ...
 
@@ -61,13 +61,13 @@ HTTP/1.1 200 OK
 
 Request:
 
-```
-curl -i -X GET "https://tesserae.caset.buffalo.edu/stopwords/?works=latin&list_size=20"
+```bash
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/stopwords/?language=latin&list_size=20"
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 200 OK
 ...
 
@@ -80,15 +80,17 @@ HTTP/1.1 200 OK
 
 #### Get the 15 Highest Frequency Lemmata in Two Specific Texts
 
+Assume that `5c6c69f042facf59122418f6` and `5c6c69f042facf59122418f8` are object IDs of texts in the database.
+
 Request:
 
-```
-curl -i -X GET "https://tesserae.caset.buffalo.edu/stopwords/?works=5c6c69f042facf59122418f6%2C5c6c69f042facf59122418f8&list_size=15"
+```bash
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/stopwords/?works=5c6c69f042facf59122418f6%2C5c6c69f042facf59122418f8&list_size=15"
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 200 OK
 ...
 
@@ -105,13 +107,13 @@ Suppose no text has the identifier `DEADBEEFDEADBEEFDEADBEEF`.
 
 Request:
 
-```
-curl -i -X GET "https://tesserae.caset.buffalo.edu/stopwords/?works=DEADBEEFDEADBEEFDEADBEEF&list_size=15"
+```bash
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/stopwords/?works=DEADBEEFDEADBEEFDEADBEEF&list_size=15"
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 400 Bad Request
 ...
 

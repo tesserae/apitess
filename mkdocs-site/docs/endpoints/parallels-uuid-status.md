@@ -1,10 +1,10 @@
-# `/parallels/status/<uuid>/`
+# `/parallels/<uuid>/status/`
 
-The `/parallels/status/<uuid>/` endpoint retrieves the current status of a search query identified by `<uuid>`, where `<uuid>` is a placeholder for an identifying string.
+The `/parallels/<uuid>/status/` endpoint retrieves the current status of a search query identified by `<uuid>`, where `<uuid>` is a placeholder for an identifying string.
 
 ## GET
 
-Requesting GET at `/parallels/status/<uuid>/` retrieves the status of the search job associated with `<uuid>`.  This association was made at the time that the intertext query was submitted with a POST at [`/parallels/`](parallels.md).
+Requesting GET at `/parallels/<uuid>/status/` retrieves the status of the search job associated with `<uuid>`.  This association was made at the time that the intertext query was submitted with a POST at [`/parallels/`](parallels.md).
 
 ### Request
 
@@ -30,13 +30,13 @@ Assume that the identifier `id1` is associated with a search job that successful
 
 Request:
 
-```
-curl -i -X GET "https://tesserae.caset.buffalo.edu/parallels/status/id1"
+```bash
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/parallels/id1/status/"
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 200 OK
 ...
 {
@@ -52,13 +52,13 @@ Assume that the identifier `i-failed` is associated with a failed search job.
 
 Request:
 
-```
-curl -i -X GET "https://tesserae.caset.buffalo.edu/parallels/status/i-failed"
+```bash
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/parallels/i-failed/status/"
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 200 OK
 ...
 {
@@ -74,13 +74,13 @@ Assume that the identifier `i-expired` is not associated with any search results
 
 Request:
 
-```
-curl -i -X GET "https://tesserae.caset.buffalo.edu/parallels/status/i-expired"
+```bash
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/parallels/i-expired/status/"
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 404 Not Found
 ...
 ```

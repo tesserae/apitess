@@ -1,6 +1,7 @@
 import json
 import os
 import unicodedata
+import urllib.parse
 
 import flask
 import werkzeug.datastructures
@@ -20,6 +21,22 @@ def test_stopwords_default(app, client):
     assert len(data['stopwords']) == 0
 
 
+def test_stopwords_bad_keyword(app, client):
+    with app.test_request_context():
+        endpoint = flask.url_for('stopwords.query_stopwords', garbage='jkl;')
+    response = client.get(endpoint)
+    assert response.status_code == 400
+
+
+def test_stopwords_bad_object_ids(app, client):
+    with app.test_request_context():
+        endpoint = flask.url_for('stopwords.query_stopwords',
+                works='badoid1,badoid2',
+                garbage='jkl;')
+    response = client.get(endpoint)
+    assert response.status_code == 400
+
+
 def test_stopwords_from_work(populated_app, populated_client):
     with populated_app.test_request_context():
         populated_app.preprocess_request()
@@ -32,6 +49,22 @@ def test_stopwords_from_work(populated_app, populated_client):
     assert 'stopwords' in data
     assert isinstance(data['stopwords'], list)
     assert len(data['stopwords']) == 2
+
+
+def test_stopwords_from_multiple_works(populated_app, populated_client):
+    with populated_app.test_request_context():
+        populated_app.preprocess_request()
+        found_texts = flask.g.db.find(tesserae.db.entities.Text.collection)
+        endpoint = flask.url_for('stopwords.query_stopwords',
+                works=urllib.parse.quote(
+                    ','.join([str(t.id) for t in found_texts])),
+                list_size=10)
+    response = populated_client.get(endpoint)
+    assert response.status_code == 200
+    data = response.get_json()
+    assert 'stopwords' in data
+    assert isinstance(data['stopwords'], list)
+    assert len(data['stopwords']) == 10
 
 
 def test_stopwords_language(populated_app, populated_client):

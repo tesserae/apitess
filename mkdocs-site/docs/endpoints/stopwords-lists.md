@@ -20,13 +20,13 @@ On success, the response includes a JSON data payload consisting of a JSON objec
 
 Request:
 
-```
-curl -i -X GET "https://tesserae.caset.buffalo.edu/stopwords/lists/"
+```bash
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/stopwords/lists/"
 ```
 
 Response:
 
-```
+```http
 HTTP/1.1 200 OK
 ...
 
@@ -72,8 +72,8 @@ On failure, the data payload contains error information in a JSON object with th
 
 Request:
 
-```
-curl -i -X POST "https://tesserae.caset.buffalo.edu/stopwords/lists/" -d '{ \
+```bash
+curl -i -X POST "https://tess-new.caset.buffalo.edu/api/stopwords/lists/" -d '{ \
   "name": "new-list", \
   "stopwords": [ \
     "a", \
@@ -84,7 +84,7 @@ curl -i -X POST "https://tesserae.caset.buffalo.edu/stopwords/lists/" -d '{ \
 
 Response:
 
-```
+```http
 HTTP/1.1 201 Created
 ...
 Content-Location: /stopwords/lists/new-list/
@@ -104,8 +104,8 @@ Suppose that `latin-lemma-10` is the name of one of the stopwords lists.
 
 Request:
 
-```
-curl -i -X POST "https://tesserae.caset.buffalo.edu/stopwords/lists/" -d '{ \
+```bash
+curl -i -X POST "https://tess-new.caset.buffalo.edu/api/stopwords/lists/" -d '{ \
   "name": "latin-lemma-10", \
   "stopwords": [ \
     "a", \
@@ -116,7 +116,7 @@ curl -i -X POST "https://tesserae.caset.buffalo.edu/stopwords/lists/" -d '{ \
 
 Response:
 
-```
+```http
 HTTP/1.1 400 Bad Request
 ...
 
@@ -128,7 +128,7 @@ HTTP/1.1 400 Bad Request
       "b"
     ]
   }
-  "message": "The stopwords list name provided (latin-lemma-10) already exists in the database. If you meant to update the stopwords list, try a DELETE at https://tesserae.caset.buffalo.edu/texts/latin-lemma-10/ first, then re-try this POST."
+  "message": "The stopwords list name provided (latin-lemma-10) already exists in the database. If you meant to update the stopwords list, try a DELETE at https://tess-new.caset.buffalo.edu/api/texts/latin-lemma-10/ first, then re-try this POST."
 }
 ```
 
@@ -136,8 +136,8 @@ HTTP/1.1 400 Bad Request
 
 Request:
 
-```
-curl -i -X POST "https://tesserae.caset.buffalo.edu/stopwords/lists/" -d '{ \
+```bash
+curl -i -X POST "https://tess-new.caset.buffalo.edu/api/stopwords/lists/" -d '{ \
   "stopwords": [ \
     "a", \
     "b" \
@@ -147,7 +147,7 @@ curl -i -X POST "https://tesserae.caset.buffalo.edu/stopwords/lists/" -d '{ \
 
 Response:
 
-```
+```http
 HTTP/1.1 400 Bad Request
 ...
 

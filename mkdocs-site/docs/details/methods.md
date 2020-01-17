@@ -107,9 +107,4 @@ As noted earlier, the distance between tokens is important to how the score for 
 |Distance Basis|Description|
 |---|---|
 |`"span"`|The two farthest apart matching tokens within the span are used; $d_t>0$ and $d_s>0$ in this case.|
-|`"span-target"`|The two farthest apart matching tokens in the target span only are used; $d_t>0$ and $d_s=0$ in this case.|
-|`"span-source"`|The two farthest apart matching tokens in the source span only are used; $d_t=0$ and $d_s>0$ in this case.|
 |`"frequency"`|The two lowest frequency tokens within the span are used. $d_t>0$ and $d_s>0$ in this case.|
-|`"frequency-target"`|The two lowest frequency tokens within the target span only are used; $d_t>0$ and $d_s=0$ in this case.|
-|`"frequency-source"`|The two lowest frequency tokens within the source span only are used; $d_t=0$ and $d_s>0$ in this case.|
-
