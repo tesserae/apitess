@@ -20,8 +20,6 @@ On success, the response includes a data payload consisting of a JSON object wit
 |---|---|
 |`"author"`|A string identifying the text's author.|
 |`"object_id"`|A string which uniquely identifies the text on the instance of Tesserae you queried.|
-|`"extras"`|A JSON object specified by the user.|
-|`"is_prose"`|A boolean value denoting whether the text is considered a prose work.|
 |`"language"`|A string identifying the composition language of the text.|
 |`"title"`|A string identifying the text's name.|
 |`"year"`|An integer representing the text's publication year; a negative integer corresponds to the BC era.|
@@ -51,14 +49,12 @@ Response:
 HTTP/1.1 200 OK
 ...
 
-{ 
-  "author": "Lucan",
+{
+  "author": "lucan",
   "object_id": "5c6c69f042facf59122418f6",
-  "extras": {},
-  "is_prose": false,
   "path": "https://raw.githubusercontent.com/tesserae/tesserae/master/texts/la/lucan.bellum_civile.tess",
   "language": "latin",
-  "title": "Bellum Civile",
+  "title": "bellum civile",
   "year": 65
 }
 ```
@@ -137,13 +133,11 @@ Assume that the following entry exists in the database:
 
 ```json
 {
-  "author": "Lucan",
+  "author": "lucan",
   "object_id": "5c6c69f042facf59122418f6",
-  "extras": {},
-  "is_prose": false,
   "path": "https://raw.githubusercontent.com/tesserae/tesserae/master/texts/la/lucan.bellum_civile.tess",
   "language": "latin",
-  "title": "Bellum Civile",
+  "title": "bellum civile",
   "year": 65
 }
 ```
@@ -163,10 +157,8 @@ HTTP/1.1 200 OK
 ...
 
 {
-  "author": "Lucan",
+  "author": "lucan",
   "object_id": "5c6c69f042facf59122418f6",
-  "extras": {},
-  "is_prose": false,
   "path": "https://raw.githubusercontent.com/tesserae/tesserae/master/texts/la/lucan.bellum_civile.tess",
   "language": "latin",
   "title": "Pharsalia",
@@ -180,13 +172,11 @@ Assume that the following entry exists in the database:
 
 ```json
 {
-  "author": "Lucan",
+  "author": "lucan",
   "object_id": "5c6c69f042facf59122418f6",
-  "extras": {},
-  "is_prose": false,
   "path": "https://raw.githubusercontent.com/tesserae/tesserae/master/texts/la/lucan.bellum_civile.tess",
   "language": "latin",
-  "title": "Bellum Civile",
+  "title": "bellum civile",
   "year": 65
 }
 ```
@@ -195,7 +185,7 @@ Request:
 
 ```bash
 curl -i -X PATCH "https://tess-new.caset.buffalo.edu/api/texts/5c6c69f042facf59122418f6/" -d '{ \
-  "extras": {"alternate_title": "Pharsalia"} \
+  "alternate_title": "Pharsalia" \
 }'
 ```
 
@@ -206,15 +196,12 @@ HTTP/1.1 200 OK
 ...
 
 {
-  "author": "Lucan",
+  "author": "lucan",
   "object_id": "5c6c69f042facf59122418f6",
-  "extras": {
-    "alternate_title": "Pharsalia"
-  },
-  "is_prose": false,
+  "alternate_title": "Pharsalia"
   "path": "https://raw.githubusercontent.com/tesserae/tesserae/master/texts/la/lucan.bellum_civile.tess",
   "language": "latin",
-  "title": "Bellum Civile",
+  "title": "bellum civile",
   "year": 65
 }
 ```
@@ -300,13 +287,11 @@ Assume that the following entry exists in the database:
 
 ```json
 {
-  "author": "Lucan",
+  "author": "lucan",
   "object_id": "5c6c69f042facf59122418f6",
-  "extras": {},
-  "is_prose": false,
   "path": "https://raw.githubusercontent.com/tesserae/tesserae/master/texts/la/lucan.bellum_civile.tess",
   "language": "latin",
-  "title": "Bellum Civile",
+  "title": "bellum civile",
   "year": 65
 }
 ```

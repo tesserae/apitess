@@ -12,6 +12,6 @@ If you want to know more about a particular endpoint, look under the "Endpoints"
 
 Who are "we"?  We are digital humanists, associated with the Tesserae project.  We are interested in intertextual relationships, and we use computational methods to aid us in finding them.
 
-Our current site is available at https://tesserae.caset.buffalo.edu/.
+Our current site is available at <https://tesserae.caset.buffalo.edu/>.
 
-The API described on this site is currently served off of https://tess-new.caset.buffalo.edu/api/.
+The API described on this site is currently served off of <https://tess-new.caset.buffalo.edu/api/>.

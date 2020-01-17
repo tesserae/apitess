@@ -18,12 +18,6 @@ TODO:  On the live server, should we limit the amount of source and target texts
 |`"target"`|A JSON object describing target units.  Further details are available at [Units](../details/units.md).  These units will be compared with the units described by `"source"` to find intertexts.|
 |`"method"`|A JSON object describing the scoring method used to evaluate the intertextual strength of a source text and target text pair.  More information on specifying the scoring method can be found in [Scoring Methods](../details/methods.md).|
 
-> NB:  Compressing this request body with gzip is recommended.  (The `Content-Encoding` header will be required for compressing the request body.)
-
-#### JSON Object Describing Source and Target Units
-
-
-
 ### Response
 
 On success, one of two responses will be returned.  The first is a 201 (created); the second is a 303 (see other).  In either case, a `Location` header will specify the URL where the search results can be retrieved.  Note that the URL specified in the `Location` header will conform to the [`/parallels/<uuid>/`](parallels-uuid.md) endpoint.

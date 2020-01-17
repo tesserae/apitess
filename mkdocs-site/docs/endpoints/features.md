@@ -1,10 +1,12 @@
 # `/features/`
 
-The `/features/` endpoint interacts with Tesserae's database of feature sets, which are bundles of features computed from tokens found in the literary works Tesserae has processed.  Thus, a feature set includes such features as the exact word form and the possible lemmata of a given token.  (Given that a token is an instance of a given word, the exact word form matches the word which a token is an instance of.)
+The `/features/` endpoint interacts with features registered in Tesserae's database.
 
 ## GET
 
-Requesting GET at `/features/` provides information on features stored in Tesserae's database.
+Requesting GET at `/features/` provides a JSON object containing list of features.  How this list of features was created is dependent on the URL query fields used.
+
+By default, a GET at `/features/` returns a JSON object containing an empty list.
 
 ### Request
 
@@ -12,8 +14,9 @@ The following fields may be used in a URL query to filter the response:
 
 |Field Name|Field Value|
 |---|---|
-| `form` | Only database information for the features corresponding with the specified exact word form is returned. |
-| `lemma` | Only database information for features corresponding with the specified lemma is returned. |
+| `language` | Limits features retrieved to be of the specified language. |
+| `feature` | Limits features retrieved to be of the specified feature type. |
+| `token` | Limits features retrieved to be of the specified representation. |
 
 > NB:  Remember to percent encode field values when necessary.
 
@@ -23,16 +26,20 @@ On success, the response includes a JSON data payload consisting of a JSON objec
 
 |Key|Value|
 |---|---|
-|`"form"`|A string matching the exact word form.|
-|`"lemmata"`|A list of strings, where each string is a possible lemma for this word.|
-|`"language"`|A string indicating what language this word belongs to.|
+|`"language"`|A string indicating what language this feature belongs to.|
+|`"feature"`|A string representing the feature type of this feature.|
+|`"token"`|A string representing this feature.|
+|`"index"`|An integer denoting the order in which the database became aware of this feature, relative to other instances of this feature type for the given language.|
+|`"frequencies"`|A JSON object associating text identifiers with the number of instances this feature occurs in that text.|
 
 ### Examples
 
 #### Search by One Field
 
+Suppose that "lego" is the 45th Latin form and the 67th Latin lemma the database encountered.
+
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/features/?form=leges"
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/features/?token=lego"
 ```
 
 Response:
@@ -44,18 +51,28 @@ HTTP/1.1 200 OK
 {
   "features": [
     {
-      "form": "leges",
-      "lemmata": ["lego", "lex"],
-      "language": "latin"
-    }
+      "language": "latin",
+      "feature": "form",
+      "token": "lego",
+      "index": 45,
+      "frequencies": { ... }
+    },
+    {
+      "language": "latin",
+      "feature": "lemmata",
+      "token": "lego",
+      "index": 67,
+      "frequencies": { ... }
+    },
+    ...
   ]
 }
 ```
 
-#### Search for Word Not Present in Database
+#### Search for Feature Not Present in Database
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/features/?lemma=xlwbnd"
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/features/?token=xlwbnd"
 ```
 
 Response:
@@ -66,5 +83,34 @@ HTTP/1.1 200 OK
 
 {
   "features": []
+}
+```
+
+#### Retrieve Features of a Feature Type for a Language
+
+```bash
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/features/?feature=lemmata&language=latin"
+```
+
+Response:
+
+```http
+HTTP/1.1 200 OK
+...
+
+{
+  "features": [
+    {
+      "language": "latin",
+      "feature": "lemmata",
+      ...
+    },
+    {
+      "language": "latin",
+      "feature": "lemmata",
+      ...
+    },
+    ...
+  ]
 }
 ```

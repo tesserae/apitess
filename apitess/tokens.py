@@ -21,7 +21,7 @@ def query_tokens():
         return flask.jsonify(tokens=[])
     works = flask.request.args.get('works', None)
     if works:
-        oids, fails = apitess.utils.parse_works_args(works)
+        oids, fails = apitess.utils.parse_works_arg(works)
         if fails:
             return apitess.errors.bad_object_ids(fails, flask.request.args)
         token_results = flask.g.db.find(

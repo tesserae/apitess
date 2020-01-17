@@ -49,6 +49,7 @@ def test_query_tokens_with_one_text(populated_app, populated_client):
     for token in data['tokens']:
         assert token['text'] == text_ids[0]
 
+
 def test_query_tokens_with_multiple_texts(populated_app, populated_client):
     response = populated_client.get('/texts/')
     assert response.status_code == 200

@@ -6,9 +6,9 @@ Stopwords lists are typically computed using frequency information.  The reasoni
 
 ## GET
 
-Requesting GET at `/stopwords/` provides a stopwords list.  How this stopwords list was created is dependent on the URL query fields used.
+Requesting GET at `/stopwords/` provides a JSON object containing a stopwords list.  How this stopwords list was created is dependent on the URL query fields used.
 
-By default, a GET at `/stopwords/` returns an empty list.
+By default, a GET at `/stopwords/` returns a JSON object containing an empty list.
 
 ### Request
 

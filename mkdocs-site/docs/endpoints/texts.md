@@ -39,7 +39,7 @@ On success, the response includes a JSON data payload consisting of a JSON objec
 Request:
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/texts/?author=Vergil"
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/texts/?author=vergil"
 ```
 
 Response:
@@ -51,7 +51,7 @@ HTTP/1.1 200 OK
 {
   "texts": [
     {
-      "author": "Vergil",
+      "author": "vergil",
       ...
     },
     ...
@@ -145,11 +145,10 @@ Request:
 
 ```bash
 curl -i -X POST "https://tess-new.caset.buffalo.edu/api/texts/" -d '{ \
-  "author": "Lucan", \
-  "is_prose": false, \
+  "author": "lucan", \
   "path": "https://raw.githubusercontent.com/tesserae/tesserae/master/texts/la/lucan.bellum_civile.tess" \
   "language": "latin", \
-  "title": "Bellum Civile", \
+  "title": "bellum civile", \
   "year": 65 \
 }'
 ```
@@ -163,12 +162,12 @@ Content-Location: /texts/5c6c69f042facf59122418f6/
 ...
 
 {
-  "author": "Lucan",
+  "author": "lucan",
   "object_id": "5c6c69f042facf59122418f6",
   "is_prose": false,
   "path": "https://raw.githubusercontent.com/tesserae/tesserae/master/texts/la/lucan.bellum_civile.tess"
   "language": "latin",
-  "title": "Bellum Civile",
+  "title": "bellum civile",
   "year": 65
 }
 ```
@@ -179,10 +178,9 @@ Request:
 
 ```bash
 curl -i -X POST "https://tess-new.caset.buffalo.edu/api/texts/" -d '{ \
-  "author": "Lucan", \
-  "is_prose": false, \
+  "author": "lucan", \
   "path": "https://raw.githubusercontent.com/tesserae/tesserae/master/texts/la/lucan.bellum_civile.tess" \
-  "title": "Bellum Civile", \
+  "title": "bellum civile", \
   "year": 65 \
 }'
 ```
@@ -195,10 +193,9 @@ HTTP/1.1 400 Bad Request
 
 {
   "data": {
-    "author": "Lucan",
-    "is_prose": false,
+    "author": "lucan",
     "path": "https://raw.githubusercontent.com/tesserae/tesserae/master/texts/la/lucan.bellum_civile.tess"
-    "title": "Bellum Civile",
+    "title": "bellum civile",
     "year": 65
   },
   "message": "The request data payload is missing the following required key(s): language."
@@ -211,12 +208,11 @@ Request:
 
 ```bash
 curl -i -X POST "https://tess-new.caset.buffalo.edu/api/texts/" -d '{ \
-  "author": "Lucan", \
+  "author": "lucan", \
   "object_id": "DEADBEEFDEADBEEFDEADBEEF", \
-  "is_prose": false, \
   "path": "https://raw.githubusercontent.com/tesserae/tesserae/master/texts/la/lucan.bellum_civile.tess" \
   "language": "latin", \
-  "title": "Bellum Civile", \
+  "title": "bellum civile", \
   "year": 65 \
 }'
 ```
@@ -229,12 +225,11 @@ HTTP/1.1 400 Bad Request
 
 {
   "data": {
-    "author": "Lucan",
+    "author": "lucan",
     "object_id": "DEADBEEFDEADBEEFDEADBEEF"
-    "is_prose": false,
     "path": "https://raw.githubusercontent.com/tesserae/tesserae/master/texts/la/lucan.bellum_civile.tess"
     "language": "latin",
-    "title": "Bellum Civile",
+    "title": "bellum civile",
     "year": 65
   },
   "message": "The request data payload contains the following prohibited key(s): object_id."
