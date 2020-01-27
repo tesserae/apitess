@@ -8,7 +8,7 @@ from bson.objectid import ObjectId
 import flask
 
 import tesserae.db.entities
-from tesserae.matchers.sparse_encoding import SparseMatrixSearch
+from tesserae.matchers.text_options import TextOptions
 from tesserae.utils.retrieve import get_results
 from tesserae.utils.search import check_cache
 import apitess.errors
@@ -129,8 +129,8 @@ def submit_search():
 
     try:
         flask.g.searcher.queue_search(results_id, method['name'], {
-            'texts': [source_text, target_text],
-            'unit_type': received['source']['units'],
+            'source': TextOptions(source_text, source['units']),
+            'target': TextOptions(target_text, target['units']),
             'feature': method['feature'],
             'stopwords': method['stopwords'],
             'frequency_basis': method['freq_basis'],
