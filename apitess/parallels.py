@@ -125,7 +125,7 @@ def submit_search():
     results_id = uuid.uuid4().hex
     # we want the final '/' on the URL
     response.headers['Location'] = os.path.join(
-            flask.request.base_url, results_id, '')
+        flask.request.base_url, results_id, '')
 
     try:
         flask.g.searcher.queue_search(results_id, method['name'], {
@@ -174,8 +174,10 @@ def retrieve_results(results_id):
         response.status_code = 404
         return response
     if results_status_found[0].status != tesserae.db.entities.Search.DONE:
+        status_url = os.path.join(
+            flask.request.base_url, results_id, 'status', '')
         response = flask.Response(
-                'Unable to retrieve results; check /status/ endpoint.')
+            f'Unable to retrieve results; check {status_url} endpoint.')
         reponse.status_code = 404
         return response
 
