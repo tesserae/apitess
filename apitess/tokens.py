@@ -4,6 +4,7 @@ import urllib.parse
 
 from bson.objectid import ObjectId
 import flask
+from flask_cors import cross_origin
 
 import apitess.errors
 from apitess.utils import fix_id
@@ -14,6 +15,7 @@ bp = flask.Blueprint('tokens', __name__, url_prefix='/tokens')
 
 
 @bp.route('/')
+@cross_origin()
 def query_tokens():
     """Consult database for token information"""
     if len(flask.request.args) == 0:

@@ -2,6 +2,7 @@
 import urllib.parse
 
 import flask
+from flask_cors import CORS
 
 import tesserae.db
 
@@ -60,5 +61,8 @@ def create_app(async_searcher, test_config=None):
     _load_config(app, test_config)
     _register_before_request(app, async_searcher)
     _register_blueprints(app)
+    
+    CORS(app)
+    app.config['CORS_HEADERS'] = 'Content-Type'
 
     return app

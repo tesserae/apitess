@@ -6,6 +6,7 @@ import uuid
 
 from bson.objectid import ObjectId
 import flask
+from flask_cors import cross_origin
 
 import tesserae.db.entities
 from tesserae.matchers.sparse_encoding import SparseMatrixSearch
@@ -44,6 +45,7 @@ def _validate_units(specs, name):
 
 
 @bp.route('/', methods=('POST',))
+@cross_origin()
 def submit_search():
     """Run a Tesserae search"""
     received = flask.request.get_json()
@@ -148,6 +150,7 @@ def submit_search():
 
 
 @bp.route('/<results_id>/status/')
+@cross_origin()
 def retrieve_status(results_id):
     results_status_found = flask.g.db.find(
         tesserae.db.entities.Search.collection,
@@ -163,6 +166,7 @@ def retrieve_status(results_id):
 
 
 @bp.route('/<results_id>/')
+@cross_origin()
 def retrieve_results(results_id):
     # get search results
     results_status_found = flask.g.db.find(

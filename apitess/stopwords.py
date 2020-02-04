@@ -5,6 +5,7 @@ import urllib.parse
 
 from bson.objectid import ObjectId
 import flask
+from flask_cors import cross_origin
 
 import apitess.errors
 import apitess.utils
@@ -25,6 +26,7 @@ def indices_to_tokens(connection, stopword_indices, language, feature):
 
 
 @bp.route('/')
+@cross_origin()
 def query_stopwords():
     """Build a stopwords list"""
     if len(flask.request.args) == 0:
@@ -89,6 +91,7 @@ def query_stopwords():
 
 
 @bp.route('/lists/')
+@cross_origin()
 def query_stopwords_lists():
     """Report curated stopwords lists in database"""
     found = flask.g.db.find(
@@ -98,6 +101,7 @@ def query_stopwords_lists():
 
 
 @bp.route('/lists/<name>/')
+@cross_origin()
 def get_stopwords_list(name):
     """Retrieve specified stopwords list"""
     found = flask.g.db.find(
