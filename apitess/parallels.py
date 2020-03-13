@@ -44,8 +44,8 @@ def _validate_units(specs, name):
     return result
 
 
-@bp.route('/', methods=('POST',))
-@cross_origin()
+@bp.route('/', methods=('POST', 'OPTIONS',))
+@cross_origin(expose_headers='Location')
 def submit_search():
     """Run a Tesserae search"""
     received = flask.request.get_json()
