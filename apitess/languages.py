@@ -7,6 +7,7 @@ import urllib.parse
 from bson.objectid import ObjectId
 from bson.errors import InvalidId
 import flask
+from flask_cors import cross_origin
 
 import apitess.errors
 from apitess.utils import fix_id
@@ -18,6 +19,7 @@ bp = flask.Blueprint('languages', __name__, url_prefix='/languages')
 
 
 @bp.route('/')
+@cross_origin()
 def query_languages():
     """Consult database for available languages
     
@@ -32,6 +34,7 @@ def query_languages():
 
 
 @bp.route('/<language>/')
+@cross_origin()
 def get_language_stats(language):
     """Retrive statistics and information about a language in the database.
     
