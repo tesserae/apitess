@@ -3,6 +3,7 @@ import json
 
 from bson.objectid import ObjectId
 import flask
+from flask_cors import cross_origin
 
 from apitess.utils import fix_id
 import tesserae
@@ -12,6 +13,7 @@ bp = flask.Blueprint('features', __name__, url_prefix='/features')
 
 
 @bp.route('/')
+@cross_origin()
 def query_features():
     """Consult database for feature information"""
     alloweds = {'language', 'feature', 'token'}

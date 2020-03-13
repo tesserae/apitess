@@ -3,6 +3,7 @@ import json
 
 from bson.objectid import ObjectId
 import flask
+from flask_cors import cross_origin
 
 import apitess.utils
 import tesserae
@@ -12,6 +13,7 @@ bp = flask.Blueprint('units', __name__, url_prefix='/units')
 
 
 @bp.route('/')
+@cross_origin()
 def query_units():
     """Consult database for unit information"""
     if len(flask.request.args) == 0:

@@ -25,6 +25,7 @@ setup(
     keywords='text_processing intertext_matching',
     install_requires=[
         'flask>=1.0.2',
+        'flask-cors',
         'tesserae @ git+https://github.com/tesserae/tesserae-v5@master',
     ],
 )

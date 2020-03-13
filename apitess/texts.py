@@ -6,6 +6,7 @@ import urllib.parse
 from bson.objectid import ObjectId
 from bson.errors import InvalidId
 import flask
+from flask_cors import cross_origin
 
 import apitess.errors
 from apitess.utils import fix_id
@@ -17,6 +18,7 @@ bp = flask.Blueprint('texts', __name__, url_prefix='/texts')
 
 
 @bp.route('/')
+@cross_origin()
 def query_texts():
     """Consult database for text metadata"""
     alloweds = {'author', 'is_prose', 'language', 'title'}
@@ -62,6 +64,7 @@ def query_texts():
 
 
 @bp.route('/<object_id>/')
+@cross_origin()
 def get_text(object_id):
     """Retrieve specific text's metadata"""
     results, failures = apitess.utils.make_object_ids([object_id])
