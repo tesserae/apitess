@@ -13,6 +13,3 @@ def test_query_languages(populated_client):
     assert 'greek' in data['languages']
     assert 'latin' in data['languages']
 
-
-def test_get_language_stats(populated_client):
-    pass
