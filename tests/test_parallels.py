@@ -1,5 +1,6 @@
 import gzip
 import json
+import pprint
 import time
 
 import flask
@@ -60,6 +61,7 @@ def test_search(populated_app, populated_client):
     assert response.status_code == 200
     data = flask.json.loads(gzip.decompress(response.get_data()).decode('utf-8'))
     assert 'parallels' in data
+    pprint.pprint(data['parallels'])
     assert len(data['parallels']) > 0
 
     # make sure search results were cached
@@ -116,3 +118,12 @@ def test_bad_feature_search(populated_app, populated_client):
     assert status == tesserae.db.entities.Search.FAILED
     assert 'message' in data
     assert f'"{bad_feature}"' in data['message']
+
+
+def test_non_existent_results(populated_app, populated_client):
+    with populated_app.test_request_context():
+        populated_app.preprocess_request()
+        retrieve_endpoint = flask.url_for('parallels.retrieve_results',
+                results_id='does-not-exist')
+    response = populated_client.get(retrieve_endpoint)
+    assert response.status_code == 404

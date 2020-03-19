@@ -182,7 +182,7 @@ def retrieve_results(results_id):
             flask.request.base_url, results_id, 'status', '')
         response = flask.Response(
             f'Unable to retrieve results; check {status_url} endpoint.')
-        reponse.status_code = 404
+        response.status_code = 404
         return response
 
     params = results_status_found[0].parameters
