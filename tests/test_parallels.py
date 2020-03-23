@@ -1,6 +1,5 @@
 import gzip
 import json
-import pprint
 import time
 
 import flask
@@ -61,7 +60,6 @@ def test_search(populated_app, populated_client):
     assert response.status_code == 200
     data = flask.json.loads(gzip.decompress(response.get_data()).decode('utf-8'))
     assert 'parallels' in data
-    pprint.pprint(data['parallels'])
     assert len(data['parallels']) > 0
 
     # make sure search results were cached
