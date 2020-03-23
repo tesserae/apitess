@@ -116,3 +116,12 @@ def test_bad_feature_search(populated_app, populated_client):
     assert status == tesserae.db.entities.Search.FAILED
     assert 'message' in data
     assert f'"{bad_feature}"' in data['message']
+
+
+def test_non_existent_results(populated_app, populated_client):
+    with populated_app.test_request_context():
+        populated_app.preprocess_request()
+        retrieve_endpoint = flask.url_for('parallels.retrieve_results',
+                results_id='does-not-exist')
+    response = populated_client.get(retrieve_endpoint)
+    assert response.status_code == 404
