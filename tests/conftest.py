@@ -1,13 +1,20 @@
 """Global fixtures for tests"""
 from pathlib import Path
-import pytest
+import tempfile
 
 import flask
+import pytest
 
 import apitess
 from tesserae.db.entities import Text
 from tesserae.utils import ingest_text
 from tesserae.utils.search import AsynchronousSearcher
+from tesserae.utils.multitext import BigramWriter
+
+
+# Write bigram databases to temporary directory
+BigramWriter.BIGRAM_DB_DIR = tmpfile.TemporaryDirectory()
+
 
 db_config = {
     'MONGO_HOSTNAME': 'localhost',
