@@ -8,12 +8,13 @@ import pytest
 import apitess
 from tesserae.db.entities import Text
 from tesserae.utils import ingest_text
+from tesserae.utils.delete import obliterate
 from tesserae.utils.search import AsynchronousSearcher
 from tesserae.utils.multitext import BigramWriter
 
 
 # Write bigram databases to temporary directory
-BigramWriter.BIGRAM_DB_DIR = tmpfile.TemporaryDirectory()
+BigramWriter.BIGRAM_DB_DIR = tempfile.mkdtemp()
 
 
 db_config = {
@@ -42,8 +43,7 @@ def app():
         with cur_app.test_request_context():
             # initialize database for testing
             cur_app.preprocess_request()
-            for coll_name in flask.g.db.connection.list_collection_names():
-                flask.g.db.connection.drop_collection(coll_name)
+            obliterate(flask.g.db)
 
         yield cur_app
     finally:
@@ -125,14 +125,18 @@ def populated_app():
         with cur_app.test_request_context():
             # initialize populated database for testing
             cur_app.preprocess_request()
-            for coll_name in flask.g.db.connection.list_collection_names():
-                flask.g.db.connection.drop_collection(coll_name)
+            obliterate(flask.g.db)
             texts_to_add = _get_text_metadata()
             for t in texts_to_add:
                 cur_text = Text.json_decode(t)
                 text_id = str(ingest_text(flask.g.db, cur_text))
 
         yield cur_app
+
+        with cur_app.test_request_context():
+            # delete populated test database
+            cur_app.preprocess_request()
+            obliterate(flask.g.db)
     finally:
         a_searcher.cleanup()
 
