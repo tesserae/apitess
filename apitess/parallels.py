@@ -11,7 +11,7 @@ from flask_cors import cross_origin
 import tesserae.db.entities
 from tesserae.matchers.text_options import TextOptions
 from tesserae.utils.retrieve import get_results
-from tesserae.utils.search import check_cache
+import tesserae.utils.search
 import apitess.errors
 
 bp = flask.Blueprint('parallels', __name__, url_prefix='/parallels')
@@ -111,7 +111,8 @@ def submit_search():
             data=received,
             message='The specified method is missing the following required key(s): {}'.format(', '.join(missing)))
 
-    results_id = check_cache(flask.g.db, source, target, method)
+    results_id = tesserae.utils.search.check_cache(
+        flask.g.db, source, target, method)
     if results_id:
         response = flask.Response()
         response.status_code = 303
@@ -130,15 +131,16 @@ def submit_search():
         flask.request.base_url, results_id, '')
 
     try:
-        flask.g.searcher.queue_search(results_id, method['name'], {
-            'source': TextOptions(source_text, source['units']),
-            'target': TextOptions(target_text, target['units']),
-            'feature': method['feature'],
-            'stopwords': method['stopwords'],
-            'frequency_basis': method['freq_basis'],
-            'max_distance': method['max_distance'],
-            'distance_metric': method['distance_basis'],
-            'min_score': 0
+        tesserae.utils.search.submit_search(
+            flask.g.jobqueue, results_id, method['name'], {
+                'source': TextOptions(source_text, source['units']),
+                'target': TextOptions(target_text, target['units']),
+                'feature': method['feature'],
+                'stopwords': method['stopwords'],
+                'freq_basis': method['freq_basis'],
+                'max_distance': method['max_distance'],
+                'distance_basis': method['distance_basis'],
+                'min_score': 0
         })
     except queue.Full:
         return apitess.error.error(

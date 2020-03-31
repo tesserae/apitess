@@ -9,7 +9,7 @@ import apitess
 from tesserae.db.entities import Text
 from tesserae.utils import ingest_text
 from tesserae.utils.delete import obliterate
-from tesserae.utils.search import AsynchronousSearcher
+from tesserae.utils.coordinate import JobQueue
 from tesserae.utils.multitext import BigramWriter
 
 
@@ -37,8 +37,8 @@ db_cred = {
 @pytest.fixture(scope='session')
 def app():
     try:
-        a_searcher = AsynchronousSearcher(1, db_cred)
-        cur_app = apitess.create_app(a_searcher, db_config)
+        jobqueue = JobQueue(1, db_cred)
+        cur_app = apitess.create_app(jobqueue, db_config)
 
         with cur_app.test_request_context():
             # initialize database for testing
@@ -47,7 +47,7 @@ def app():
 
         yield cur_app
     finally:
-        a_searcher.cleanup()
+        jobqueue.cleanup()
 
 
 @pytest.fixture(scope='session')
@@ -119,8 +119,8 @@ db_populated_cred = {
 @pytest.fixture(scope='session')
 def populated_app():
     try:
-        a_searcher = AsynchronousSearcher(1, db_populated_cred)
-        cur_app = apitess.create_app(a_searcher, db_populated_config)
+        jobqueue = JobQueue(1, db_populated_cred)
+        cur_app = apitess.create_app(jobqueue, db_populated_config)
 
         with cur_app.test_request_context():
             # initialize populated database for testing
@@ -138,7 +138,7 @@ def populated_app():
             cur_app.preprocess_request()
             obliterate(flask.g.db)
     finally:
-        a_searcher.cleanup()
+        jobqueue.cleanup()
 
 
 @pytest.fixture(scope='session')
