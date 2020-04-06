@@ -10,7 +10,6 @@ from flask_cors import cross_origin
 
 import tesserae.db.entities
 from tesserae.matchers.text_options import TextOptions
-from tesserae.utils.retrieve import get_results
 import tesserae.utils.search
 import apitess.errors
 
@@ -185,7 +184,8 @@ def retrieve_results(results_id):
 
     params = results_status_found[0].parameters
 
-    matches = [m for m in get_results(flask.g.db, results_id)]
+    matches = [
+        m for m in tesserae.utils.search.get_results(flask.g.db, results_id)]
     response = flask.Response(
         response=gzip.compress(flask.json.dumps({
             'data': params,
