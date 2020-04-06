@@ -125,3 +125,28 @@ def test_non_existent_results(populated_app, populated_client):
                 results_id='does-not-exist')
     response = populated_client.get(retrieve_endpoint)
     assert response.status_code == 404
+
+
+def test_search_bad_request(populated_app, populated_client):
+    # request a search
+    with populated_app.test_request_context():
+        populated_app.preprocess_request()
+        found_texts = flask.g.db.find(tesserae.db.entities.Text.collection)
+        submit_endpoint = flask.url_for('parallels.submit_search')
+    headers = werkzeug.datastructures.Headers()
+    headers['Content-Type'] = 'application/json; charset=utf-8'
+    search_query = {
+        'source': {'object_id': str(found_texts[0].id), 'units': 'line'},
+        'target': {'object_id': str(found_texts[1].id), 'units': 'line'},
+    }
+    response = populated_client.post(submit_endpoint,
+            data=json.dumps(search_query), headers=headers)
+    assert response.status_code == 400
+    data = response.get_json()
+    for k1, v1 in search_query.items():
+        assert k1 in data['data']
+        rv1 = data['data'][k1]
+        for k2, v2 in v1.items():
+            assert k2 in rv1
+            assert rv1[k2] == v2
+    assert 'method' in data['message'].split(': ')[-1].split(',')

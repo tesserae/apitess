@@ -50,15 +50,9 @@ def submit_search():
     """Run a Tesserae search"""
     received = flask.request.get_json()
     requireds = {'source', 'target', 'method'}
-    missing = []
-    for req in requireds:
-        if req not in received:
-            missing.append(req)
-    if missing:
-        return apitess.errors.error(
-            400,
-            data=received,
-            message='The request data payload is missing the following required key(s): {}'.format(', '.join(missing)))
+    miss_error = apitess.errors.check_requireds(received, requireds)
+    if miss_error:
+        return miss_error
 
     source = received['source']
     target = received['target']
@@ -156,7 +150,8 @@ def submit_search():
 def retrieve_status(results_id):
     results_status_found = flask.g.db.find(
         tesserae.db.entities.Search.collection,
-        results_id=results_id
+        results_id=results_id,
+        search_type=tesserae.utils.search.NORMAL_SEARCH
     )
     if not results_status_found:
         response = flask.Response('Could not find results_id')
@@ -173,7 +168,8 @@ def retrieve_results(results_id):
     # get search results
     results_status_found = flask.g.db.find(
         tesserae.db.entities.Search.collection,
-        results_id=results_id
+        results_id=results_id,
+        search_type=tesserae.utils.search.NORMAL_SEARCH
     )
     if not results_status_found:
         response = flask.Response('Could not find results_id')

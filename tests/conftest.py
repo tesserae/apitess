@@ -66,6 +66,7 @@ def _get_text_metadata():
             'unit_types': ['line', 'phrase'],
             'path': str(Path(__file__).resolve().parent.joinpath(
                 'ztest.aen.tess')),
+            'is_prose': False,
         },
         {
             'cts_urn': 'urn:cts:latinLit:phi0917.phi001',
@@ -76,6 +77,7 @@ def _get_text_metadata():
             'unit_types': ['line', 'phrase'],
             'path': str(Path(__file__).resolve().parent.joinpath(
                 'ztest.phar.tess')),
+            'is_prose': False,
         },
         {
             'cts_urn': 'urn:cts:greekLit:tlg0012.tlg001',
@@ -86,6 +88,7 @@ def _get_text_metadata():
             'unit_types': ['line', 'phrase'],
             'path': str(Path(__file__).resolve().parent.joinpath(
                 'ztest.il.tess')),
+            'is_prose': False,
         },
         {
             'cts_urn': 'urn:cts:greekLit:tlg0059.tlg023.perseus-grc2',
@@ -96,6 +99,7 @@ def _get_text_metadata():
             'unit_types': ['line', 'phrase'],
             'path': str(Path(__file__).resolve().parent.joinpath(
                 'ztest.gorg.tess')),
+            'is_prose': True,
         },
     ]
 
