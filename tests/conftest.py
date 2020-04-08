@@ -148,3 +148,50 @@ def populated_app():
 @pytest.fixture(scope='session')
 def populated_client(populated_app):
     return populated_app.test_client()
+
+
+db_multitext_config = {
+    'MONGO_HOSTNAME': 'localhost',
+    'MONGO_PORT': 27017,
+    'MONGO_USER': None,
+    'MONGO_PASSWORD': None,
+    'DB_NAME': 'test_apitess_multitext',
+}
+
+db_multitext_cred = {
+    'host': db_multitext_config['MONGO_HOSTNAME'],
+    'port': db_multitext_config['MONGO_PORT'],
+    'user': db_multitext_config['MONGO_USER'],
+    'password': db_multitext_config['MONGO_PASSWORD'],
+    'db': db_multitext_config['DB_NAME']
+}
+
+
+@pytest.fixture(scope='session')
+def multitext_app():
+    try:
+        jobqueue = JobQueue(1, db_multitext_cred)
+        cur_app = apitess.create_app(jobqueue, db_multitext_config)
+
+        with cur_app.test_request_context():
+            # initialize multitext database for testing
+            cur_app.preprocess_request()
+            obliterate(flask.g.db)
+            texts_to_add = _get_text_metadata()
+            for t in texts_to_add:
+                cur_text = Text.json_decode(t)
+                text_id = str(ingest_text(flask.g.db, cur_text))
+
+        yield cur_app
+
+        with cur_app.test_request_context():
+            # delete multitext test database
+            cur_app.preprocess_request()
+            obliterate(flask.g.db)
+    finally:
+        jobqueue.cleanup()
+
+
+@pytest.fixture(scope='session')
+def multitext_client(multitext_app):
+    return multitext_app.test_client()

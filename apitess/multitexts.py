@@ -1,5 +1,8 @@
 """The family of /multitexts/ endpoints"""
+import gzip
+import os
 import queue
+import uuid
 
 import flask
 from flask_cors import cross_origin
@@ -34,6 +37,12 @@ def submit_multitext():
             )
         )
 
+    if not received['text_ids']:
+        return apitess.errors.error(
+            400,
+            data=received,
+            message='Cannot run multitext search on empty selection of texts'
+        )
     _, failures = apitess.utils.make_object_ids(received['text_ids'])
     if failures:
         return apitess.errors.error(
@@ -114,7 +123,7 @@ def retrieve_results(results_id):
     results_status_found = flask.g.db.find(
         tesserae.db.entities.Search.collection,
         results_id=results_id,
-        search_type=tesserae.utils.search.NORMAL_SEARCH
+        search_type=tesserae.utils.multitext.MULTITEXT_SEARCH
     )
     if not results_status_found:
         response = flask.Response('Could not find results_id')
