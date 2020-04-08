@@ -73,14 +73,55 @@ def test_multitexts(multitext_app, multitext_client):
     assert 'Location' in response.headers
     assert search_results_id == response.headers['Location'].split('/')[-2]
 
-    # perform multitext search
-    print('Submitting multitext query')
+    #
+    # Set up submission for multitext search
+    #
     with multitext_app.test_request_context():
         multitext_app.preprocess_request()
         found_texts = flask.g.db.find(tesserae.db.entities.Text.collection)
         submit_endpoint = flask.url_for('multitexts.submit_multitext')
     headers = werkzeug.datastructures.Headers()
     headers['Content-Type'] = 'application/json; charset=utf-8'
+
+    # perform bad multitext search submissions
+    print('Submitting no texts')
+    search_query = {
+        'parallels_uuid': search_results_id,
+        'text_ids': [],
+        'unit_type': 'line'
+    }
+    response = multitext_client.post(submit_endpoint,
+            data=json.dumps(search_query), headers=headers)
+    assert response.status_code == 400
+    print('Submitting bad text id')
+    bad_id = 'bad-id'
+    search_query = {
+        'parallels_uuid': search_results_id,
+        'text_ids': [bad_id],
+        'unit_type': 'line'
+    }
+    response = multitext_client.post(submit_endpoint,
+            data=json.dumps(search_query), headers=headers)
+    assert response.status_code == 400
+    data = response.get_json()
+    assert 'message' in data
+    assert bad_id in data['message']
+    print('Submitting bad unit_type')
+    bad_unit = 'bad-unit'
+    search_query = {
+        'parallels_uuid': search_results_id,
+        'text_ids': [str(found_texts[0].id), str(found_texts[1].id)],
+        'unit_type': 'bad-unit'
+    }
+    response = multitext_client.post(submit_endpoint,
+            data=json.dumps(search_query), headers=headers)
+    assert response.status_code == 400
+    data = response.get_json()
+    assert 'message' in data
+    assert bad_unit in data['message']
+
+    # perform multitext search
+    print('Submitting good multitext query')
     search_query = {
         'parallels_uuid': search_results_id,
         'text_ids': [str(found_texts[0].id), str(found_texts[1].id)],
@@ -131,3 +172,39 @@ def test_multitexts(multitext_app, multitext_client):
     assert response.status_code == 303
     assert 'Location' in response.headers
     assert multitext_results_id == response.headers['Location'].split('/')[-2]
+
+
+def test_multitext_requireds_missing(multitext_app, multitext_client):
+    with multitext_app.test_request_context():
+        multitext_app.preprocess_request()
+        found_texts = flask.g.db.find(tesserae.db.entities.Text.collection)
+        submit_endpoint = flask.url_for('multitexts.submit_multitext')
+    headers = werkzeug.datastructures.Headers()
+    headers['Content-Type'] = 'application/json; charset=utf-8'
+    search_query = {}
+    response = multitext_client.post(submit_endpoint,
+            data=json.dumps(search_query), headers=headers)
+    assert response.status_code == 400
+    data = response.get_json()
+    assert 'message' in data
+
+
+def test_multitext_search_not_found(multitext_app, multitext_client):
+    bad_uuid = 'does-not-exist'
+    with multitext_app.test_request_context():
+        multitext_app.preprocess_request()
+        found_texts = flask.g.db.find(tesserae.db.entities.Text.collection)
+        submit_endpoint = flask.url_for('multitexts.submit_multitext')
+    headers = werkzeug.datastructures.Headers()
+    headers['Content-Type'] = 'application/json; charset=utf-8'
+    search_query = {
+        'parallels_uuid': bad_uuid,
+        'text_ids': [str(found_texts[0].id), str(found_texts[1].id)],
+        'unit_type': 'line'
+    }
+    response = multitext_client.post(submit_endpoint,
+            data=json.dumps(search_query), headers=headers)
+    assert response.status_code == 400
+    data = response.get_json()
+    assert 'message' in data
+    assert bad_uuid in data['message']
