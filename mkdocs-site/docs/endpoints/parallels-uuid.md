@@ -25,6 +25,7 @@ A JSON object in the `"parallels"` list of the successful response data payload 
 
 |Key|Value|
 |---|---|
+|`"object_id"`|A string representing the database identifier for this parallel.|
 |`"source_tag"`|A string representing the text span used as the source in this parallel.|
 |`"target_tag"`|A string representing the text span used as the target in this parallel.|
 |`"matched_features"`|A list of strings, where each string represents a feature found in both the source span and the target span.|
