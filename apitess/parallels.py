@@ -12,6 +12,7 @@ import tesserae.db.entities
 from tesserae.matchers.text_options import TextOptions
 import tesserae.utils.search
 import apitess.errors
+from apitess.utils import fix_id
 
 bp = flask.Blueprint('parallels', __name__, url_prefix='/parallels')
 
@@ -184,12 +185,11 @@ def retrieve_results(results_id):
 
     params = results_status_found[0].parameters
 
-    matches = [
-        m for m in tesserae.utils.search.get_results(flask.g.db, results_id)]
     response = flask.Response(
         response=gzip.compress(flask.json.dumps({
             'data': params,
-            'parallels': matches
+            'parallels': tesserae.utils.search.get_results(
+                flask.g.db, results_id)
         }).encode()),
         mimetype='application/json',
     )
