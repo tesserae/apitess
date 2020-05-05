@@ -16,6 +16,9 @@ The following fields may be used in a URL query to specify the parameters by whi
 |---|---|
 |`unit_type`|A string refering to a unit type ("line" or "phrase").|
 |`works`|A percent-encoded string of the form `<object_id 1>,<object_id 2>,...`, specifying which works' units are to be retrieved.|
+|`unit_ids`|A percent-encoded string of the form `<object_id 1>,<object_id 2>,...`, specifying which units are to be retrieved.|
+
+Note that units retrieved must match all of the query parameters given.  Thus, specifying `unit_type` and `works` restricts the returned units to only those which are of the specified `unit_type` and belong to the specified `works`.
 
 ### Response
 
@@ -30,6 +33,7 @@ Each JSON object in the list referenced by `"units"` in the response object has 
 |Key|Value|
 |---|---|
 |`"index"`|An integer denoting the order in which this unit appears in the text.|
+|`"object_id"`|A string which uniquely identifies the unit in the Tesserae database.|
 |`"snippet"`|A display string for the unit.|
 |`"tags"`|A list of strings matching the tag information on the line(s) of the .tess file from which this unit was extracted.|
 |`"text"`|A string representing the identifier for the text to which this unit belongs.|
@@ -65,6 +69,7 @@ HTTP/1.1 200 OK
 {
   "units": [
     {
+      "object_id": "5e4314ab5cc42adc23b1da00",
       "index": 0,
       "snippet": "lorem ipsum",
       "tags": ["1.1"]

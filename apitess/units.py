@@ -31,7 +31,14 @@ def query_units():
         if fails:
             return apitess.errors.bad_object_ids(fails, flask.request.args)
         filters['text'] = oids
+    unit_ids = flask.request.args.get('unit_ids', None)
+    if unit_ids:
+        oids, fails = apitess.utils.parse_works_arg(unit_ids)
+        if fails:
+            return apitess.errors.bad_object_ids(fails, flask.request.args)
+        filters['_id'] = oids
     results = [{
+            "object_id": str(r.id),
             "index": r.index,
             "snippet": r.snippet,
             "tags": r.tags,

@@ -10,8 +10,6 @@ Requesting POST at `/parallels/` submits a query for discovering intertexts betw
 
 The JSON data payload representing query parameters must contain the following keys.
 
-TODO:  On the live server, should we limit the amount of source and target texts allowed to be queried?
-
 |Key|Value|
 |---|---|
 |`"source"`|A JSON object describing source units.  Further details are available at [Units](../details/units.md).  These units will be compared with the units described by `"target"` to find intertexts.|
@@ -52,7 +50,7 @@ curl -i -X POST "https://tess-new.caset.buffalo.edu/api/parallels/" -d '{ \
     "feature": "lemma", \
     "stopwords": [ \
       "qui", "quis", "sum", "et", "in", \
-      "is", "non", "hic", "ego", "ut"
+      "is", "non", "hic", "ego", "ut" \
     ], \
     "freq_basis": "corpus", \
     "max_distance": 10, \
@@ -66,6 +64,6 @@ Response:
 ```http
 HTTP/1.1 201 Created
 ...
-Content-Location: /parallels/some-uuid-for-results/
+Location: /parallels/some-uuid-for-results/
 ...
 ```

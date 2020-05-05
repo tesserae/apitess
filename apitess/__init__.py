@@ -16,7 +16,7 @@ def _load_config(app, test_config):
         app.config.from_mapping(test_config)
 
 
-def _register_before_request(app, async_searcher):
+def _register_before_request(app, jobqueue):
     """Make database and searcher available to app
 
     From this point forward, before_request exposes access to the database via
@@ -30,26 +30,28 @@ def _register_before_request(app, async_searcher):
     @app.before_request
     def before_request():
         flask.g.db = db
-        flask.g.searcher = async_searcher
+        flask.g.jobqueue = jobqueue
 
 
 def _register_blueprints(app):
-    from . import parallels, stopwords, texts, tokens, units, features, languages
+    from . import parallels, stopwords, texts, tokens, units, features, \
+        multitexts, languages
     app.register_blueprint(parallels.bp)
     app.register_blueprint(stopwords.bp)
     app.register_blueprint(texts.bp)
     app.register_blueprint(tokens.bp)
     app.register_blueprint(units.bp)
     app.register_blueprint(features.bp)
+    app.register_blueprint(multitexts.bp)
     app.register_blueprint(languages.bp)
 
 
-def create_app(async_searcher, test_config=None):
+def create_app(jobqueue, test_config=None):
     """Create and configure flask application
 
     Parameters
     ----------
-    async_searcher : tesserae.utils.search.AsynchronousSearcher
+    jobqueue : tesserae.utils.coordinate.JobQueue
         interface through which searches can be scheduled
     test_config : dict or None
         configuration options for database connection; if None, looks for a
@@ -60,9 +62,9 @@ def create_app(async_searcher, test_config=None):
     app = flask.Flask(__name__, instance_relative_config=True)
 
     _load_config(app, test_config)
-    _register_before_request(app, async_searcher)
+    _register_before_request(app, jobqueue)
     _register_blueprints(app)
-    
+
     CORS(app, expose_headers=['Content-Type', 'Location'])
 
     return app

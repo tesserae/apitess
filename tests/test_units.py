@@ -59,8 +59,8 @@ def test_query_units_with_multiple_texts(populated_app, populated_client):
     data = response.get_json()
     assert 'units' in data and isinstance(data['units'], list)
     assert len(data['units']) > 0
-    for token in data['units']:
-        assert token['text'] in text_ids
+    for text in data['units']:
+        assert text['text'] in text_ids
 
     with populated_app.test_request_context():
         endpoint = flask.url_for('units.query_units',
@@ -71,5 +71,37 @@ def test_query_units_with_multiple_texts(populated_app, populated_client):
     data = response.get_json()
     assert 'units' in data and isinstance(data['units'], list)
     assert len(data['units']) > 0
-    for token in data['units']:
-        assert token['text'] in text_ids
+    for text in data['units']:
+        assert text['text'] in text_ids
+
+
+def test_query_units_with_multiple_units(populated_app, populated_client):
+    with populated_app.test_request_context():
+        endpoint = flask.url_for('units.query_units', unit_type='phrase')
+    response = populated_client.get(endpoint)
+    assert response.status_code == 200
+    data = response.get_json()
+    unit_ids = [u['object_id'] for u in data['units']]
+    with populated_app.test_request_context():
+        endpoint = flask.url_for('units.query_units',
+                unit_ids=urllib.parse.quote(','.join(unit_ids)),
+                ignore='asdf')
+    response = populated_client.get(endpoint)
+    assert response.status_code == 200
+    data = response.get_json()
+    assert 'units' in data and isinstance(data['units'], list)
+    assert len(data['units']) == len(unit_ids)
+    for unit in data['units']:
+        assert unit['object_id'] in unit_ids
+
+    with populated_app.test_request_context():
+        endpoint = flask.url_for('units.query_units',
+                unit_ids=','.join(unit_ids),
+                ignore='asdf')
+    response = populated_client.get(endpoint)
+    assert response.status_code == 200
+    data = response.get_json()
+    assert 'units' in data and isinstance(data['units'], list)
+    assert len(data['units']) == len(unit_ids)
+    for unit in data['units']:
+        assert unit['object_id'] in unit_ids

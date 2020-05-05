@@ -10,9 +10,9 @@ from flask_cors import cross_origin
 
 import tesserae.db.entities
 from tesserae.matchers.text_options import TextOptions
-from tesserae.utils.retrieve import get_results
-from tesserae.utils.search import check_cache
+import tesserae.utils.search
 import apitess.errors
+from apitess.utils import fix_id
 
 bp = flask.Blueprint('parallels', __name__, url_prefix='/parallels')
 
@@ -50,15 +50,9 @@ def submit_search():
     """Run a Tesserae search"""
     received = flask.request.get_json()
     requireds = {'source', 'target', 'method'}
-    missing = []
-    for req in requireds:
-        if req not in received:
-            missing.append(req)
-    if missing:
-        return apitess.errors.error(
-            400,
-            data=received,
-            message='The request data payload is missing the following required key(s): {}'.format(', '.join(missing)))
+    miss_error = apitess.errors.check_requireds(received, requireds)
+    if miss_error:
+        return miss_error
 
     source = received['source']
     target = received['target']
@@ -111,7 +105,8 @@ def submit_search():
             data=received,
             message='The specified method is missing the following required key(s): {}'.format(', '.join(missing)))
 
-    results_id = check_cache(flask.g.db, source, target, method)
+    results_id = tesserae.utils.search.check_cache(
+        flask.g.db, source, target, method)
     if results_id:
         response = flask.Response()
         response.status_code = 303
@@ -130,15 +125,16 @@ def submit_search():
         flask.request.base_url, results_id, '')
 
     try:
-        flask.g.searcher.queue_search(results_id, method['name'], {
-            'source': TextOptions(source_text, source['units']),
-            'target': TextOptions(target_text, target['units']),
-            'feature': method['feature'],
-            'stopwords': method['stopwords'],
-            'frequency_basis': method['freq_basis'],
-            'max_distance': method['max_distance'],
-            'distance_metric': method['distance_basis'],
-            'min_score': 0
+        tesserae.utils.search.submit_search(
+            flask.g.jobqueue, results_id, method['name'], {
+                'source': TextOptions(source_text, source['units']),
+                'target': TextOptions(target_text, target['units']),
+                'feature': method['feature'],
+                'stopwords': method['stopwords'],
+                'freq_basis': method['freq_basis'],
+                'max_distance': method['max_distance'],
+                'distance_basis': method['distance_basis'],
+                'min_score': 0
         })
     except queue.Full:
         return apitess.error.error(
@@ -154,7 +150,8 @@ def submit_search():
 def retrieve_status(results_id):
     results_status_found = flask.g.db.find(
         tesserae.db.entities.Search.collection,
-        results_id=results_id
+        results_id=results_id,
+        search_type=tesserae.utils.search.NORMAL_SEARCH
     )
     if not results_status_found:
         response = flask.Response('Could not find results_id')
@@ -171,7 +168,8 @@ def retrieve_results(results_id):
     # get search results
     results_status_found = flask.g.db.find(
         tesserae.db.entities.Search.collection,
-        results_id=results_id
+        results_id=results_id,
+        search_type=tesserae.utils.search.NORMAL_SEARCH
     )
     if not results_status_found:
         response = flask.Response('Could not find results_id')
@@ -187,11 +185,11 @@ def retrieve_results(results_id):
 
     params = results_status_found[0].parameters
 
-    matches = [m for m in get_results(flask.g.db, results_id)]
     response = flask.Response(
         response=gzip.compress(flask.json.dumps({
             'data': params,
-            'parallels': matches
+            'parallels': tesserae.utils.search.get_results(
+                flask.g.db, results_id)
         }).encode()),
         mimetype='application/json',
     )
