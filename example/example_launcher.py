@@ -3,7 +3,7 @@ import atexit
 import signal
 
 import apitess
-from tesserae.utils.search import AsynchronousSearcher
+from tesserae.utils.coordinate import JobQueue
 
 # Give app chance to clean up when signal is sent
 def raise_exit(*args):
@@ -28,7 +28,7 @@ db_cred = {
     'db': db_config['DB_NAME']
 }
 
-a_searcher = AsynchronousSearcher(5, db_cred)
+a_searcher = JobQueue(5, db_cred)
 
 atexit.register(a_searcher.cleanup)
 
