@@ -6,7 +6,7 @@ This page describes some basic concepts of web API's in general, using examples 
 
 Whenever we visit a website through a web browser, we are actually initiating a conversation between two computers:  the one we're using the web browser on, and the one that serves the website to us.  For those computers to understand each other, that conversation is governed by a set of rules (or a protocol).
 
-Ignoring the minute details of computer conversation rules, one relevant subset of rules for our discussion is the HyperText Transfer Protocol, or HTTP.  You've probably seen that acronym, for example, in a URL to a website.  Due to security concerns, most websites nowadays are moving toward a more secure version of HTTP, which is why you will often see "https://" at the beginning of many website URLs (including the one you used to visit this page).
+For this discussion, our focus will be on the HyperText Transfer Protocol, or HTTP.  You've probably seen that acronym, for example, in a URL to a website.  Due to security concerns, most websites nowadays are moving toward a more secure version of HTTP, which is why you will often see "https://" at the beginning of many website URLs (including the one you used to visit this page).
 
 According to the conventions of HTTP (which also apply to its more secure version), one computer acts as the client (i.e., the requester of information), and one computer acts as the server (i.e., the one that responds to the request).  Back to the example of visiting a website, the computer we used to pull up a webpage would be the client, and the computer that gave the webpage to our computer would be the server.
 
@@ -30,7 +30,7 @@ The TIS API supports URL query strings on that URL to filter results.  To specif
 
   * <https://tess-new.caset.buffalo.edu/api/texts/?author=vergil>
 
-asks the TIS API for information on texts that have "vergil" as an author.  Multiple query filters can be applied, by separating each query string with an ampersand, as shown in the following example:
+asks the TIS API for information on texts that have "vergil" as an author.  Multiple query filters can be applied, by separating each query string with an ampersand (&), as shown in the following example:
 
   * <https://tess-new.caset.buffalo.edu/api/texts/?author=vergil&title=georgics>
 

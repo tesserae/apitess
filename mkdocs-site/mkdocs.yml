@@ -1,6 +1,5 @@
-site_name: TIS API (Beta)
+site_name: TIS API Documentation
 nav:
-- 'Home': 'index.md'
 - 'Getting Started':
     - 'Tutorial': 'getting-started/tutorial.md'
     - 'Advanced Tutorial': 'getting-started/advanced-tutorial.md'
