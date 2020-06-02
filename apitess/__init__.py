@@ -34,12 +34,11 @@ def _register_before_request(app, jobqueue):
 
 
 def _register_blueprints(app):
-    from . import parallels, stopwords, texts, tokens, units, features, \
+    from . import parallels, stopwords, texts, units, features, \
         multitexts, languages
     app.register_blueprint(parallels.bp)
     app.register_blueprint(stopwords.bp)
     app.register_blueprint(texts.bp)
-    app.register_blueprint(tokens.bp)
     app.register_blueprint(units.bp)
     app.register_blueprint(features.bp)
     app.register_blueprint(multitexts.bp)

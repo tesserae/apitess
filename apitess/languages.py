@@ -22,7 +22,7 @@ bp = flask.Blueprint('languages', __name__, url_prefix='/languages')
 @cross_origin()
 def query_languages():
     """Consult database for available languages
-    
+
     Returns
     -------
     languages : list of str
