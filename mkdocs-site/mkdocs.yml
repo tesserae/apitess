@@ -14,7 +14,6 @@ nav:
     - '/stopwords/lists/&lt;name&gt;/': 'endpoints/stopwords-lists-name.md'
     - '/texts/': 'endpoints/texts.md'
     - '/texts/&lt;object_id&gt;/': 'endpoints/texts-objid.md'
-    - '/tokens/': 'endpoints/tokens.md'
     - '/units/': 'endpoints/units.md'
 - 'Details':
     - 'Cached Results': 'details/cached-results.md'

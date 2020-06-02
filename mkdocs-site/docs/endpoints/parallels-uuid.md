@@ -1,6 +1,6 @@
 # `/parallels/<uuid>/`
 
-The `/parallels/<uuid>/` endpoint serves the results from a Tesserae intertext discovery result.  Note that `<uuid>` is a placeholder for an identifying string.
+The `/parallels/<uuid>/` endpoint serves the results from a Tesserae intertext discovery run.  Note that `<uuid>` is a placeholder for an identifying string.
 
 > NB:  This endpoint is meant to be used for retrieving the results from a Tesserae search and not as a permanent link to a previously completed search.
 

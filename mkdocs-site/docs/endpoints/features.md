@@ -4,7 +4,7 @@ The `/features/` endpoint interacts with features registered in Tesserae's datab
 
 ## GET
 
-Requesting GET at `/features/` provides a JSON object containing list of features.  How this list of features was created is dependent on the URL query fields used.
+Requesting GET at `/features/` provides a JSON object containing a list of features.  How this list of features was created is dependent on the URL query fields used.
 
 By default, a GET at `/features/` returns a JSON object containing an empty list.
 

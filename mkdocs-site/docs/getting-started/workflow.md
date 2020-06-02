@@ -10,12 +10,12 @@ The first step in the process is figuring out what the TIS API will understand a
 
 The second step in the process is deciding how to ask the TIS API to perform the search for intertexts between A and B.  One key decision to make is which words to ignore when performing the search.  These ignored words are called stopwords.  Typically, words of such high occurrence in a text as to render the word mostly meaningless are good candidates as stopwords.  The TIS API can help find these high frequency words at the [`/stopwords/` endpoint](../endpoints/stopwords.md).  Supposing that A and B are Latin texts, the user might try requesting a GET at `/stopwords/?language=latin&list_size=25`.  This should return a response object containing a list of stopwords.
 
-Another key decision is deciding how to divide the texts in searching for intertextual relations.  Since A and B happen to be poetic works, it could make sense to search for intertextual relations by line.  The other option is to look by phrase.  Since looking by phrase could catch intertextual relations involving enjambment, the user decides divide the texts by phrase.  To specify this decision for A, the user composes the following JSON object:
+Another key decision is deciding how to divide the texts in searching for intertextual relations.  Since A and B happen to be poetic works, it could make sense to search for intertextual relations by line.  The other option is to look by phrase.  Since looking by phrase could catch intertextual relations involving enjambment, the user decides to divide the texts by phrase.  To specify this decision for A, the user composes the following JSON object:
 
 ```json
 {
   "object_id": "507f1f77bcf86cd799439011",
-  "units": "line"
+  "units": "phrase"
 }
 ```
 
@@ -35,7 +35,7 @@ The `"distance"` field requires choosing a cutoff point for when to count two wo
 
 The final field for scoring method object is `"distance_basis"`, which requires choosing how to calculate the distance between matching words in a given text fragment.  The authors of this original Tesserae scoring method recommended using `"frequency"`, so the user goes with that choice.
 
-Now, the user composes these decisions into a JSON object the looks something like the following:
+Now, the user composes these decisions into a JSON object that looks something like the following:
 
 ```json
 {
@@ -48,7 +48,7 @@ Now, the user composes these decisions into a JSON object the looks something li
 }
 ```
 
-With all of these decisions made, the user is now ready to compose the request object which will submit a search request to the TIS API.  Following the documentation at the (`/parallels/` endpoint)[../endpoints/parallels.md], the user gathers the previously composed JSON objects and composes them into the following request object:
+With all of these decisions made, the user is now ready to compose the request object which will submit a search request to the TIS API.  Following the documentation at the [`/parallels/` endpoint](../endpoints/parallels.md), the user gathers the previously composed JSON objects and composes them into the following request object:
 
 ```json
 {
@@ -71,7 +71,7 @@ With all of these decisions made, the user is now ready to compose the request o
 }
 ```
 
-The user now POSTs this request object to the `/parallels/` endpoint and receives an HTTP `201 Created` response.  Looking at the HTTP headers of this reponse, the user finds the `Content-Location` header, which contains a URL.  If the URL is accessed before the search is complete, the user will find a `404 Not Found` response.  To check on the status of the search, the user could consult the (`/parallels/<uuid>/status/` endpoint)[../endpoints/parallels-uuid-status.md], where the `<uuid>` portion can be determined from the URL associated with the `Content-Location` header (which takes the form of `/parallels/<uuid>/`).  When the `/parallels/<uuid>/status/` endpoint returns that the status is "Done", the user can return to the `/parallels/<uuid>/` endpoint to find the results of the search.
+The user now POSTs this request object to the `/parallels/` endpoint and receives an HTTP `201 Created` response.  Looking at the HTTP headers of this reponse, the user finds the `Location` header, which contains a URL.  If the URL is accessed before the search is complete, the user will find a `404 Not Found` response.  To check on the status of the search, the user could consult the [`/parallels/<uuid>/status/` endpoint](../endpoints/parallels-uuid-status.md), where the `<uuid>` portion can be determined from the URL associated with the `Location` header (which takes the form of `/parallels/<uuid>/`).  When the `/parallels/<uuid>/status/` endpoint returns that the status is "Done", the user can return to the `/parallels/<uuid>/` endpoint to find the results of the search.
 
 At this point, the user can analyze the results to see what intertextual insights can be found there.
 

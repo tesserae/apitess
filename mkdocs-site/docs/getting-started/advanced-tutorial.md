@@ -36,7 +36,7 @@ Unlike GET, POST allows the client to submit more than just the URL to the serve
 The TIS API is defined such that if the data is formatted properly and sent with a POST to the `/parallels/` endpoint, that data will be interpreted as the constraints for a Tesserae search and submit the query for processing.
 
 The format for data accepted at the `/parallels/` endpoint is specified in the [`/parallels/` endpoint documentation](../endpoints/parallels.md).
-The accepted format is known as JSON, and the structure of the data will look as follows:
+The accepted format should (like the response data from the `/texts/` endpoint) be formatted in JSON, and the structure of the data will look as follows:
 ```json
 {
   "source": ... ,
@@ -44,7 +44,7 @@ The accepted format is known as JSON, and the structure of the data will look as
   "method": ...
 }
 ```
-Note the pattern of curly braces surrounding comma-separated entries, where each entry contains two parts separated by a colon (:).
+Note again the pattern of curly braces surrounding comma-separated entries, where each entry contains two parts separated by a colon (:).
 The first part of the entry is surrounded by double quotes.
 The second part is currently elided but will be revealed as we make further choices in how to constrain our Tesserae search.
 
@@ -52,7 +52,7 @@ The second part is currently elided but will be revealed as we make further choi
 
 Of course, an intertext necessitates a comparison between two texts.
 Tesserae further requires specification of how to break up texts into passages or units.
-An intertext, then, is the association between a unit from one text and a unit from another text.
+An intertext, then, is an association between a unit from one text and a unit from another text.
 We have already laid out the idea that one text will serve as the source text while the other is considered the target text, and by looking at the format that the `/parallels/` endpoint expects, we can see that there are `"source"` and `"target"` entries in the data.
 By consulting [the details on units](../details/units.md), we see that we can specify text and unit options in JSON format, as follows:
 ```json
@@ -75,7 +75,7 @@ That means that both specifications will look something like this:
 As for what option to use for `"object_id"`, that depends on the internal identifiers the TIS API uses to refer to the texts.
 We can use the `/texts/` endpoint to query for our texts of interest, and the returned results (which are in JSON format) should contain an `"object_id"` entry.
 For purposes of this tutorial, we will use placeholders to represent these internal identifiers.
-If you want the command that will be revealed at later in the tutorial to correctly submit a Tesserae search query, you will have to replace the placeholders with the actual identifiers you find through the `/texts/` endpoint.
+If you want the command that will be revealed later in the tutorial to correctly submit a Tesserae search query, you will have to replace the placeholders with the actual identifiers you find through the `/texts/` endpoint.
 
 So more concretely, suppose you use <https://tess-new.caset.buffalo.edu/api/texts/?author=vergil> to find information about the *Aeneid*.
 You will find something like the following in the response:
@@ -100,7 +100,7 @@ Then, to specify the *Aeneid* as the source text for our search, we would includ
 }
 ```
 
-Assuming that <bellum_id> is the internal identifier of *Bellum Civile*, the submission data could be further filled out to:
+Assuming that `<bellum_id>` is the internal identifier of *Bellum Civile*, the submission data could be further filled out to:
 ```json
 {
   "source": {
@@ -217,17 +217,19 @@ curl -i -X POST "https://tess-new.caset.buffalo.edu/api/parallels/" -d '{ \
   } \
 }'
 ```
-Note that the backslashes (\) tell the terminal that the command is continuing onto the next line.
+Note that the backslashes (`\`) tell the terminal that the command is continuing onto the next line.
 So if you blindly copied-and-pasted the above into your terminal, you'll have trouble fixing the parts that need to be substituted.
 You may want to copy-and-paste the above into your favorite text editor, make the required substitutions, and then copy-and-paste from your text editor to the command line.
 
 If everything is working correctly, you should see one of two things.
-One possibility is that this search has already been run and saved temporarily (to help speed up retrieving results from common queries).
+One possibility is that this search has already been run and saved temporarily.
+In other words, the search has been cached.
 In this case, the first line following the command should contain "303", which indicates that the results to the query are already available.
 The other possibility is that the results to a search with this query has not been temporarily saved recently.
 Thus, the full search must be run before results are made available.
 In either case, the search results can be retrieved at the URL specified on the line that starts with "`Location: `".
-Simply requesting GET at that URL (perhaps by entering it into your web browser) will retrieve the results once search has completed.
+If you request a GET at the URL (perhaps by entering the URL into your web browser) before search is complete, you will get a 404 (not found) error.
+But if the search is complete, requesting GET at that URL will yield the results of the search.
 
 ## Final Thoughts
 

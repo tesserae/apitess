@@ -1,6 +1,6 @@
 # `/stopwords/lists/`
 
-the `/stopwords/lists` endpoint serves the names of the curated stopwords lists.  Use [`/stopwords/lists/<name>/`](stopwords-lists-name.md) to obtain one of these curated stopwords lists.
+the `/stopwords/lists/` endpoint serves the names of the curated stopwords lists.  Use [`/stopwords/lists/<name>/`](stopwords-lists-name.md) to obtain one of these curated stopwords lists.
 
 ## GET
 
@@ -53,7 +53,7 @@ Appropriate JSON data for a POST at `/stopwords/lists/` must be a JSON object co
 |`"name"`|A string representing the name of the stopwords lists.|
 |`"stopwords"`|An array of strings, where each string is a stopword.|
 
-If the value given to `"name"` is already used in Tesserae's database for a stopwords list, the request will fail.  Consider a [DELETE at `/stopwords/lists/<name>/`](stopwords-lists-name.md#delete) followed by a POST at `/stopwords/lists/` if you wish to change the list associated with a given list name.
+If the value given to `"name"` is already used in Tesserae's database for a stopwords list, the request will fail.  If you wish to change the name of a list, consider performing a [DELETE at `/stopwords/lists/<name>/`](stopwords-lists-name.md#delete) followed by a POST at `/stopwords/lists/`.
 
 ### Response
 
