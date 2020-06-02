@@ -6,6 +6,9 @@ nav:
     - 'Example Workflow': 'getting-started/workflow.md'
 - 'Endpoints':
     - '/features/': 'endpoints/features.md'
+    - '/multitexts/': 'endpoints/multitexts.md'
+    - '/multitexts/&ltuuid&gt/': 'endpoints/multitexts-uuid.md'
+    - '/multitexts/&ltuuid&gt/status': 'endpoints/multitexts-uuid-status.md'
     - '/parallels/': 'endpoints/parallels.md'
     - '/parallels/&ltuuid&gt/': 'endpoints/parallels-uuid.md'
     - '/parallels/&ltuuid&gt/status/': 'endpoints/parallels-uuid-status.md'
