@@ -14,7 +14,7 @@ The JSON data payload representing query parameters must contain the following k
 |---|---|
 |`"parallels_uuid"`|A string UUID corresponding to the results of a previously completed intertext discovery query submitted at the [`/parallels/` endpoint](parallels.md).|
 |`"text_ids"`|A list of strings corresponding to `object_id`s of texts in Tesserae's database.|
-|`"unit_type"`|A string describing the units by which to look through the specified texts.  It should either by "line" or "phrase".  For specified texts that are prose works, this option is ignored and they will be look through by phrases.|
+|`"unit_type"`|A string describing the units by which to look through the specified texts.  It should either by "line" or "phrase".  For specified texts that are prose works, this option is ignored (prose works are looked at by phrase only).|
 
 ### Response
 

@@ -21,7 +21,7 @@ On success, the data payload contains a JSON object with the following keys:
 |`"data"`|The JSON object received as request data payload.|
 |`"multiresults"`|A list of JSON objects describing multitext results found.|
 
-A JSON object in the `"mulitresults"` list of the successful response data payload contains the following keys:
+A JSON object in the `"multiresults"` list contains the following keys:
 
 |Key|Value|
 |---|---|

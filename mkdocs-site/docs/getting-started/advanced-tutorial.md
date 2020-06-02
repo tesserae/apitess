@@ -118,7 +118,7 @@ Assuming that `<bellum_id>` is the internal identifier of *Bellum Civile*, the s
 ### Defining the `"method"` and Choosing Stopwords
 
 Now that we have specified the source and target texts, we need to specify further options on how we would like Tesserae to search for intertexts between these two texts.
-Details on the specifics can be found in the [scoring method details](../details/scoring-methods.md).
+Details on the specifics can be found in the [scoring method details](../details/methods.md).
 For this tutorial, we would like to run the Tesserae search with the following options:
 
   * search by lemma
