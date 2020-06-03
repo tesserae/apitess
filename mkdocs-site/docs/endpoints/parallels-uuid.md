@@ -47,7 +47,7 @@ Assume that the identifier `id1` is associated with a certain search result.
 Request:
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/parallels/id1"
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/parallels/id1/"
 ```
 
 Response:
@@ -68,7 +68,7 @@ Assume that the identifier `i-expired` is not associated with any search results
 Request:
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/parallels/i-expired"
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/parallels/i-expired/"
 ```
 
 Response:
