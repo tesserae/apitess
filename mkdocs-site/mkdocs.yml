@@ -6,6 +6,7 @@ nav:
     - 'Example Workflow': 'getting-started/workflow.md'
 - 'Endpoints':
     - '/features/': 'endpoints/features.md'
+    - '/languages/': 'endpoints/languages.md'
     - '/multitexts/': 'endpoints/multitexts.md'
     - '/multitexts/&ltuuid&gt/': 'endpoints/multitexts-uuid.md'
     - '/multitexts/&ltuuid&gt/status': 'endpoints/multitexts-uuid-status.md'
