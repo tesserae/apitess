@@ -180,6 +180,7 @@ def retrieve_results(results_id):
             flask.request.base_url, results_id, 'status', '')
         response = flask.Response(
             f'Unable to retrieve results; check {status_url} endpoint.')
+        response.headers['Cache-Control'] = 'no-store'
         response.status_code = 404
         return response
 
