@@ -159,7 +159,9 @@ def retrieve_status(results_id):
         return response
     status = results_status_found[0]
     response = flask.jsonify(
-        results_id=status.results_id, status=status.status, message=status.msg)
+        results_id=status.results_id, status=status.status, message=status.msg,
+        progress=status.progress
+    )
     if status.status != tesserae.db.entities.Search.DONE and \
             status.status != tesserae.db.entities.Search.FAILED:
         response.headers['Cache-Control'] = 'no-store'
