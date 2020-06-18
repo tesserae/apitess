@@ -12,7 +12,7 @@ import tesserae.db.entities
 from tesserae.matchers.text_options import TextOptions
 import tesserae.utils.search
 import apitess.errors
-from apitess.utils import fix_id
+from apitess.utils import fix_id, common_retrieve_status
 
 bp = flask.Blueprint('parallels', __name__, url_prefix='/parallels')
 
@@ -148,24 +148,11 @@ def submit_search():
 @bp.route('/<results_id>/status/')
 @cross_origin()
 def retrieve_status(results_id):
-    results_status_found = flask.g.db.find(
-        tesserae.db.entities.Search.collection,
-        results_id=results_id,
-        search_type=tesserae.utils.search.NORMAL_SEARCH
+    return common_retrieve_status(
+        flask.g.db.find,
+        results_id,
+        tesserae.utils.search.NORMAL_SEARCH
     )
-    if not results_status_found:
-        response = flask.Response('Could not find results_id')
-        response.status_code = 404
-        return response
-    status = results_status_found[0]
-    response = flask.jsonify(
-        results_id=status.results_id, status=status.status, message=status.msg,
-        progress=status.progress
-    )
-    if status.status != tesserae.db.entities.Search.DONE and \
-            status.status != tesserae.db.entities.Search.FAILED:
-        response.headers['Cache-Control'] = 'no-store'
-    return response
 
 
 @bp.route('/<results_id>/')
