@@ -1,6 +1,4 @@
 """A place for error message code"""
-import urllib.parse
-
 import flask
 
 
@@ -21,14 +19,16 @@ def bad_object_ids(object_ids, args):
     return error(
         400,
         data={k: v for k, v in args.items()},
-        message='The following identifiers were malformed: {}'.format(object_ids))
+        message=('The following identifiers were malformed: '
+                 '{}'.format(object_ids)))
 
 
 def text_not_found_object_id(object_id):
-    return apitess.errors.error(
+    return error(
         404,
         object_id=object_id,
-        message='No text with the provided identifier ({}) was found in the database.'.format(object_id))
+        message=(f'No text with the provided identifier ({object_id}) was '
+                 'found in the database.'))
 
 
 def check_requireds(received, requireds):
@@ -47,5 +47,6 @@ def check_requireds(received, requireds):
         return error(
             400,
             data=received,
-            message='The request data payload is missing the following required key(s): {}'.format(', '.join(missing)))
+            message=('The request data payload is missing the following '
+                     'required key(s): {}'.format(', '.join(missing))))
     return None
