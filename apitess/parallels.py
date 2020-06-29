@@ -12,7 +12,7 @@ import tesserae.db.entities
 from tesserae.matchers.text_options import TextOptions
 import tesserae.utils.search
 import apitess.errors
-from apitess.utils import fix_id
+from apitess.utils import common_retrieve_status
 
 bp = flask.Blueprint('parallels', __name__, url_prefix='/parallels')
 
@@ -63,12 +63,14 @@ def submit_search():
         return apitess.errors.error(
             400,
             data=received,
-            message='The following errors were found in source and target unit specifications:\n{}'.format('\n\t'.join(errors)))
+            message=('The following errors were found in source and target '
+                     'unit specifications:\n{}'.format('\n\t'.join(errors))))
 
     source_object_id = source['object_id']
     target_object_id = target['object_id']
-    results = flask.g.db.find(tesserae.db.entities.Text.collection,
-            _id=[ObjectId(source_object_id), ObjectId(target_object_id)])
+    results = flask.g.db.find(
+        tesserae.db.entities.Text.collection,
+        _id=[ObjectId(source_object_id), ObjectId(target_object_id)])
     results = {str(t.id): t for t in results}
     errors = []
     if source_object_id not in results:
@@ -79,7 +81,9 @@ def submit_search():
         return apitess.errors.error(
             400,
             data=received,
-            message='Unable to find the following object_id(s) among the texts in the database:\n\t{}'.format('\n\t'.join(errors)))
+            message=('Unable to find the following object_id(s) among the '
+                     'texts in the database:\n\t{}'.format(
+                         '\n\t'.join(errors))))
     source_text = results[source_object_id]
     target_text = results[target_object_id]
 
@@ -103,7 +107,8 @@ def submit_search():
         return apitess.errors.error(
             400,
             data=received,
-            message='The specified method is missing the following required key(s): {}'.format(', '.join(missing)))
+            message=('The specified method is missing the following required '
+                     'key(s): {}'.format(', '.join(missing))))
 
     results_id = tesserae.utils.search.check_cache(
         flask.g.db, source, target, method)
@@ -135,37 +140,24 @@ def submit_search():
                 'max_distance': method['max_distance'],
                 'distance_basis': method['distance_basis'],
                 'min_score': 0
-        })
+            })
     except queue.Full:
         return apitess.error.error(
             500,
             data=received,
             message=('The search request could not be added to the queue. '
-                'Please try again in a few minutes'))
+                     'Please try again in a few minutes'))
     return response
 
 
 @bp.route('/<results_id>/status/')
 @cross_origin()
 def retrieve_status(results_id):
-    results_status_found = flask.g.db.find(
-        tesserae.db.entities.Search.collection,
-        results_id=results_id,
-        search_type=tesserae.utils.search.NORMAL_SEARCH
+    return common_retrieve_status(
+        flask.g.db.find,
+        results_id,
+        tesserae.utils.search.NORMAL_SEARCH
     )
-    if not results_status_found:
-        response = flask.Response('Could not find results_id')
-        response.status_code = 404
-        return response
-    status = results_status_found[0]
-    response = flask.jsonify(
-        results_id=status.results_id, status=status.status, message=status.msg,
-        progress=status.progress
-    )
-    if status.status != tesserae.db.entities.Search.DONE and \
-            status.status != tesserae.db.entities.Search.FAILED:
-        response.headers['Cache-Control'] = 'no-store'
-    return response
 
 
 @bp.route('/<results_id>/')
@@ -191,12 +183,105 @@ def retrieve_results(results_id):
         return response
 
     params = results_status_found[0].parameters
+    url_query_params = flask.request.args
+    if len(url_query_params) == 0:
+        page_options = tesserae.utils.search.PageOptions()
+    else:
+        requireds = {
+            'sort_by',
+            'sort_order',
+            'per_page',
+            'page_number'
+        }
+        potential_error = apitess.errors.check_requireds(url_query_params,
+                                                         requireds)
+        if potential_error:
+            return potential_error
+        allowed_sort_by = {
+            'score',
+            'source_tag',
+            'target_tag',
+            'matched_features'
+        }
+        sort_by = url_query_params.get('sort_by')
+        if sort_by not in allowed_sort_by:
+            return apitess.errors.error(
+                400,
+                data=url_query_params,
+                message=(
+                    f'Specified "sort_by" value ({sort_by}) is not supported. '
+                    f'(Supported values are {list(allowed_sort_by)})'
+                )
+            )
+        allowed_sort_order = {
+            'ascending',
+            'descending'
+        }
+        sort_order = url_query_params.get('sort_order')
+        if sort_order not in allowed_sort_order:
+            return apitess.errors.error(
+                400,
+                data=url_query_params,
+                message=(
+                    f'Specified "sort_order" value ({sort_order}) is not '
+                    'supported. Supported values are '
+                    f'{list(allowed_sort_order)})'
+                )
+            )
+        try:
+            raw_per_page = url_query_params.get('per_page')
+            per_page = int(raw_per_page)
+        except ValueError:
+            return apitess.errors.error(
+                400,
+                data=url_query_params,
+                message=(
+                    f'Specified "per_page" value ({raw_per_page}) is not '
+                    'supported. Only positive integers are supported.'
+                )
+            )
+        if per_page < 1:
+            return apitess.errors.error(
+                400,
+                data=url_query_params,
+                message=(
+                    f'Specified "per_page" value ({raw_per_page}) is not '
+                    'supported. Only positive integers are supported.'
+                )
+            )
+        try:
+            raw_page_number = url_query_params.get('page_number')
+            page_number = int(raw_page_number)
+        except ValueError:
+            return apitess.errors.error(
+                400,
+                data=url_query_params,
+                message=(
+                    f'Specified "page_number" value ({raw_page_number}) is '
+                    'not supported. Only non-negative integers are supported.'
+                )
+            )
+        if page_number < 0:
+            return apitess.errors.error(
+                400,
+                data=url_query_params,
+                message=(
+                    f'Specified "page_number" value ({raw_page_number}) is '
+                    'not supported. Only non-negative integers are supported.'
+                )
+            )
+        page_options = tesserae.utils.search.PageOptions(
+            sort_by=sort_by,
+            sort_order=sort_order,
+            per_page=per_page,
+            page_number=page_number
+        )
 
     response = flask.Response(
         response=gzip.compress(flask.json.dumps({
             'data': params,
             'parallels': tesserae.utils.search.get_results(
-                flask.g.db, results_id)
+                flask.g.db, results_id, page_options)
         }).encode()),
         mimetype='application/json',
     )
