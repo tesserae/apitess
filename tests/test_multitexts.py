@@ -43,18 +43,18 @@ def test_multitexts(multitext_app, multitext_client):
             results_id=search_results_id)
     response = multitext_client.get(status_endpoint)
     while response.status_code == 404:
-        response = multitext_client.get(status_endpoint)
         time.sleep(0.1)
+        response = multitext_client.get(status_endpoint)
     assert response.status_code == 200
     data = response.get_json()
     status = data['status']
     assert status != tesserae.db.entities.Search.FAILED, data['message']
     while status != tesserae.db.entities.Search.DONE:
+        time.sleep(0.1)
         response = multitext_client.get(status_endpoint)
         data = response.get_json()
         status = data['status']
         assert status != tesserae.db.entities.Search.FAILED, data['message']
-        time.sleep(0.1)
 
     # make sure we can retrieve results
     print('Retrieving search results')
@@ -151,18 +151,18 @@ def test_multitexts(multitext_app, multitext_client):
             results_id=multitext_results_id)
     response = multitext_client.get(status_endpoint)
     while response.status_code == 404:
-        response = multitext_client.get(status_endpoint)
         time.sleep(0.1)
+        response = multitext_client.get(status_endpoint)
     assert response.status_code == 200
     data = response.get_json()
     status = data['status']
     assert status != tesserae.db.entities.Search.FAILED, data['message']
     while status != tesserae.db.entities.Search.DONE:
+        time.sleep(0.1)
         response = multitext_client.get(status_endpoint)
         data = response.get_json()
         status = data['status']
         assert status != tesserae.db.entities.Search.FAILED, data['message']
-        time.sleep(0.1)
 
     # make sure we can retrieve multitext results
     print('Retrieving multitext results')
