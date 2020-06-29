@@ -43,18 +43,21 @@ def test_search_search_retrieval(populated_app, populated_client):
             results_id=search_results_id)
     response = populated_client.get(status_endpoint)
     while response.status_code == 404:
-        response = populated_client.get(status_endpoint)
         time.sleep(0.1)
+        response = populated_client.get(status_endpoint)
     assert response.status_code == 200
     data = response.get_json()
     status = data['status']
     assert status != tesserae.db.entities.Search.FAILED, data['message']
     while status != tesserae.db.entities.Search.DONE:
+        time.sleep(0.1)
         response = populated_client.get(status_endpoint)
         data = response.get_json()
         status = data['status']
         assert status != tesserae.db.entities.Search.FAILED, data['message']
-        time.sleep(0.1)
+    # current response should have everything at 100%
+    for progress_entry in data['progress']:
+        assert progress_entry['value'] == 1.0
 
     # make sure we can retrieve results
     print('Retrieving search results')
@@ -173,16 +176,16 @@ def test_bad_feature_search(populated_app, populated_client):
             results_id=results_id)
     response = populated_client.get(status_endpoint)
     while response.status_code == 404:
-        response = populated_client.get(status_endpoint)
         time.sleep(0.1)
+        response = populated_client.get(status_endpoint)
     assert response.status_code == 200
     data = response.get_json()
     status = data['status']
     while status != tesserae.db.entities.Search.FAILED:
+        time.sleep(0.1)
         response = populated_client.get(status_endpoint)
         data = response.get_json()
         status = data['status']
-        time.sleep(0.1)
     assert status == tesserae.db.entities.Search.FAILED
     assert 'message' in data
     assert f'"{bad_feature}"' in data['message']
