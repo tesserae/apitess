@@ -28,6 +28,8 @@ On success, the data payload contains a JSON object with the following keys:
 |Key|Value|
 |---|---|
 |`"data"`|The JSON object received as request data payload.|
+|`"max_score"`|The highest score of all results associated with the UUID.|
+|`"total_count"`|The total number of parallels associated with the UUID.|
 |`"parallels"`|A list of JSON objects describing parallels found.|
 
 A JSON object in the `"parallels"` list of the successful response data payload contains the following keys:

@@ -134,8 +134,8 @@ def retrieve_results(results_id):
     params = results_status_found[0].parameters
 
     multiresults = [
-        mr for mr in tesserae.utils.multitext.get_results(flask.g.db,
-                                                          results_id)]
+        mr for mr in tesserae.utils.multitext.get_results(
+            flask.g.db, results_status_found[0].id)]
     response = flask.Response(
         response=gzip.compress(flask.json.dumps({
             'data': params,
@@ -146,4 +146,7 @@ def retrieve_results(results_id):
     response.status_code = 200
     response.status = '200 OK'
     response.headers['Content-Encoding'] = 'gzip'
+
+    results_status_found[0].update_last_queried()
+    flask.g.db.update(results_status_found[0])
     return response
