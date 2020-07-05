@@ -277,15 +277,23 @@ def retrieve_results(results_id):
             page_number=page_number
         )
 
+    search_id = results_status_found[0].id
     response = flask.Response(
         response=gzip.compress(flask.json.dumps({
             'data': params,
+            'max_score': tesserae.utils.search.get_max_score(flask.g.db,
+                                                             search_id),
+            'total_count': tesserae.utils.search.get_results_count(flask.g.db,
+                                                                   search_id),
             'parallels': tesserae.utils.search.get_results(
-                flask.g.db, results_id, page_options)
+                flask.g.db, search_id, page_options)
         }).encode()),
         mimetype='application/json',
     )
     response.status_code = 200
     response.status = '200 OK'
     response.headers['Content-Encoding'] = 'gzip'
+
+    results_status_found[0].update_last_queried()
+    flask.g.db.update(results_status_found[0])
     return response
