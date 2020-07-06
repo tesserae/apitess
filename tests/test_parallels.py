@@ -82,6 +82,23 @@ def test_search_search_retrieval(populated_app, populated_client):
     assert search_results_id == response.headers['Location'].split('/')[-2]
 
     # try various paging options
+    print('Retrieve everything')
+    with populated_app.test_request_context():
+        retrieve_endpoint = flask.url_for(
+            'parallels.retrieve_results',
+            results_id=search_results_id
+        )
+    response = populated_client.get(retrieve_endpoint)
+    assert response.status_code == 200
+    data = flask.json.loads(
+        gzip.decompress(response.get_data()).decode('utf-8'))
+    assert 'parallels' in data
+    assert 'max_score' in data
+    assert 'total_count' in data
+    parallels = data['parallels']
+    assert len(parallels) == int(data['total_count'])
+    assert max(p['score'] for p in parallels) == float(data['max_score'])
+
     print('Retrieving by score')
     with populated_app.test_request_context():
         retrieve_endpoint = flask.url_for(
@@ -97,10 +114,13 @@ def test_search_search_retrieval(populated_app, populated_client):
     data = flask.json.loads(
         gzip.decompress(response.get_data()).decode('utf-8'))
     assert 'parallels' in data
+    assert 'max_score' in data
+    assert 'total_count' in data
     parallels = data['parallels']
     assert len(parallels) == 3
     for earlier, later in zip(parallels[:-1], parallels[1:]):
         assert earlier['score'] >= later['score']
+
     print('Retrieving by source_tag')
     with populated_app.test_request_context():
         retrieve_endpoint = flask.url_for(
@@ -116,6 +136,8 @@ def test_search_search_retrieval(populated_app, populated_client):
     data = flask.json.loads(
         gzip.decompress(response.get_data()).decode('utf-8'))
     assert 'parallels' in data
+    assert 'max_score' in data
+    assert 'total_count' in data
     parallels = data['parallels']
     assert len(parallels) == 3
     for earlier, later in zip(parallels[:-1], parallels[1:]):
