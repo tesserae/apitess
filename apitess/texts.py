@@ -1,10 +1,9 @@
 """The family of /texts/ endpoints"""
-import json
 import os
 import urllib.parse
+import uuid
 
 from bson.objectid import ObjectId
-from bson.errors import InvalidId
 import flask
 from flask_cors import cross_origin
 
@@ -81,36 +80,41 @@ def get_text(object_id):
 
 
 if os.environ.get('ADMIN_INSTANCE') == 'true':
+    FILE_UPLOAD_DIR = os.path.join(os.path.expanduser('~'), 'tess_data',
+                                   'tessfiles')
+
     @bp.route('/', methods=['POST'])
     def add_text():
         received = flask.request.get_json()
-        # error checking on request data
-        requireds = {'author', 'is_prose', 'language', 'path',
-                'title', 'year'}
-        missing = []
-        for req in requireds:
-            if req not in received:
-                missing.append(req)
-        if missing:
-            return apitess.errors.error(
-                400,
-                data=received,
-                message='The request data payload is missing the following required key(s): {}'.format(', '.join(missing)))
+        requireds = {'metadata', 'file_contents'}
+        error_response = apitess.errors.check_requireds(received, requireds)
+        if error_response:
+            return error_response
+
+        text = received['metadata']
+        requireds = {'author', 'is_prose', 'language',
+                     'title', 'year'}
+        error_response = apitess.errors.check_requireds(text, requireds)
+        if error_response:
+            return error_response
+
         prohibiteds = {'_id', 'id', 'object_id'}
-        found = []
-        for prohib in prohibiteds:
-            if prohib in received:
-                found.append(prohib)
-        if found:
-            return apitess.errors.error(
-                400,
-                data=received,
-                message='The request data payload contains the following prohibited key(s): {}'.format(', '.join(found)))
+        error_response = apitess.errors.check_prohibited(text, prohibiteds)
+        if error_response:
+            return error_response
+
+        # save uploaded file to local filesystem
+        file_location = os.path.join(FILE_UPLOAD_DIR,
+                                     str(uuid.uuid4()) + '.tess')
+        with open(file_location, 'w', encoding='utf-8') as ofh:
+            ofh.write(received['file_contents'])
 
         try:
             # add text to database
-            insert_id = tesserae.utils.ingest_text(
-                flask.g.db, tesserae.db.entities.Text(**received))
+            insert_id = tesserae.utils.ingest.submit_ingest(
+                flask.g.ingest_queue, flask.g.db,
+                tesserae.db.entities.Text(**received['metadata']),
+                file_location)
         except Exception as e:
             return apitess.errors.error(
                 500,
@@ -118,7 +122,8 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
                 message='Could not add to database: {}'.format(e))
 
         object_id = str(insert_id)
-        received['object_id'] = object_id
+        received_metadata = received['metadata']
+        received_metadata['object_id'] = object_id
         percent_encoded_object_id = urllib.parse.quote(object_id)
 
         response = flask.Response()
@@ -127,41 +132,32 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
         response.headers['Content-Location'] = os.path.join(
             flask.request.base_url, percent_encoded_object_id, '')
         response.headers['Content-Type'] = 'application/json; charset=utf-8'
-        response.set_data(flask.json.dumps(received).encode('utf-8'))
+        response.set_data(flask.json.dumps(received_metadata).encode('utf-8'))
         return response
-
 
     @bp.route('/<object_id>/', methods=['PATCH'])
     def update_text(object_id):
-        try:
-            object_id_obj = ObjectId(object_id)
-        except:
-            return apitess.errors.error(
-                400,
-                object_id=object_id,
-                message='Provided identifier ({}) is malformed.'.format(object_id))
+        error_message = apitess.errors.check_object_id(object_id)
+        if error_message:
+            return error_message
+
         received = flask.request.get_json()
         found = flask.g.db.find(
             tesserae.db.entities.Text.collection,
-            _id=object_id_obj)
+            _id=ObjectId(object_id))
         if not found:
             return apitess.errors.error(
                 404,
                 object_id=object_id,
                 data=received,
-                message='No text with the provided identifier ({}) was found in the database.'.format(object_id))
+                message=(f'No text with the provided identifier ({object_id}) '
+                         'was found in the database.')
+            )
 
         prohibited = {'_id', 'id', 'object_id'}
-        problems = []
-        for key in prohibited:
-            if key in received:
-                problems.append(key)
-        if problems:
-            return apitess.errors.error(
-                400,
-                object_id=object_id,
-                data=received,
-                message='Prohibited key(s) found in data payload: {}'.format(', '.join(problems)))
+        error_response = apitess.errors.check_prohibited(received, prohibited)
+        if error_response:
+            return error_response
 
         found = found[0]
         found.__dict__.update(received)
@@ -171,27 +167,25 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
                 500,
                 object_id=object_id,
                 data=received,
-                message='Unexpected number of updates: {}'.format(updated.matched_count))
+                message=('Unexpected number of updates: '
+                         f'{updated.matched_count}'))
         return get_text(object_id)
-
 
     @bp.route('/<object_id>/', methods=['DELETE'])
     def delete_text(object_id):
-        try:
-            object_id_obj = ObjectId(object_id)
-        except:
-            return apitess.errors.error(
-                400,
-                object_id=object_id,
-                message='Provided identifier ({}) is malformed.'.format(object_id))
+        error_message = apitess.errors.check_object_id(object_id)
+        if error_message:
+            return error_message
         found = flask.g.db.find(
             tesserae.db.entities.Text.collection,
-            _id=object_id_obj)
+            _id=ObjectId(object_id))
         if not found:
             return apitess.errors.error(
                 404,
                 object_id=object_id,
-                message='No text with the provided identifier ({}) was found in the database.'.format(object_id))
+                message=(f'No text with the provided identifier ({object_id}) '
+                         'was found in the database.')
+            )
         # TODO check for proper deletion?
         flask.g.db.delete(found).deleted_count
         response = flask.Response()

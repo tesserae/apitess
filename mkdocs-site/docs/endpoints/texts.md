@@ -117,18 +117,26 @@ Appropriate JSON data for a POST at `/texts/` must be a JSON object containing t
 
 |Key|Value|
 |---|---|
+|`"metadata"`|A JSON object specifying the metadata of the work.|
+|`"file_contents"`|A string containing the contents of a .tess file.|
+
+The JSON object associated with the `"metadata"` field of the request object must have the following keys:
+
+|Key|Value|
+|---|---|
 |`"author"`|A string identifying the text's author.|
 |`"is_prose"`|A boolean value denoting whether the text is a prose work.|
 |`"language"`|A string identifying the composition language of the text.|
-|`"path"`| A string identifying the location of the text's contents.|
 |`"title"`|A string identifying the text's name.|
 |`"year"`|An integer representing the text's publication year; a negative integer corresponds to the BC era.|
 
-The JSON object is forbidden from containing the following keys: `"_id"`, `"id"`, `"object_id"`.
+This metadata JSON object is forbidden from containing the following keys: `"_id"`, `"id"`, `"object_id"`.
 
 ### Response
 
-On success, the response data payload is a JSON object replicating the entry created in Tesserae's database according to the POST request.  Additionally, the `Content-Location` header will specify the URL associated with this newly created database entry.
+On success, the response data payload is a JSON object replicating the entry created in Tesserae's database according to the POST request (in other words, the JSON object associated with the `"metadata"` key in the request object).  Additionally, the `Content-Location` header will specify the URL associated with this newly created database entry.
+
+The work will be ingested in the background. The ingestion status information is displayed in the database entry associated with the URL specified by the `Content-Location` header.
 
 On failure, the data payload contains error information in a JSON object with the following keys:
 
