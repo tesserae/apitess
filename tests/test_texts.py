@@ -1,10 +1,11 @@
 import json
 import os
+import time
 
 import flask
 import werkzeug.datastructures
 
-import tesserae.db.entities
+from tesserae.db.entities.text import TextStatus
 
 
 def test_query_texts(populated_client):
@@ -18,7 +19,8 @@ def test_query_texts_with_fields(populated_app, populated_client):
     year = 1
     lang = 'latin'
     with populated_app.test_request_context():
-        endpoint = flask.url_for('texts.query_texts', after=year, language=lang)
+        endpoint = flask.url_for('texts.query_texts', after=year,
+                                 language=lang)
     response = populated_client.get(endpoint)
     assert response.status_code == 200
     data = response.get_json()
@@ -36,13 +38,18 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
             for text in client.get('/texts/').get_json()['texts']
         }
 
+        with open(os.path.join(os.path.dirname(__file__), 'bob.txt'), 'r',
+                  encoding='utf-8') as ifh:
+            file_contents = ifh.read()
         to_be_added = {
-            'author': 'Bob',
-            'is_prose': False,
-            'language': 'latin',
-            'path': os.path.join(os.path.dirname(__file__), 'bob.txt'),
-            'title': 'Bob Bob',
-            'year': 2018
+            'metadata': {
+                'author': 'Bob',
+                'is_prose': False,
+                'language': 'latin',
+                'title': 'Bob Bob',
+                'year': 2018
+            },
+            'file_contents': file_contents
         }
         headers = werkzeug.datastructures.Headers()
         headers['Content-Type'] = 'application/json; charset=utf-8'
@@ -57,7 +64,8 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
             if k == 'object_id':
                 new_obj_id = v
             else:
-                assert k in to_be_added and v == to_be_added[k]
+                assert k in to_be_added['metadata'] and \
+                    v == to_be_added['metadata'][k]
 
         # make sure the new text isn't in the database
         with app.test_request_context():
@@ -88,7 +96,6 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
         for k, v in after_delete.items():
             assert k in before and v == before[k]
 
-
     def test_add_text_insufficient_data(client):
         to_be_added = {
         }
@@ -107,15 +114,19 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
             assert k in to_be_added and v == to_be_added[k]
         assert 'message' in data
 
-
     def test_patch_then_replace_text(app, client):
+        with open(os.path.join(os.path.dirname(__file__), 'bob.txt'), 'r',
+                  encoding='utf-8') as ifh:
+            file_contents = ifh.read()
         to_be_added = {
-            'author': 'Bob',
-            'is_prose': False,
-            'language': 'latin',
-            'path': os.path.join(os.path.dirname(__file__), 'bob.txt'),
-            'title': 'Bob Bob',
-            'year': 2018
+            'metadata': {
+                'author': 'Bob',
+                'is_prose': False,
+                'language': 'latin',
+                'title': 'Bob Bob',
+                'year': 2018
+            },
+            'file_contents': file_contents
         }
         headers = werkzeug.datastructures.Headers()
         headers['Content-Type'] = 'application/json; charset=utf-8'
@@ -131,6 +142,9 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
                 'texts.get_text',
                 object_id=new_obj_id)
         before = client.get(endpoint).get_json()
+        while before['ingestion_status'] != TextStatus.DONE:
+            time.sleep(0.1)
+            before = client.get(endpoint).get_json()
 
         patch = {
             'title': 'Pharsalia',
@@ -157,21 +171,31 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
         response = client.get(endpoint)
         assert response.status_code == 404
 
+        to_be_added = {
+            'metadata': before,
+            'file_contents': file_contents
+        }
         headers = werkzeug.datastructures.Headers()
         headers['Content-Type'] = 'application/json; charset=utf-8'
         response = client.post(
             '/texts/',
-            data=json.dumps(before).encode(encoding='utf-8'),
+            data=json.dumps(to_be_added).encode(encoding='utf-8'),
             headers=headers,
         )
         assert response.status_code == 400
 
         del before['object_id']
+        del before['ingestion_status']
+        del before['ingestion_msg']
+        to_be_added = {
+            'metadata': before,
+            'file_contents': file_contents
+        }
         headers = werkzeug.datastructures.Headers()
         headers['Content-Type'] = 'application/json; charset=utf-8'
         response = client.post(
             '/texts/',
-            data=json.dumps(before).encode(encoding='utf-8'),
+            data=json.dumps(to_be_added).encode(encoding='utf-8'),
             headers=headers,
         )
         assert response.status_code == 201
@@ -188,7 +212,6 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
         assert response.status_code == 204
         response = client.get(endpoint)
         assert response.status_code == 404
-
 
     def test_nonexistent_text(app, client):
         nonexistent = 'DEADBEEFDEADBEEFDEADBEEF'

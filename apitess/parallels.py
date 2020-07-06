@@ -131,7 +131,7 @@ def submit_search():
 
     try:
         tesserae.utils.search.submit_search(
-            flask.g.jobqueue, results_id, method['name'], {
+            flask.g.jobqueue, flask.g.db, results_id, method['name'], {
                 'source': TextOptions(source_text, source['units']),
                 'target': TextOptions(target_text, target['units']),
                 'feature': method['feature'],

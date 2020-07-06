@@ -6,8 +6,10 @@ import flask
 import pytest
 
 import apitess
+import apitess.texts
 from tesserae.db.entities import Text
 from tesserae.utils import ingest_text
+from tesserae.utils.ingest import IngestQueue
 from tesserae.utils.delete import obliterate
 from tesserae.utils.coordinate import JobQueue
 from tesserae.utils.multitext import BigramWriter
@@ -15,6 +17,8 @@ from tesserae.utils.multitext import BigramWriter
 
 # Write bigram databases to temporary directory
 BigramWriter.BIGRAM_DB_DIR = tempfile.mkdtemp()
+# Write file uploads to temporary directory
+apitess.texts.FILE_UPLOAD_DIR = tempfile.mkdtemp()
 
 
 db_config = {
@@ -38,7 +42,8 @@ db_cred = {
 def app():
     try:
         jobqueue = JobQueue(1, db_cred)
-        cur_app = apitess.create_app(jobqueue, db_config)
+        ingest_queue = IngestQueue(db_cred)
+        cur_app = apitess.create_app(jobqueue, ingest_queue, db_config)
 
         with cur_app.test_request_context():
             # initialize database for testing
@@ -48,6 +53,7 @@ def app():
         yield cur_app
     finally:
         jobqueue.cleanup()
+        ingest_queue.cleanup()
 
 
 @pytest.fixture(scope='session')
@@ -120,11 +126,14 @@ db_populated_cred = {
     'db': db_populated_config['DB_NAME']
 }
 
+
 @pytest.fixture(scope='session')
 def populated_app():
     try:
         jobqueue = JobQueue(1, db_populated_cred)
-        cur_app = apitess.create_app(jobqueue, db_populated_config)
+        ingest_queue = IngestQueue(db_cred)
+        cur_app = apitess.create_app(jobqueue, ingest_queue,
+                                     db_populated_config)
 
         with cur_app.test_request_context():
             # initialize populated database for testing
@@ -133,7 +142,7 @@ def populated_app():
             texts_to_add = _get_text_metadata()
             for t in texts_to_add:
                 cur_text = Text.json_decode(t)
-                text_id = str(ingest_text(flask.g.db, cur_text))
+                ingest_text(flask.g.db, cur_text)
 
         yield cur_app
 
@@ -143,6 +152,7 @@ def populated_app():
             obliterate(flask.g.db)
     finally:
         jobqueue.cleanup()
+        ingest_queue.cleanup()
 
 
 @pytest.fixture(scope='session')
@@ -171,7 +181,9 @@ db_multitext_cred = {
 def multitext_app():
     try:
         jobqueue = JobQueue(1, db_multitext_cred)
-        cur_app = apitess.create_app(jobqueue, db_multitext_config)
+        ingest_queue = IngestQueue(db_cred)
+        cur_app = apitess.create_app(jobqueue, ingest_queue,
+                                     db_multitext_config)
 
         with cur_app.test_request_context():
             # initialize multitext database for testing
@@ -180,7 +192,7 @@ def multitext_app():
             texts_to_add = _get_text_metadata()
             for t in texts_to_add:
                 cur_text = Text.json_decode(t)
-                text_id = str(ingest_text(flask.g.db, cur_text))
+                ingest_text(flask.g.db, cur_text)
 
         yield cur_app
 
@@ -190,6 +202,7 @@ def multitext_app():
             obliterate(flask.g.db)
     finally:
         jobqueue.cleanup()
+        ingest_queue.cleanup()
 
 
 @pytest.fixture(scope='session')

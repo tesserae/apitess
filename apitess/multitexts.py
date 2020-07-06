@@ -13,6 +13,7 @@ import tesserae.utils.multitext
 
 bp = flask.Blueprint('multitexts', __name__, url_prefix='/multitexts')
 
+
 @bp.route('/', methods=('POST', 'OPTIONS',))
 @cross_origin(expose_headers='Location')
 def submit_multitext():
@@ -58,7 +59,8 @@ def submit_multitext():
         return apitess.errors.error(
             400,
             data=received,
-            message='Specified unit_type ({}) is not acceptable; acceptable values: {}'.format(received['unit_type'], accepted_unit_types)
+            message=(f'Specified unit_type ({received["unit_type"]}) is not '
+                     f'acceptable; acceptable values: {accepted_unit_types}')
         )
 
     results_id = tesserae.utils.multitext.check_cache(
@@ -94,7 +96,7 @@ def submit_multitext():
             500,
             data=received,
             message=('The search request could not be added to the queue. '
-                'Please try again in a few minutes')
+                     'Please try again in a few minutes')
         )
     return response
 
