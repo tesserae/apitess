@@ -162,7 +162,7 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
                          'was found in the database.')
             )
 
-        prohibited = {'_id', 'id', 'object_id'}
+        prohibited = {'_id', 'id', 'object_id', 'path', 'divisions'}
         error_response = apitess.errors.check_prohibited(received, prohibited)
         if error_response:
             return error_response
