@@ -85,6 +85,7 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
 
     @bp.route('/', methods=['POST'])
     def add_text():
+        os.makedirs(os.path.abspath(FILE_UPLOAD_DIR), exist_ok=True)
         received = flask.request.get_json()
         requireds = {'metadata', 'file_contents'}
         error_response = apitess.errors.check_requireds(received, requireds)
@@ -109,11 +110,18 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
         with open(file_location, 'w', encoding='utf-8') as ofh:
             ofh.write(received['file_contents'])
 
+        # remove ingestion status information, if provided
+        if 'ingestion_status' in text:
+            del text['ingestion_status']
+        if 'ingestion_msg' in text:
+            del text['ingestion_msg']
+
+        text_to_add = tesserae.db.entities.Text(**text)
         try:
             # add text to database
             insert_id = tesserae.utils.ingest.submit_ingest(
                 flask.g.ingest_queue, flask.g.db,
-                tesserae.db.entities.Text(**received['metadata']),
+                text_to_add,
                 file_location)
         except Exception as e:
             return apitess.errors.error(
@@ -122,8 +130,8 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
                 message='Could not add to database: {}'.format(e))
 
         object_id = str(insert_id)
-        received_metadata = received['metadata']
-        received_metadata['object_id'] = object_id
+        created = tesserae.utils.fix_id(text.decode_json())
+        created['object_id'] = object_id
         percent_encoded_object_id = urllib.parse.quote(object_id)
 
         response = flask.Response()
@@ -132,7 +140,7 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
         response.headers['Content-Location'] = os.path.join(
             flask.request.base_url, percent_encoded_object_id, '')
         response.headers['Content-Type'] = 'application/json; charset=utf-8'
-        response.set_data(flask.json.dumps(received_metadata).encode('utf-8'))
+        response.set_data(flask.json.dumps(created).encode('utf-8'))
         return response
 
     @bp.route('/<object_id>/', methods=['PATCH'])
@@ -154,7 +162,7 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
                          'was found in the database.')
             )
 
-        prohibited = {'_id', 'id', 'object_id'}
+        prohibited = {'_id', 'id', 'object_id', 'path', 'divisions'}
         error_response = apitess.errors.check_prohibited(received, prohibited)
         if error_response:
             return error_response

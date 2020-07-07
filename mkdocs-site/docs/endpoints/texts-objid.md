@@ -109,7 +109,7 @@ Requesting PATCH at `/texts/<object_id>/` with an appropriate JSON data payload 
 
 ### Request
 
-Appropriate JSON data for a PATCH at `/texts/<object_id>/` is any JSON object without the following keys:  `"object_id"`, `"id"`, `"_id"`.  The keys in this object specify which attributes of the text entry in Tesserae's database will be updated (or added, if the key does not correspond with any of the text entry's attributes).  The new values of these attributes are specified by the values of the keys corresponding to those attributes.
+Appropriate JSON data for a PATCH at `/texts/<object_id>/` is any JSON object without the following keys:  `"object_id"`, `"id"`, `"_id"`, `"path"`, `"divisions"`.  The keys in this object specify which attributes of the text entry in Tesserae's database will be updated (or added, if the key does not correspond with any of the text entry's attributes).  The new values of these attributes are specified by the values of the keys corresponding to those attributes.
 
 > NB:  You cannot update a text's identifier.
 
