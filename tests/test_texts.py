@@ -185,8 +185,6 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
         assert response.status_code == 400
 
         del before['object_id']
-        del before['ingestion_status']
-        del before['ingestion_msg']
         to_be_added = {
             'metadata': before,
             'file_contents': file_contents
