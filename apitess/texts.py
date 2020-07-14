@@ -12,7 +12,6 @@ from apitess.utils import fix_id
 import tesserae.db.entities
 import tesserae.utils
 
-
 bp = flask.Blueprint('texts', __name__, url_prefix='/texts')
 
 
@@ -39,10 +38,9 @@ def query_texts():
             message='If used, "before" and "after" must have integer values.')
 
     if before_val is not None and after_val is not None:
-        results = flask.g.db.find(
-            tesserae.db.entities.Text.collection,
-            year_not=(before_val, after_val),
-            **filters)
+        results = flask.g.db.find(tesserae.db.entities.Text.collection,
+                                  year_not=(before_val, after_val),
+                                  **filters)
     elif before_val is not None and after_val is None:
         results = flask.g.db.find(
             tesserae.db.entities.Text.collection,
@@ -56,9 +54,8 @@ def query_texts():
             year=(after_val, 999999999999),
             **filters)
     else:
-        results = flask.g.db.find(
-            tesserae.db.entities.Text.collection,
-            **filters)
+        results = flask.g.db.find(tesserae.db.entities.Text.collection,
+                                  **filters)
     return flask.jsonify(texts=[fix_id(r.json_encode()) for r in results])
 
 
@@ -70,9 +67,8 @@ def get_text(object_id):
     if failures:
         return apitess.errors.bad_object_id(object_id)
     object_id_obj = results[0]
-    found = flask.g.db.find(
-        tesserae.db.entities.Text.collection,
-        _id=object_id_obj)
+    found = flask.g.db.find(tesserae.db.entities.Text.collection,
+                            _id=object_id_obj)
     if not found:
         return apitess.errors.text_not_found_object_id(object_id)
     result = fix_id(found[0].json_encode())
@@ -93,8 +89,7 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
             return error_response
 
         text = received['metadata']
-        requireds = {'author', 'is_prose', 'language',
-                     'title', 'year'}
+        requireds = {'author', 'is_prose', 'language', 'title', 'year'}
         error_response = apitess.errors.check_requireds(text, requireds)
         if error_response:
             return error_response
@@ -120,9 +115,7 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
         try:
             # add text to database
             insert_id = tesserae.utils.ingest.submit_ingest(
-                flask.g.ingest_queue, flask.g.db,
-                text_to_add,
-                file_location)
+                flask.g.ingest_queue, flask.g.db, text_to_add, file_location)
         except Exception as e:
             return apitess.errors.error(
                 500,
@@ -130,8 +123,7 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
                 message='Could not add to database: {}'.format(e))
 
         object_id = str(insert_id)
-        created = tesserae.utils.fix_id(text.decode_json())
-        created['object_id'] = object_id
+        text['object_id'] = object_id
         percent_encoded_object_id = urllib.parse.quote(object_id)
 
         response = flask.Response()
@@ -140,7 +132,7 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
         response.headers['Content-Location'] = os.path.join(
             flask.request.base_url, percent_encoded_object_id, '')
         response.headers['Content-Type'] = 'application/json; charset=utf-8'
-        response.set_data(flask.json.dumps(created).encode('utf-8'))
+        response.set_data(flask.json.dumps(text).encode('utf-8'))
         return response
 
     @bp.route('/<object_id>/', methods=['PATCH'])
@@ -150,17 +142,15 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
             return error_message
 
         received = flask.request.get_json()
-        found = flask.g.db.find(
-            tesserae.db.entities.Text.collection,
-            _id=ObjectId(object_id))
+        found = flask.g.db.find(tesserae.db.entities.Text.collection,
+                                _id=ObjectId(object_id))
         if not found:
             return apitess.errors.error(
                 404,
                 object_id=object_id,
                 data=received,
                 message=(f'No text with the provided identifier ({object_id}) '
-                         'was found in the database.')
-            )
+                         'was found in the database.'))
 
         prohibited = {'_id', 'id', 'object_id', 'path', 'divisions'}
         error_response = apitess.errors.check_prohibited(received, prohibited)
@@ -184,16 +174,14 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
         error_message = apitess.errors.check_object_id(object_id)
         if error_message:
             return error_message
-        found = flask.g.db.find(
-            tesserae.db.entities.Text.collection,
-            _id=ObjectId(object_id))
+        found = flask.g.db.find(tesserae.db.entities.Text.collection,
+                                _id=ObjectId(object_id))
         if not found:
             return apitess.errors.error(
                 404,
                 object_id=object_id,
                 message=(f'No text with the provided identifier ({object_id}) '
-                         'was found in the database.')
-            )
+                         'was found in the database.'))
         # TODO check for proper deletion?
         flask.g.db.delete(found).deleted_count
         response = flask.Response()
