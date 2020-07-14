@@ -36,27 +36,31 @@ On failure, the data payload contains error information in a JSON object with th
 Request:
 
 ```bash
-curl -i -X POST "https://tess-new.caset.buffalo.edu/api/parallels/" -d '{ \
-  "source": { \
-    "object_id": "5c6c69f042facf59122418f8", \
-    "units": "line" \
-  }, \
-  "target": { \
-    "object_id": "5c6c69f042facf59122418f6", \
-    "units": "line" \
-  }, \
-  "method": { \
-    "name": "original", \
-    "feature": "lemma", \
-    "stopwords": [ \
-      "qui", "quis", "sum", "et", "in", \
-      "is", "non", "hic", "ego", "ut" \
-    ], \
-    "freq_basis": "corpus", \
-    "max_distance": 10, \
-    "distance_basis": "frequency" \
-  } \
-}'
+curl -i -X POST -H "Content-Type: application/json; charset=utf-8" \
+"https://tess-new.caset.buffalo.edu/api/parallels/" \
+--data-binary @- << EOF
+{
+  "source": {
+    "object_id": "5c6c69f042facf59122418f8",
+    "units": "line"
+  },
+  "target": {
+    "object_id": "5c6c69f042facf59122418f6",
+    "units": "line"
+  },
+  "method": {
+    "name": "original",
+    "feature": "lemma",
+    "stopwords": [
+      "qui", "quis", "sum", "et", "in",
+      "is", "non", "hic", "ego", "ut"
+    ],
+    "freq_basis": "corpus",
+    "max_distance": 10,
+    "distance_basis": "frequency"
+  }
+}
+EOF
 ```
 
 Response:
