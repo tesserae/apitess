@@ -22,10 +22,11 @@ def _register_before_request(app, jobqueue, ingest_queue):
     g.db and to the searcher via g.searcher.
     """
     # http://librelist.com/browser/flask/2013/8/21/flask-pymongo-and-blueprint/#811dd1b119757bc09d28425a5bda86d9
-    db = tesserae.db.TessMongoConnection(
-        app.config['MONGO_HOSTNAME'],
-        app.config['MONGO_PORT'], app.config['MONGO_USER'],
-        app.config['MONGO_PASSWORD'], db=app.config['DB_NAME'])
+    db = tesserae.db.TessMongoConnection(app.config['MONGO_HOSTNAME'],
+                                         app.config['MONGO_PORT'],
+                                         app.config['MONGO_USER'],
+                                         app.config['MONGO_PASSWORD'],
+                                         db=app.config['DB_NAME'])
 
     @app.before_request
     def before_request():
@@ -68,5 +69,16 @@ def create_app(jobqueue, ingest_queue, test_config=None):
     _register_blueprints(app)
 
     CORS(app, expose_headers=['Content-Type', 'Location'])
+
+    @app.route('/')
+    def helpful_root():
+        docs_url = 'https://tess-new.caset.buffalo.edu/docs/api/'
+        response = flask.Response(
+            response=('The root endpoint is undefined for this API. '
+                      f'See the <a href="{docs_url}">documentation</a> for '
+                      'more details.'))
+        response.status_code = 404
+        response.status = '404 Not Found'
+        return response
 
     return app
