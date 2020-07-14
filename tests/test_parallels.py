@@ -298,6 +298,7 @@ def test_search_unparsable_body(populated_app, populated_client):
     data = response.get_json()
     assert data['data'] == unparsable
     assert data['message'].startswith('Unable to parse search parameters')
+    assert 'JSON data is malformed' in data['message']
 
 
 def test_search_bad_content_type(populated_app, populated_client):
@@ -314,3 +315,4 @@ def test_search_bad_content_type(populated_app, populated_client):
     data = response.get_json()
     assert data['data'] == original_data
     assert data['message'].startswith('Unable to parse search parameters')
+    assert 'Content-Type' in data['message']

@@ -59,7 +59,6 @@ def submit_search():
             message=('No search parameters were sent with the request'))
     try:
         received = flask.request.get_json()
-        print(received)
     except BadRequest:
         return apitess.errors.error(
             400,
