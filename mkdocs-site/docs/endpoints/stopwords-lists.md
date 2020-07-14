@@ -73,13 +73,17 @@ On failure, the data payload contains error information in a JSON object with th
 Request:
 
 ```bash
-curl -i -X POST "https://tess-new.caset.buffalo.edu/api/stopwords/lists/" -d '{ \
-  "name": "new-list", \
-  "stopwords": [ \
-    "a", \
-    "b" \
-  ] \
-}'
+curl -i -X POST -H "Content-Type: application/json; charset=utf-8" \
+"https://tess-new.caset.buffalo.edu/api/stopwords/lists/" \
+--data-binary @- << EOF
+{
+  "name": "new-list",
+  "stopwords": [
+    "a",
+    "b"
+  ]
+}
+EOF
 ```
 
 Response:
@@ -90,7 +94,7 @@ HTTP/1.1 201 Created
 Content-Location: /stopwords/lists/new-list/
 ...
 
-{ 
+{
   "stopwords": [
     "a",
     "b"
@@ -105,13 +109,17 @@ Suppose that `latin-lemma-10` is the name of one of the stopwords lists.
 Request:
 
 ```bash
-curl -i -X POST "https://tess-new.caset.buffalo.edu/api/stopwords/lists/" -d '{ \
-  "name": "latin-lemma-10", \
-  "stopwords": [ \
-    "a", \
-    "b" \
-  ] \
-}'
+curl -i -X POST -H "Content-Type: application/json; charset=utf-8" \
+"https://tess-new.caset.buffalo.edu/api/stopwords/lists/" \
+--data-binary @- << EOF
+{
+  "name": "latin-lemma-10",
+  "stopwords": [
+    "a",
+    "b"
+  ]
+}
+EOF
 ```
 
 Response:
@@ -137,12 +145,16 @@ HTTP/1.1 400 Bad Request
 Request:
 
 ```bash
-curl -i -X POST "https://tess-new.caset.buffalo.edu/api/stopwords/lists/" -d '{ \
-  "stopwords": [ \
-    "a", \
-    "b" \
-  ] \
-}'
+curl -i -X POST -H "Content-Type: application/json; charset=utf-8" \
+"https://tess-new.caset.buffalo.edu/api/stopwords/lists/" \
+--data-binary @- << EOF
+{
+  "stopwords": [
+    "a",
+    "b"
+  ]
+}
+EOF
 ```
 
 Response:

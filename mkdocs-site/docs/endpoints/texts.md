@@ -152,13 +152,20 @@ On failure, the data payload contains error information in a JSON object with th
 Request:
 
 ```bash
-curl -i -X POST "https://tess-new.caset.buffalo.edu/api/texts/" -d '{ \
-  "author": "lucan", \
-  "path": "https://raw.githubusercontent.com/tesserae/tesserae/master/texts/la/lucan.bellum_civile.tess" \
-  "language": "latin", \
-  "title": "bellum civile", \
-  "year": 65 \
-}'
+curl -i -X POST  -H "Content-Type: application/json; charset=utf-8" \
+"https://tess-new.caset.buffalo.edu/api/texts/" \
+--data-binary @- << EOF
+{
+  "metadata": {
+    "author": "lucan",
+    "is_prose": false,
+    "language": "latin",
+    "title": "bellum civile",
+    "year": 65
+  },
+  "file_contents": ...
+}
+EOF
 ```
 
 Response:
@@ -173,7 +180,7 @@ Content-Location: /texts/5c6c69f042facf59122418f6/
   "author": "lucan",
   "object_id": "5c6c69f042facf59122418f6",
   "is_prose": false,
-  "path": "https://raw.githubusercontent.com/tesserae/tesserae/master/texts/la/lucan.bellum_civile.tess"
+  "path": ...,
   "language": "latin",
   "title": "bellum civile",
   "year": 65
@@ -185,12 +192,15 @@ Content-Location: /texts/5c6c69f042facf59122418f6/
 Request:
 
 ```bash
-curl -i -X POST "https://tess-new.caset.buffalo.edu/api/texts/" -d '{ \
-  "author": "lucan", \
-  "path": "https://raw.githubusercontent.com/tesserae/tesserae/master/texts/la/lucan.bellum_civile.tess" \
-  "title": "bellum civile", \
-  "year": 65 \
-}'
+curl -i -X POST -H "Content-Type: application/json; charset=utf-8" \
+"https://tess-new.caset.buffalo.edu/api/texts/" \
+--data-binary @- << EOF
+{
+  "author": "lucan",
+  "title": "bellum civile",
+  "year": 65
+}
+EOF
 ```
 
 Response:
@@ -202,7 +212,6 @@ HTTP/1.1 400 Bad Request
 {
   "data": {
     "author": "lucan",
-    "path": "https://raw.githubusercontent.com/tesserae/tesserae/master/texts/la/lucan.bellum_civile.tess"
     "title": "bellum civile",
     "year": 65
   },
@@ -215,14 +224,17 @@ HTTP/1.1 400 Bad Request
 Request:
 
 ```bash
-curl -i -X POST "https://tess-new.caset.buffalo.edu/api/texts/" -d '{ \
-  "author": "lucan", \
-  "object_id": "DEADBEEFDEADBEEFDEADBEEF", \
-  "path": "https://raw.githubusercontent.com/tesserae/tesserae/master/texts/la/lucan.bellum_civile.tess" \
-  "language": "latin", \
-  "title": "bellum civile", \
-  "year": 65 \
-}'
+curl -i -X POST -H "Content-Type: application/json; charset=utf-8" \
+"https://tess-new.caset.buffalo.edu/api/texts/" \
+--data-binary @- << EOF
+{
+  "author": "lucan",
+  "object_id": "DEADBEEFDEADBEEFDEADBEEF",
+  "language": "latin",
+  "title": "bellum civile",
+  "year": 65
+}
+EOF
 ```
 
 Response:
@@ -235,7 +247,6 @@ HTTP/1.1 400 Bad Request
   "data": {
     "author": "lucan",
     "object_id": "DEADBEEFDEADBEEFDEADBEEF"
-    "path": "https://raw.githubusercontent.com/tesserae/tesserae/master/texts/la/lucan.bellum_civile.tess"
     "language": "latin",
     "title": "bellum civile",
     "year": 65

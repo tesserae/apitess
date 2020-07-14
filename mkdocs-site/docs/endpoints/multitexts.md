@@ -36,15 +36,19 @@ On failure, the data payload contains error information in a JSON object with th
 Request:
 
 ```bash
-curl -i -X POST "https://tess-new.caset.buffalo.edu/api/multitext/" -d '{ \
-  "parallels_uuid": "uuid-to-previous-search-results", \
-  "text_ids": [ \
-    "id-for-text-1", \
-    "id-for-text-2", \
+curl -i -X POST  -H "Content-Type: application/json; charset=utf-8" \
+"https://tess-new.caset.buffalo.edu/api/multitext/" \
+--data-binary @- << EOF
+{
+  "parallels_uuid": "uuid-to-previous-search-results",
+  "text_ids": [
+    "id-for-text-1",
+    "id-for-text-2",
     ...
-  ], \
-  "unit_type": "line" \
-}'
+  ],
+  "unit_type": "line"
+}
+EOF
 ```
 
 Response:
