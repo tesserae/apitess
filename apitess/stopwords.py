@@ -1,9 +1,6 @@
 """The family of /stopwords/ endpoints"""
-import json
 import os
-import urllib.parse
 
-from bson.objectid import ObjectId
 import flask
 from flask_cors import cross_origin
 
@@ -16,11 +13,10 @@ bp = flask.Blueprint('stopwords', __name__, url_prefix='/stopwords')
 
 
 def indices_to_tokens(connection, stopword_indices, language, feature):
-    results = connection.find(
-        tesserae.db.entities.Feature.collection,
-        index=[int(i) for i in stopword_indices],
-        language=language,
-        feature=feature)
+    results = connection.find(tesserae.db.entities.Feature.collection,
+                              index=[int(i) for i in stopword_indices],
+                              language=language,
+                              feature=feature)
     results = {f.index: f.token for f in results}
     return [results[i] for i in stopword_indices]
 
@@ -39,33 +35,36 @@ def query_stopwords():
         list_size = int(list_size)
     except ValueError:
         return apitess.errors.error(
-                400,
-                data={k: v for k, v in flask.request.args.items()},
-                message='"list_size" must be an integer')
+            400,
+            data={k: v
+                  for k, v in flask.request.args.items()},
+            message='"list_size" must be an integer')
 
     searcher = SparseMatrixSearch(flask.g.db)
     # language takes precedence over works
     language = flask.request.args.get('language', None)
     if language:
         stopword_indices = searcher.create_stoplist(list_size, feature,
-                language)
+                                                    language)
         if len(stopword_indices) == 0:
             return apitess.errors.error(
-                    400,
-                    data={k: v for k, v in flask.request.args.items()},
-                    message='No stopwords found for feature "{}" in language "{}".'.format(feature, language))
-        return flask.jsonify(
-                {'stopwords': indices_to_tokens(flask.g.db, stopword_indices,
-                    language, feature)})
+                400,
+                data={k: v
+                      for k, v in flask.request.args.items()},
+                message='No stopwords found for feature "{}" in language "{}".'
+                .format(feature, language))
+        return flask.jsonify({
+            'stopwords':
+            indices_to_tokens(flask.g.db, stopword_indices, language, feature)
+        })
 
     works = flask.request.args.get('works', None)
     if works:
         oids, fails = apitess.utils.parse_works_arg(works)
         if fails:
             return apitess.errors.bad_object_ids(fails, flask.request.args)
-        text_results = flask.g.db.find(
-            tesserae.db.entities.Text.collection,
-            _id=oids)
+        text_results = flask.g.db.find(tesserae.db.entities.Text.collection,
+                                       _id=oids)
         if len(text_results) != len(oids):
             # figure out which works were not found in the database and report
             found = {str(r.id) for r in text_results}
@@ -74,29 +73,36 @@ def query_stopwords():
                 if obj_id not in found:
                     not_found.append(obj_id)
                 return apitess.errors.error(
-                        400,
-                        data={k: v for k, v in flask.request.args.items()},
-                        message='The following works could not be found in the database: {}'.format(not_found))
-        stopword_indices = searcher.create_stoplist(list_size, feature,
-                text_results[0].language, basis=[str(t.id) for t in text_results])
-        return flask.jsonify(
-                {'stopwords': indices_to_tokens(flask.g.db, stopword_indices,
-                    language, feature)})
+                    400,
+                    data={k: v
+                          for k, v in flask.request.args.items()},
+                    message=('The following works could not be found '
+                             f'in the database: {not_found}'))
+        stopword_indices = searcher.create_stoplist(
+            list_size,
+            feature,
+            text_results[0].language,
+            basis=[str(t.id) for t in text_results])
+        return flask.jsonify({
+            'stopwords':
+            indices_to_tokens(flask.g.db, stopword_indices, language, feature)
+        })
 
     # if we get here, then we didn't get enough information
     return apitess.errors.error(
-            400,
-            data={k: v for k, v in flask.request.args.items()},
-            message='Insufficient information was given to calculate a stopwords list (Perhaps you forgot to specify "language" or "works").')
+        400,
+        data={k: v
+              for k, v in flask.request.args.items()},
+        message=(
+            'Insufficient information was given to calculate a stopwords '
+            'list (Perhaps you forgot to specify "language" or "works").'))
 
 
 @bp.route('/lists/')
 @cross_origin()
 def query_stopwords_lists():
     """Report curated stopwords lists in database"""
-    found = flask.g.db.find(
-        tesserae.db.entities.StopwordsList.collection
-    )
+    found = flask.g.db.find(tesserae.db.entities.StopwordsList.collection)
     return flask.jsonify({'list_names': [a.name for a in found]})
 
 
@@ -104,32 +110,33 @@ def query_stopwords_lists():
 @cross_origin()
 def get_stopwords_list(name):
     """Retrieve specified stopwords list"""
-    found = flask.g.db.find(
-        tesserae.db.entities.StopwordsList.collection,
-        name=name
-    )
+    found = flask.g.db.find(tesserae.db.entities.StopwordsList.collection,
+                            name=name)
     if not found:
         return apitess.errors.error(
             404,
             name=name,
-            message='No list with the provided name ({}) was found in the database.'.format(name))
+            message=(f'No list with the provided name ({name}) was found in '
+                     'the database.'))
     return flask.jsonify({'name': name, 'stopwords': found[0].stopwords})
 
 
 if os.environ.get('ADMIN_INSTANCE') == 'true':
+
     @bp.route('/lists/', methods=['POST'])
     def add_stopwords_list():
-        data = flask.request.get_json()
+        error_response, data = apitess.errors.check_body(flask.request)
+        if error_response:
+            return error_response
         if 'name' not in data:
             return apitess.errors.error(
                 400,
                 data=data,
                 message='"name" field missing from request data.')
         if not isinstance(data['name'], str):
-            return apitess.errors.error(
-                400,
-                data=data,
-                message='"name" must be a string.')
+            return apitess.errors.error(400,
+                                        data=data,
+                                        message='"name" must be a string.')
         if 'stopwords' not in data:
             return apitess.errors.error(
                 400,
@@ -150,48 +157,45 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
         name = data['name']
 
         try:
-            found = flask.g.db.insert(
+            _ = flask.g.db.insert(
                 tesserae.db.entities.StopwordsList(
-                    name=data['name'],
-                    stopwords=data['stopwords']
-                )
-            )
+                    name=data['name'], stopwords=data['stopwords']))
         except ValueError as e:
             if 'exists' in e.args[0]:
                 return apitess.errors.error(
                     400,
                     data=data,
-                    message='The stopwords list name provided ({0}) already exists in the database. If you meant to update the stopwords list, try a DELETE at https://tesserae.caset.buffalo.edu/texts/{0}/ first, then re-try this POST.'.format(name))
-            return apitess.errors.error(
-                500,
-                data=data,
-                message='Unknown server error'
-            )
+                    message=(f'The stopwords list name provided ({name}) '
+                             'already exists in the database. If you meant to '
+                             'update the stopwords list, try a DELETE at '
+                             'https://tesserae.caset.buffalo.edu/texts/'
+                             f'{name}/ first, then re-try this POST.'))
+            return apitess.errors.error(500,
+                                        data=data,
+                                        message='Unknown server error')
         response = flask.jsonify({'stopwords': data['stopwords']})
         response.status_code = 201
         response.headers['Content-Location'] = os.path.join(
             flask.request.url_rule.rule, name, '')
         return response
 
-
     @bp.route('/lists/<name>/', methods=['DELETE'])
     def delete_stopwords_list(name):
-        found = flask.g.db.find(
-            tesserae.db.entities.StopwordsList.collection,
-            name=name
-        )
+        found = flask.g.db.find(tesserae.db.entities.StopwordsList.collection,
+                                name=name)
         if not found:
             return apitess.errors.error(
                 404,
                 name=name,
-                message='No stopwords list matches the specified name ({}).'.format(name))
+                message='No stopwords list matches the specified name ({}).'.
+                format(name))
         result = flask.g.db.delete(found[0])
         if result.deleted_count != 1:
             return apitess.errors.error(
                 500,
                 name=name,
-                message='Server error in deleting: deleted {} documents'.format(result.deleted_count)
-            )
+                message='Server error in deleting: deleted {} documents'.
+                format(result.deleted_count))
         response = flask.Response()
         response.status_code = 204
         return response

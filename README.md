@@ -21,8 +21,11 @@ In order to build the mkdocs site, you will need to install `mkdocs` and
 To run a development server to serve this flask application, you can use the
 following command:
 ```
-FLASK_APP=example/example_launcher.py FLASK_ENV=development python3 -m flask run
+python3 example/example_launcher.py
 ```
+
+(There is an error that will occur if you try running the example with `flask
+run`.)
 
 #### Running tests
 

@@ -19,7 +19,8 @@ def test_query_texts_with_fields(populated_app, populated_client):
     year = 1
     lang = 'latin'
     with populated_app.test_request_context():
-        endpoint = flask.url_for('texts.query_texts', after=year,
+        endpoint = flask.url_for('texts.query_texts',
+                                 after=year,
                                  language=lang)
     response = populated_client.get(endpoint)
     assert response.status_code == 200
@@ -31,6 +32,7 @@ def test_query_texts_with_fields(populated_app, populated_client):
 
 
 if os.environ.get('ADMIN_INSTANCE') == 'true':
+
     def test_add_and_remove_text(app, client):
 
         before = {
@@ -38,7 +40,8 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
             for text in client.get('/texts/').get_json()['texts']
         }
 
-        with open(os.path.join(os.path.dirname(__file__), 'bob.txt'), 'r',
+        with open(os.path.join(os.path.dirname(__file__), 'bob.txt'),
+                  'r',
                   encoding='utf-8') as ifh:
             file_contents = ifh.read()
         to_be_added = {
@@ -97,8 +100,7 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
             assert k in before and v == before[k]
 
     def test_add_text_insufficient_data(client):
-        to_be_added = {
-        }
+        to_be_added = {}
 
         headers = werkzeug.datastructures.Headers()
         headers['Content-Type'] = 'application/json; charset=utf-8'
@@ -109,13 +111,15 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
         )
         assert response.status_code == 400
         data = response.get_json()
+        print(data)
         assert 'data' in data
         for k, v in data['data'].items():
             assert k in to_be_added and v == to_be_added[k]
         assert 'message' in data
 
     def test_patch_then_replace_text(app, client):
-        with open(os.path.join(os.path.dirname(__file__), 'bob.txt'), 'r',
+        with open(os.path.join(os.path.dirname(__file__), 'bob.txt'),
+                  'r',
                   encoding='utf-8') as ifh:
             file_contents = ifh.read()
         to_be_added = {
@@ -138,9 +142,7 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
         new_obj_id = response.get_json()['object_id']
 
         with app.test_request_context():
-            endpoint = flask.url_for(
-                'texts.get_text',
-                object_id=new_obj_id)
+            endpoint = flask.url_for('texts.get_text', object_id=new_obj_id)
         before = client.get(endpoint).get_json()
         while before['ingestion_status'] != TextStatus.DONE:
             time.sleep(0.1)
@@ -171,10 +173,7 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
         response = client.get(endpoint)
         assert response.status_code == 404
 
-        to_be_added = {
-            'metadata': before,
-            'file_contents': file_contents
-        }
+        to_be_added = {'metadata': before, 'file_contents': file_contents}
         headers = werkzeug.datastructures.Headers()
         headers['Content-Type'] = 'application/json; charset=utf-8'
         response = client.post(
@@ -185,10 +184,7 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
         assert response.status_code == 400
 
         del before['object_id']
-        to_be_added = {
-            'metadata': before,
-            'file_contents': file_contents
-        }
+        to_be_added = {'metadata': before, 'file_contents': file_contents}
         headers = werkzeug.datastructures.Headers()
         headers['Content-Type'] = 'application/json; charset=utf-8'
         response = client.post(
@@ -203,9 +199,8 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
                 assert k in before and before[k] == v
 
         with app.test_request_context():
-            endpoint = flask.url_for(
-                'texts.get_text',
-                object_id=data['object_id'])
+            endpoint = flask.url_for('texts.get_text',
+                                     object_id=data['object_id'])
         response = client.delete(endpoint)
         assert response.status_code == 204
         response = client.get(endpoint)
