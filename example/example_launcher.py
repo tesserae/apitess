@@ -16,7 +16,6 @@ def raise_exit(*args):
 for sig in [signal.SIGHUP, signal.SIGINT, signal.SIGTERM]:
     signal.signal(sig, raise_exit)
 
-
 freeze_support()
 db_config = {
     'MONGO_HOSTNAME': 'localhost',
@@ -41,3 +40,6 @@ atexit.register(a_searcher.cleanup)
 atexit.register(ingest_queue.cleanup)
 
 app = apitess.create_app(a_searcher, ingest_queue, db_config)
+
+if __name__ == '__main__':
+    app.run()
