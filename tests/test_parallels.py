@@ -267,3 +267,50 @@ def test_search_bad_request(populated_app, populated_client):
             assert k2 in rv1
             assert rv1[k2] == v2
     assert 'method' in data['message'].split(': ')[-1].split(',')
+
+
+def test_search_no_body(populated_app, populated_client):
+    with populated_app.test_request_context():
+        populated_app.preprocess_request()
+        submit_endpoint = flask.url_for('parallels.submit_search')
+    headers = werkzeug.datastructures.Headers()
+    headers['Content-Type'] = 'application/json; charset=utf-8'
+    response = populated_client.post(submit_endpoint,
+                                     data=None,
+                                     headers=headers)
+    assert response.status_code == 400
+    data = response.get_json()
+    assert data['data'] == ''
+    assert data['message'] == 'No search parameters were sent with the request'
+
+
+def test_search_unparsable_body(populated_app, populated_client):
+    with populated_app.test_request_context():
+        populated_app.preprocess_request()
+        submit_endpoint = flask.url_for('parallels.submit_search')
+    headers = werkzeug.datastructures.Headers()
+    headers['Content-Type'] = 'application/json; charset=utf-8'
+    unparsable = 'Bound to fail'
+    response = populated_client.post(submit_endpoint,
+                                     data=unparsable,
+                                     headers=headers)
+    assert response.status_code == 400
+    data = response.get_json()
+    assert data['data'] == unparsable
+    assert data['message'].startswith('Unable to parse search parameters')
+
+
+def test_search_bad_content_type(populated_app, populated_client):
+    with populated_app.test_request_context():
+        populated_app.preprocess_request()
+        submit_endpoint = flask.url_for('parallels.submit_search')
+    headers = werkzeug.datastructures.Headers()
+    original_data = '{"garbage": "data"}'
+    response = populated_client.post(submit_endpoint,
+                                     data=original_data,
+                                     headers=headers)
+    print(response.headers['Content-Type'])
+    assert response.status_code == 400
+    data = response.get_json()
+    assert data['data'] == original_data
+    assert data['message'].startswith('Unable to parse search parameters')
