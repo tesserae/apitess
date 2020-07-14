@@ -18,18 +18,26 @@ def test_search_search_retrieval(populated_app, populated_client):
     headers = werkzeug.datastructures.Headers()
     headers['Content-Type'] = 'application/json; charset=utf-8'
     search_query = {
-        'source': {'object_id': str(found_texts[0].id), 'units': 'line'},
-        'target': {'object_id': str(found_texts[1].id), 'units': 'line'},
+        'source': {
+            'object_id': str(found_texts[0].id),
+            'units': 'line'
+        },
+        'target': {
+            'object_id': str(found_texts[1].id),
+            'units': 'line'
+        },
         'method': {
             'name': 'original',
             'feature': 'lemmata',
             'stopwords': ['et', 'qui', 'quis'],
             'freq_basis': 'corpus',
             'max_distance': 6,
-            'distance_basis': 'frequency'}}
-    response = populated_client.post(
-        submit_endpoint,
-        data=json.dumps(search_query), headers=headers)
+            'distance_basis': 'frequency'
+        }
+    }
+    response = populated_client.post(submit_endpoint,
+                                     data=json.dumps(search_query),
+                                     headers=headers)
     assert response.status_code == 201
     assert 'Location' in response.headers
     search_results_id = response.headers['Location'].split('/')[-2]
@@ -38,9 +46,8 @@ def test_search_search_retrieval(populated_app, populated_client):
     print('Waiting for search to complete')
     with populated_app.test_request_context():
         populated_app.preprocess_request()
-        status_endpoint = flask.url_for(
-            'parallels.retrieve_status',
-            results_id=search_results_id)
+        status_endpoint = flask.url_for('parallels.retrieve_status',
+                                        results_id=search_results_id)
     response = populated_client.get(status_endpoint)
     while response.status_code == 404:
         time.sleep(0.1)
@@ -62,9 +69,8 @@ def test_search_search_retrieval(populated_app, populated_client):
     # make sure we can retrieve results
     print('Retrieving search results')
     with populated_app.test_request_context():
-        retrieve_endpoint = flask.url_for(
-            'parallels.retrieve_results',
-            results_id=search_results_id)
+        retrieve_endpoint = flask.url_for('parallels.retrieve_results',
+                                          results_id=search_results_id)
     response = populated_client.get(retrieve_endpoint)
     assert response.status_code == 200
     data = flask.json.loads(
@@ -74,20 +80,28 @@ def test_search_search_retrieval(populated_app, populated_client):
 
     # make sure search results were cached
     print('Verifying that search results were cached')
-    response = populated_client.post(
-        submit_endpoint,
-        data=json.dumps(search_query), headers=headers)
+    response = populated_client.post(submit_endpoint,
+                                     data=json.dumps(search_query),
+                                     headers=headers)
     assert response.status_code == 303
     assert 'Location' in response.headers
     assert search_results_id == response.headers['Location'].split('/')[-2]
 
+    # make sure redirect URL to cached results works
+    redirect_url = response.headers['Location']
+    response = populated_client.get(redirect_url)
+    assert response.status_code == 200
+    data = flask.json.loads(
+        gzip.decompress(response.get_data()).decode('utf-8'))
+    assert 'parallels' in data
+    assert 'max_score' in data
+    assert 'total_count' in data
+
     # try various paging options
     print('Retrieve everything')
     with populated_app.test_request_context():
-        retrieve_endpoint = flask.url_for(
-            'parallels.retrieve_results',
-            results_id=search_results_id
-        )
+        retrieve_endpoint = flask.url_for('parallels.retrieve_results',
+                                          results_id=search_results_id)
     response = populated_client.get(retrieve_endpoint)
     assert response.status_code == 200
     data = flask.json.loads(
@@ -101,14 +115,12 @@ def test_search_search_retrieval(populated_app, populated_client):
 
     print('Retrieving by score')
     with populated_app.test_request_context():
-        retrieve_endpoint = flask.url_for(
-            'parallels.retrieve_results',
-            results_id=search_results_id,
-            sort_by='score',
-            sort_order='descending',
-            per_page='3',
-            page_number='0'
-        )
+        retrieve_endpoint = flask.url_for('parallels.retrieve_results',
+                                          results_id=search_results_id,
+                                          sort_by='score',
+                                          sort_order='descending',
+                                          per_page='3',
+                                          page_number='0')
     response = populated_client.get(retrieve_endpoint)
     assert response.status_code == 200
     data = flask.json.loads(
@@ -123,14 +135,12 @@ def test_search_search_retrieval(populated_app, populated_client):
 
     print('Retrieving by source_tag')
     with populated_app.test_request_context():
-        retrieve_endpoint = flask.url_for(
-            'parallels.retrieve_results',
-            results_id=search_results_id,
-            sort_by='source_tag',
-            sort_order='ascending',
-            per_page='3',
-            page_number='0'
-        )
+        retrieve_endpoint = flask.url_for('parallels.retrieve_results',
+                                          results_id=search_results_id,
+                                          sort_by='source_tag',
+                                          sort_order='ascending',
+                                          per_page='3',
+                                          page_number='0')
     response = populated_client.get(retrieve_endpoint)
     assert response.status_code == 200
     data = flask.json.loads(
@@ -145,14 +155,12 @@ def test_search_search_retrieval(populated_app, populated_client):
             tuple(later['source_tag'].split()[-1].split('.'))
     print('Try ridiculous page')
     with populated_app.test_request_context():
-        retrieve_endpoint = flask.url_for(
-            'parallels.retrieve_results',
-            results_id=search_results_id,
-            sort_by='target_tag',
-            sort_order='descending',
-            per_page='999999999',
-            page_number='999999999'
-        )
+        retrieve_endpoint = flask.url_for('parallels.retrieve_results',
+                                          results_id=search_results_id,
+                                          sort_by='target_tag',
+                                          sort_order='descending',
+                                          per_page='999999999',
+                                          page_number='999999999')
     response = populated_client.get(retrieve_endpoint)
     assert response.status_code == 200
     data = flask.json.loads(
@@ -173,8 +181,14 @@ def test_bad_feature_search(populated_app, populated_client):
     headers = werkzeug.datastructures.Headers()
     headers['Content-Type'] = 'application/json; charset=utf-8'
     search_query = {
-        'source': {'object_id': str(found_texts[0].id), 'units': 'line'},
-        'target': {'object_id': str(found_texts[1].id), 'units': 'line'},
+        'source': {
+            'object_id': str(found_texts[0].id),
+            'units': 'line'
+        },
+        'target': {
+            'object_id': str(found_texts[1].id),
+            'units': 'line'
+        },
         'method': {
             'name': 'original',
             # !!! bad feature
@@ -182,10 +196,12 @@ def test_bad_feature_search(populated_app, populated_client):
             'stopwords': ['et', 'qui', 'quis'],
             'freq_basis': 'corpus',
             'max_distance': 6,
-            'distance_basis': 'frequency'}}
-    response = populated_client.post(
-        submit_endpoint,
-        data=json.dumps(search_query), headers=headers)
+            'distance_basis': 'frequency'
+        }
+    }
+    response = populated_client.post(submit_endpoint,
+                                     data=json.dumps(search_query),
+                                     headers=headers)
     assert response.status_code == 201
     assert 'Location' in response.headers
     results_id = response.headers['Location'].split('/')[-2]
@@ -193,9 +209,8 @@ def test_bad_feature_search(populated_app, populated_client):
     # make sure bad feature was caught
     with populated_app.test_request_context():
         populated_app.preprocess_request()
-        status_endpoint = flask.url_for(
-            'parallels.retrieve_status',
-            results_id=results_id)
+        status_endpoint = flask.url_for('parallels.retrieve_status',
+                                        results_id=results_id)
     response = populated_client.get(status_endpoint)
     while response.status_code == 404:
         time.sleep(0.1)
@@ -216,9 +231,8 @@ def test_bad_feature_search(populated_app, populated_client):
 def test_non_existent_results(populated_app, populated_client):
     with populated_app.test_request_context():
         populated_app.preprocess_request()
-        retrieve_endpoint = flask.url_for(
-            'parallels.retrieve_results',
-            results_id='does-not-exist')
+        retrieve_endpoint = flask.url_for('parallels.retrieve_results',
+                                          results_id='does-not-exist')
     response = populated_client.get(retrieve_endpoint)
     assert response.status_code == 404
 
@@ -232,12 +246,18 @@ def test_search_bad_request(populated_app, populated_client):
     headers = werkzeug.datastructures.Headers()
     headers['Content-Type'] = 'application/json; charset=utf-8'
     search_query = {
-        'source': {'object_id': str(found_texts[0].id), 'units': 'line'},
-        'target': {'object_id': str(found_texts[1].id), 'units': 'line'},
+        'source': {
+            'object_id': str(found_texts[0].id),
+            'units': 'line'
+        },
+        'target': {
+            'object_id': str(found_texts[1].id),
+            'units': 'line'
+        },
     }
-    response = populated_client.post(
-        submit_endpoint,
-        data=json.dumps(search_query), headers=headers)
+    response = populated_client.post(submit_endpoint,
+                                     data=json.dumps(search_query),
+                                     headers=headers)
     assert response.status_code == 400
     data = response.get_json()
     for k1, v1 in search_query.items():
