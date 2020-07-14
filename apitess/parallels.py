@@ -7,7 +7,6 @@ import uuid
 from bson.objectid import ObjectId
 import flask
 from flask_cors import cross_origin
-from werkzeug.exceptions import BadRequest
 
 import tesserae.db.entities
 from tesserae.matchers.text_options import TextOptions
@@ -52,26 +51,9 @@ def _validate_units(specs, name):
 @cross_origin(expose_headers='Location')
 def submit_search():
     """Run a Tesserae search"""
-    if not flask.request.data:
-        return apitess.errors.error(
-            400,
-            data='',
-            message=('No search parameters were sent with the request'))
-    try:
-        received = flask.request.get_json()
-    except BadRequest:
-        return apitess.errors.error(
-            400,
-            data=flask.request.data.decode('utf-8'),
-            message=('Unable to parse search parameters; perhaps the JSON '
-                     'data is malformed'))
-    if not received:
-        return apitess.errors.error(
-            400,
-            data=flask.request.data.decode('utf-8'),
-            message=('Unable to parse search parameters; perhaps the '
-                     'Content-Type header was not set correctly to '
-                     '"application/json; charset=utf-8"'))
+    error_response, received = apitess.errors.check_body(flask.request)
+    if error_response:
+        return error_response
     requireds = {'source', 'target', 'method'}
     miss_error = apitess.errors.check_requireds(received, requireds)
     if miss_error:

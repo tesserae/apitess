@@ -82,7 +82,9 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
     @bp.route('/', methods=['POST'])
     def add_text():
         os.makedirs(os.path.abspath(FILE_UPLOAD_DIR), exist_ok=True)
-        received = flask.request.get_json()
+        error_response, received = apitess.errors.check_body(flask.request)
+        if error_response:
+            return error_response
         requireds = {'metadata', 'file_contents'}
         error_response = apitess.errors.check_requireds(received, requireds)
         if error_response:
