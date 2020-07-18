@@ -195,30 +195,33 @@ This is the point where you will need a Unix terminal with `curl` installed.
 (If you do not have `curl` installed on your system, a quick web search with "install curl" and your operating system should yield webpages with helpful instructions.)
 Once you've installed `curl` and have your terminal open, you can submit the query with the following command (after you've substituted `<aeneid_id>` and `<bellum_id>`):
 ```bash
-curl -i -X POST "https://tess-new.caset.buffalo.edu/api/parallels/" -d '{ \
-  "source": { \
-    "object_id": <aeneid_id>, \
-    "units": "line" \
-  }, \
-  "target": { \
-    "object_id": <bellum_id>, \
-    "units": "line" \
-  }, \
-  "method": { \
-    "name": "original", \
-    "feature": "lemma", \
-    "stopwords": [ \
-      "qui", "quis", "sum", "et", "in", \
-      "is", "non", "hic", "ego", "ut" \
-    ], \
-    "freq_basis": "corpus", \
-    "max_distance": 10, \
-    "distance_basis": "frequency" \
-  } \
-}'
+curl -i -X POST -H "Content-Type: application/json; charset=utf-8" \
+"https://tess-new.caset.buffalo.edu/api/parallels/" \
+--data-binary @- << EOF
+{
+  "source": {
+    "object_id": <aeneid_id>,
+    "units": "line"
+  },
+  "target": {
+    "object_id": <bellum_id>,
+    "units": "line"
+  },
+  "method": {
+    "name": "original",
+    "feature": "lemmata",
+    "stopwords": [
+      "qui", "quis", "sum", "et", "in",
+      "is", "non", "hic", "ego", "ut"
+    ],
+    "freq_basis": "corpus",
+    "max_distance": 999,
+    "distance_basis": "frequency"
+  }
+}
+EOF
 ```
-Note that the backslashes (`\`) tell the terminal that the command is continuing onto the next line.
-So if you blindly copied-and-pasted the above into your terminal, you'll have trouble fixing the parts that need to be substituted.
+If you blindly copied-and-pasted the above into your terminal, you'll probably have trouble fixing the parts that need to be substituted.
 You may want to copy-and-paste the above into your favorite text editor, make the required substitutions, and then copy-and-paste from your text editor to the command line.
 
 If everything is working correctly, you should see one of two things.
