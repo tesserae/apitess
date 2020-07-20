@@ -19,7 +19,7 @@ bp = flask.Blueprint('texts', __name__, url_prefix='/texts')
 @cross_origin()
 def query_texts():
     """Consult database for text metadata"""
-    alloweds = {'author', 'language', 'title'}
+    alloweds = {'author', 'language', 'title', 'cts_urn'}
     filters = {}
     for allowed in alloweds:
         grabbed = flask.request.args.get(allowed, None)
