@@ -19,12 +19,24 @@ bp = flask.Blueprint('texts', __name__, url_prefix='/texts')
 @cross_origin()
 def query_texts():
     """Consult database for text metadata"""
-    alloweds = {'author', 'is_prose', 'language', 'title'}
+    alloweds = {'author', 'language', 'title', 'cts_urn'}
     filters = {}
     for allowed in alloweds:
         grabbed = flask.request.args.get(allowed, None)
         if grabbed:
             filters[allowed] = grabbed
+    grabbed = flask.request.args.get('is_prose', None)
+    if grabbed is not None:
+        lower_grabbed = grabbed.lower()
+        if lower_grabbed == 'true':
+            filters['is_prose'] = True
+        elif lower_grabbed == 'false':
+            filters['is_prose'] = False
+        else:
+            return apitess.errors.error(
+                400,
+                message=('"is_prose" should be set to either "true" or '
+                         f'"false"; (it was set to {grabbed})'))
     before_val = flask.request.args.get('before', None)
     after_val = flask.request.args.get('after', None)
     try:

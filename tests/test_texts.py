@@ -31,6 +31,72 @@ def test_query_texts_with_fields(populated_app, populated_client):
         assert text['language'] == lang
 
 
+def test_query_texts_is_prose(populated_app, populated_client):
+    # gather true statistics
+    with populated_app.test_request_context():
+        endpoint = flask.url_for('texts.query_texts')
+    response = populated_client.get(endpoint)
+    assert response.status_code == 200
+    data = response.get_json()
+    assert 'texts' in data and isinstance(data['texts'], list) and \
+        len(data['texts']) > 0
+    prose_count = len([a for a in data['texts'] if a['is_prose']])
+    not_prose_count = len([a for a in data['texts'] if not a['is_prose']])
+
+    # make sure prose works are found
+    with populated_app.test_request_context():
+        endpoint = flask.url_for('texts.query_texts', is_prose='true')
+    response = populated_client.get(endpoint)
+    assert response.status_code == 200
+    data = response.get_json()
+    assert 'texts' in data and isinstance(data['texts'], list) and \
+        len(data['texts']) == prose_count
+    for text in data['texts']:
+        assert text['is_prose']
+
+    # make sure only non-prose works are found
+    with populated_app.test_request_context():
+        endpoint = flask.url_for('texts.query_texts', is_prose='false')
+    response = populated_client.get(endpoint)
+    assert response.status_code == 200
+    data = response.get_json()
+    assert 'texts' in data and isinstance(data['texts'], list) and \
+        len(data['texts']) == not_prose_count
+    for text in data['texts']:
+        assert not text['is_prose']
+
+    # make sure garbage value returns an error
+    with populated_app.test_request_context():
+        endpoint = flask.url_for('texts.query_texts', is_prose='garbage')
+    response = populated_client.get(endpoint)
+    assert response.status_code == 400
+
+
+def test_query_texts_cts_urn(populated_app, populated_client):
+    # gather available texts
+    with populated_app.test_request_context():
+        endpoint = flask.url_for('texts.query_texts')
+    response = populated_client.get(endpoint)
+    assert response.status_code == 200
+    data = response.get_json()
+    assert 'texts' in data and isinstance(data['texts'], list) and \
+        len(data['texts']) > 0
+    chosen = data['texts'][0]
+
+    # make sure that text can be found by CTS URN
+    cts_urn = chosen['cts_urn']
+    with populated_app.test_request_context():
+        endpoint = flask.url_for('texts.query_texts', cts_urn=cts_urn)
+    response = populated_client.get(endpoint)
+    assert response.status_code == 200
+    data = response.get_json()
+    assert 'texts' in data and isinstance(data['texts'], list) and \
+        len(data['texts']) > 0
+    found = data['texts'][0]
+    for key, value in chosen.items():
+        assert key in found and found[key] == value
+
+
 if os.environ.get('ADMIN_INSTANCE') == 'true':
 
     def test_add_and_remove_text(app, client):
