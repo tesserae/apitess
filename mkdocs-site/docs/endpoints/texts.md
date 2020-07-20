@@ -15,7 +15,7 @@ The following fields may be used in a URL query to filter the response:
 | `author`|  Only database information for texts with the specified author is returned.|
 | `after`|  Only database information for texts written/published after the specified year is returned; use negative integers for BCE dates.|
 | `before`|  Only database information for texts written/published before the specified year is returned; use negative integers for BCE dates.|
-| `is_prose`|  If set to "true", only database for information for texts considered prose works is returned.|
+| `is_prose`|  If set to "true", only database information for texts considered prose works is returned; if set to "false", only database information for texts not considered prose works is returned.|
 | `language`|  Only database information for texts with the specified language is returned.|
 | `title`|  Only database information for texts with the specified title is returned.|
 
