@@ -7,18 +7,9 @@ from flask_cors import cross_origin
 import apitess.errors
 import apitess.utils
 import tesserae.db.entities
-from tesserae.matchers.sparse_encoding import SparseMatrixSearch
+from tesserae.utils.stopwords import create_stoplist, get_stoplist_tokens
 
 bp = flask.Blueprint('stopwords', __name__, url_prefix='/stopwords')
-
-
-def indices_to_tokens(connection, stopword_indices, language, feature):
-    results = connection.find(tesserae.db.entities.Feature.collection,
-                              index=[int(i) for i in stopword_indices],
-                              language=language,
-                              feature=feature)
-    results = {f.index: f.token for f in results}
-    return [results[i] for i in stopword_indices]
 
 
 @bp.route('/')
@@ -40,12 +31,11 @@ def query_stopwords():
                   for k, v in flask.request.args.items()},
             message='"list_size" must be an integer')
 
-    searcher = SparseMatrixSearch(flask.g.db)
     # language takes precedence over works
     language = flask.request.args.get('language', None)
     if language:
-        stopword_indices = searcher.create_stoplist(list_size, feature,
-                                                    language)
+        stopword_indices = create_stoplist(flask.g.db, list_size, feature,
+                                           language)
         if len(stopword_indices) == 0:
             return apitess.errors.error(
                 400,
@@ -55,7 +45,8 @@ def query_stopwords():
                 .format(feature, language))
         return flask.jsonify({
             'stopwords':
-            indices_to_tokens(flask.g.db, stopword_indices, language, feature)
+            get_stoplist_tokens(flask.g.db, stopword_indices, feature,
+                                language)
         })
 
     works = flask.request.args.get('works', None)
@@ -78,14 +69,16 @@ def query_stopwords():
                           for k, v in flask.request.args.items()},
                     message=('The following works could not be found '
                              f'in the database: {not_found}'))
-        stopword_indices = searcher.create_stoplist(
+        stopword_indices = create_stoplist(
+            flask.g.db,
             list_size,
             feature,
             text_results[0].language,
             basis=[str(t.id) for t in text_results])
         return flask.jsonify({
             'stopwords':
-            indices_to_tokens(flask.g.db, stopword_indices, language, feature)
+            get_stoplist_tokens(flask.g.db, stopword_indices, feature,
+                                language)
         })
 
     # if we get here, then we didn't get enough information
