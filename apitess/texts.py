@@ -10,7 +10,6 @@ from flask_cors import cross_origin
 import apitess.errors
 from apitess.utils import fix_id
 import tesserae.db.entities
-import tesserae.utils
 
 bp = flask.Blueprint('texts', __name__, url_prefix='/texts')
 
@@ -88,6 +87,8 @@ def get_text(object_id):
 
 
 if os.environ.get('ADMIN_INSTANCE') == 'true':
+    from tesserae.utils.delete import remove_text
+    from tesserae.utils.ingest import submit_ingest
     FILE_UPLOAD_DIR = os.path.join(os.path.expanduser('~'), 'tess_data',
                                    'tessfiles')
 
@@ -128,7 +129,7 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
         text_to_add = tesserae.db.entities.Text(**text)
         try:
             # add text to database
-            insert_id = tesserae.utils.ingest.submit_ingest(
+            insert_id = submit_ingest(
                 flask.g.ingest_queue, flask.g.db, text_to_add, file_location)
         except Exception as e:
             return apitess.errors.error(
@@ -196,8 +197,7 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
                 object_id=object_id,
                 message=(f'No text with the provided identifier ({object_id}) '
                          'was found in the database.'))
-        # TODO check for proper deletion?
-        flask.g.db.delete(found).deleted_count
+        remove_text(flask.g.db, found[0])
         response = flask.Response()
         response.status_code = 204
         response.status = '204 No Content'
