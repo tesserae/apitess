@@ -192,7 +192,7 @@ def multitext_app():
             texts_to_add = _get_text_metadata()
             for t in texts_to_add:
                 cur_text = Text.json_decode(t)
-                ingest_text(flask.g.db, cur_text)
+                ingest_text(flask.g.db, cur_text, enable_multitext=True)
 
         yield cur_app
 
