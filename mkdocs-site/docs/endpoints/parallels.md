@@ -50,7 +50,7 @@ curl -i -X POST -H "Content-Type: application/json; charset=utf-8" \
   },
   "method": {
     "name": "original",
-    "feature": "lemma",
+    "feature": "lemmata",
     "stopwords": [
       "qui", "quis", "sum", "et", "in",
       "is", "non", "hic", "ego", "ut"
