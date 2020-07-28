@@ -210,7 +210,7 @@ if os.environ.get('ADMIN_INSTANCE') == 'true':
         with app.test_request_context():
             endpoint = flask.url_for('texts.get_text', object_id=new_obj_id)
         before = client.get(endpoint).get_json()
-        while before['ingestion_status'] != TextStatus.DONE:
+        while before['ingestion_status'][0] != TextStatus.DONE:
             time.sleep(0.1)
             before = client.get(endpoint).get_json()
 
