@@ -90,6 +90,7 @@ The original Tesserae scoring algorithm can be specified for use at the `/parall
 |`"freq_basis"`|Either `"texts"` or `"corpus"`.  If set to `"texts"`, scoring will compute frequency of a given token based on the text in which it is found; if set to `"corpus"`, frequency of a given token will be computed from all texts available in the Tesserae database of the same language as the text in which the token is found.  For more explanation, refer to [Reference Frequences](#reference-frequencies).|
 |`"max_distance"`|A positive integer marking the maximum distance separating matching tokens within a span.  In other words, $d_s + d_t$ (from the equation in [Compute Score](#compute-score)) must be less than the maximum distance specified in order for a given source and target span to count as a parallel.  Setting this to some large value (like 999 when comparing lines of poetry) effectively makes this parameter unrestrictive.|
 |`"distance_basis"`|A string describing which matching tokens will be used to calculate distance.  For more details, see [Distance Basis](#distance-basis).|
+|`"min_score"`|A floating point value indicating a minimum score a match must have in order to be kept and reported. This is an optional value, and its default value is 0.|
 
 ### Features
 

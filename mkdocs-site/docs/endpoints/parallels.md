@@ -57,7 +57,8 @@ curl -i -X POST -H "Content-Type: application/json; charset=utf-8" \
     ],
     "freq_basis": "corpus",
     "max_distance": 10,
-    "distance_basis": "frequency"
+    "distance_basis": "frequency",
+    "min_score": 0
   }
 }
 EOF
