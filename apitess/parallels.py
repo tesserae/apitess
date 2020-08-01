@@ -115,6 +115,18 @@ def submit_search():
             message=('The specified method is missing the following required '
                      'key(s): {}'.format(', '.join(missing))))
 
+    if 'min_score' in method:
+        try:
+            method['min_score'] = float(method['min_score'])
+        except ValueError:
+            return apitess.error.error(
+                400,
+                data=received,
+                message=(f'Specified minimum score ({method["min_score"]}) '
+                         'could not be converted into a number'))
+    else:
+        method['min_score'] = 0
+
     results_id = tesserae.utils.search.check_cache(flask.g.db, source, target,
                                                    method)
     if results_id:
@@ -150,7 +162,7 @@ def submit_search():
                 'freq_basis': method['freq_basis'],
                 'max_distance': method['max_distance'],
                 'distance_basis': method['distance_basis'],
-                'min_score': 0
+                'min_score': method['min_score']
             })
     except queue.Full:
         return apitess.error.error(
