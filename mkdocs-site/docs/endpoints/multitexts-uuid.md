@@ -27,8 +27,16 @@ A JSON object in the `"multiresults"` list contains the following keys:
 |---|---|
 |`"match_id"`|A string representing the object_id of a match in the search results used as the base of the multitext query.|
 |`"bigram"`|A list containing two strings, which are a pair of matching words associated with the match associated with the value of `"match_id"`.|
-|`"units"`|A list of strings, where each string represents an object_id of a unit from the corpus of texts specified in the multitext query.|
-|`"scores"`|A list of numbers representing Tesserae scores of individual units.  The ith score in `"scores"` is the score of the ith unit in `"units"`.|
+|`"units"`|A list of JSON objects, where each JSON object represents a unit from the corpus of texts specified in the multitext query.|
+
+A JSON object in the `"units"` list contains the following keys:
+
+|Key|Value|
+|---|---|
+|`"unit_id"`|A string representing the object_id of the unit.|
+|`"tag"`|A string representing the locus of the unit.|
+|`"snippet"`|A string representing displaying the text of the unit.|
+|`"score"`|A number representing the Tesserae score of the unit.|
 
 > NB:  A successful response body will be compressed with gzip.
 
