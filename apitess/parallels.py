@@ -97,7 +97,11 @@ def submit_search():
         'original': {
             'name', 'feature', 'stopwords', 'freq_basis', 'max_distance',
             'distance_basis'
-        }
+        },
+        'greek_to_latin': {
+            'name', 'greek_stopwords', 'latin_stopwords', 'freq_basis',
+            'max_distance', 'distance_basis'
+        },
     }
     method = received['method']
     if 'name' not in method:
@@ -153,17 +157,16 @@ def submit_search():
                                                 results_id, '')
 
     try:
-        tesserae.utils.search.submit_search(
-            flask.g.jobqueue, flask.g.db, results_id, method['name'], {
-                'source': TextOptions(source_text, source['units']),
-                'target': TextOptions(target_text, target['units']),
-                'feature': method['feature'],
-                'stopwords': method['stopwords'],
-                'freq_basis': method['freq_basis'],
-                'max_distance': method['max_distance'],
-                'distance_basis': method['distance_basis'],
-                'min_score': method['min_score']
-            })
+        search_params = {
+            'source': TextOptions(source_text, source['units']),
+            'target': TextOptions(target_text, target['units']),
+        }
+        search_params.update(
+            {key: method[key]
+             for key in method if key != 'name'})
+        tesserae.utils.search.submit_search(flask.g.jobqueue, flask.g.db,
+                                            results_id, method['name'],
+                                            search_params)
     except queue.Full:
         return apitess.error.error(
             500,

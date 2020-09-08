@@ -14,12 +14,10 @@ from tesserae.utils.delete import obliterate
 from tesserae.utils.coordinate import JobQueue
 from tesserae.utils.multitext import BigramWriter
 
-
 # Write bigram databases to temporary directory
 BigramWriter.BIGRAM_DB_DIR = tempfile.mkdtemp()
 # Write file uploads to temporary directory
 apitess.texts.FILE_UPLOAD_DIR = tempfile.mkdtemp()
-
 
 db_config = {
     'MONGO_HOSTNAME': 'localhost',
@@ -70,20 +68,26 @@ def _get_text_metadata():
             'language': 'latin',
             'year': -19,
             'unit_types': ['line', 'phrase'],
-            'path': str(Path(__file__).resolve().parent.joinpath(
-                'ztest.aen.tess')),
+            'path':
+            str(Path(__file__).resolve().parent.joinpath('ztest.aen.tess')),
             'is_prose': False,
         },
         {
-            'cts_urn': 'urn:cts:latinLit:phi0917.phi001',
-            'title': 'zbellum civile',
-            'author': 'zlucan',
-            'language': 'latin',
-            'year': 65,
+            'cts_urn':
+            'urn:cts:latinLit:phi0917.phi001',
+            'title':
+            'zbellum civile',
+            'author':
+            'zlucan',
+            'language':
+            'latin',
+            'year':
+            65,
             'unit_types': ['line', 'phrase'],
-            'path': str(Path(__file__).resolve().parent.joinpath(
-                'ztest.phar.tess')),
-            'is_prose': False,
+            'path':
+            str(Path(__file__).resolve().parent.joinpath('ztest.phar.tess')),
+            'is_prose':
+            False,
         },
         {
             'cts_urn': 'urn:cts:greekLit:tlg0012.tlg001',
@@ -92,20 +96,49 @@ def _get_text_metadata():
             'language': 'greek',
             'year': -750,
             'unit_types': ['line', 'phrase'],
-            'path': str(Path(__file__).resolve().parent.joinpath(
-                'ztest.il.tess')),
+            'path':
+            str(Path(__file__).resolve().parent.joinpath('ztest.il.tess')),
             'is_prose': False,
         },
         {
-            'cts_urn': 'urn:cts:greekLit:tlg0059.tlg023.perseus-grc2',
-            'title': 'zgorgias',
-            'author': 'zplato',
-            'language': 'greek',
-            'year': -283,
+            'cts_urn':
+            'urn:cts:greekLit:tlg0059.tlg023.perseus-grc2',
+            'title':
+            'zgorgias',
+            'author':
+            'zplato',
+            'language':
+            'greek',
+            'year':
+            -283,
             'unit_types': ['line', 'phrase'],
-            'path': str(Path(__file__).resolve().parent.joinpath(
-                'ztest.gorg.tess')),
-            'is_prose': True,
+            'path':
+            str(Path(__file__).resolve().parent.joinpath('ztest.gorg.tess')),
+            'is_prose':
+            True,
+        },
+        {
+            'title': 'miniacharnians',
+            'author': 'miniaristophanes',
+            'language': 'greek',
+            'year': -425,
+            'path':
+            str(Path(__file__).resolve().parent.joinpath('mini.ach.tess')),
+            'is_prose': False
+        },
+        {
+            'title':
+            'minipunica',
+            'author':
+            'minisilius',
+            'language':
+            'latin',
+            'year':
+            96,
+            'path':
+            str(Path(__file__).resolve().parent.joinpath('mini.punica.tess')),
+            'is_prose':
+            False
         },
     ]
 
