@@ -87,7 +87,7 @@ The original Tesserae scoring algorithm can be specified for use at the `/parall
 |`"name"`|Set to `"original"`.|
 |`"feature"`|A string representing the linguistic feature to use for matching and scoring.  For more details, see [Features](#features).|
 |`"stopwords"`|A list of strings, where each string represents a feature that should be ignored during matching.  This is useful, for example, when you want to ignore common function words.|
-|`"freq_basis"`|Either `"texts"` or `"corpus"`.  If set to `"texts"`, scoring will compute frequency of a given token based on the text in which it is found; if set to `"corpus"`, frequency of a given token will be computed from all texts available in the Tesserae database of the same language as the text in which the token is found.  For more explanation, refer to [Reference Frequences](#reference-frequencies).|
+|`"freq_basis"`|Either `"texts"` or `"corpus"`.  If set to `"texts"`, scoring will compute frequency of a given token based on the text in which it is found; if set to `"corpus"`, frequency of a given token will be computed from all texts available in the Tesserae database of the same language as the text in which the token is found.  For more explanation, refer to [Reference Frequencies](#reference-frequencies).|
 |`"max_distance"`|A positive integer marking the maximum distance separating matching tokens within a span.  In other words, $d_s + d_t$ (from the equation in [Compute Score](#compute-score)) must be less than the maximum distance specified in order for a given source and target span to count as a parallel.  Setting this to some large value (like 999 when comparing lines of poetry) effectively makes this parameter unrestrictive.|
 |`"distance_basis"`|A string describing which matching tokens will be used to calculate distance.  For more details, see [Distance Basis](#distance-basis).|
 |`"min_score"`|A floating point value indicating a minimum score a match must have in order to be kept and reported. This is an optional value, and its default value is 0.|
@@ -109,3 +109,24 @@ As noted earlier, the distance between tokens is important to how the score for 
 |---|---|
 |`"span"`|The two farthest apart matching tokens within the span are used; $d_t>0$ and $d_s>0$ in this case.|
 |`"frequency"`|The two lowest frequency tokens within the span are used. $d_t>0$ and $d_s>0$ in this case.|
+
+## Greek to Latin
+
+It is possible to adapt the original Tesserae search to perform cross-language
+search. A Greek to Latin search has been developed and can be used at the
+`/parallels/` endpoint. Take care to specify the Greek work as the source text
+and a Latin work as the target text when using this method.
+
+### Method Parameterization
+
+The Greek to Latin Tesserae scoring algorithm can be specified for use at the `/parallels/` endpoint as a JSON object with the following keys:
+
+|Key|Value|
+|---|---|
+|`"name"`|Set to `"greek_to_latin"`.|
+|`"greek_stopwords"`|A list of strings, where each string represents a Greek lemma that should be ignored during matching.  This is useful, for example, when you want to ignore common function words.|
+|`"latin_stopwords"`|A list of strings, where each string represents a Latin lemma that should be ignored during matching.  This is useful, for example, when you want to ignore common function words.|
+|`"freq_basis"`|Either `"texts"` or `"corpus"`.  If set to `"texts"`, scoring will compute frequency of a given token based on the text in which it is found; if set to `"corpus"`, frequency of a given token will be computed from all texts available in the Tesserae database of the same language as the text in which the token is found.  For more explanation, refer to [Reference Frequencies](#reference-frequencies).|
+|`"max_distance"`|A positive integer marking the maximum distance separating matching tokens within a span.  In other words, $d_s + d_t$ (from the equation in [Compute Score](#compute-score)) must be less than the maximum distance specified in order for a given source and target span to count as a parallel.  Setting this to some large value (like 999 when comparing lines of poetry) effectively makes this parameter unrestrictive.|
+|`"distance_basis"`|A string describing which matching tokens will be used to calculate distance.  For more details, see [Distance Basis](#distance-basis).|
+|`"min_score"`|A floating point value indicating a minimum score a match must have in order to be kept and reported. This is an optional value, and its default value is 0.|
