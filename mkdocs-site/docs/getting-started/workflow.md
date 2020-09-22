@@ -42,6 +42,7 @@ Now, the user composes these decisions into a JSON object that looks something l
   "name": "original",
   "feature": "lemmata",
   "stopwords": [...],
+  "score_basis": "lemmata",
   "freq_basis": "corpus",
   "max_distance": 100,
   "distance_basis": "frequency"
@@ -64,6 +65,7 @@ With all of these decisions made, the user is now ready to compose the request o
     "name": "original",
     "feature": "lemmata",
     "stopwords": [...],
+    "score_basis": "lemmata",
     "freq_basis": "corpus",
     "max_distance": 100,
     "distance_basis": "frequency"

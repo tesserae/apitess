@@ -55,6 +55,7 @@ curl -i -X POST -H "Content-Type: application/json; charset=utf-8" \
       "qui", "quis", "sum", "et", "in",
       "is", "non", "hic", "ego", "ut"
     ],
+    "score_basis": "lemmata",
     "freq_basis": "corpus",
     "max_distance": 10,
     "distance_basis": "frequency",
