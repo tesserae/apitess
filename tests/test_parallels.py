@@ -118,6 +118,7 @@ def test_min_score(populated_app, populated_client):
             'name': 'original',
             'feature': 'lemmata',
             'stopwords': ['et', 'qui', 'quis'],
+            'score_basis': 'lemmata',
             'freq_basis': 'corpus',
             'max_distance': 6,
             'distance_basis': 'frequency',
@@ -199,6 +200,7 @@ def test_search_search_retrieval(populated_app, populated_client):
             'name': 'original',
             'feature': 'lemmata',
             'stopwords': ['et', 'qui', 'quis'],
+            'score_basis': 'lemmata',
             'freq_basis': 'corpus',
             'max_distance': 6,
             'distance_basis': 'frequency'
@@ -363,6 +365,7 @@ def test_bad_feature_search(populated_app, populated_client):
             # !!! bad feature
             'feature': bad_feature,
             'stopwords': ['et', 'qui', 'quis'],
+            'score_basis': 'lemmata',
             'freq_basis': 'corpus',
             'max_distance': 6,
             'distance_basis': 'frequency'

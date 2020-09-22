@@ -95,8 +95,8 @@ def submit_search():
 
     method_requireds = {
         'original': {
-            'name', 'feature', 'stopwords', 'freq_basis', 'max_distance',
-            'distance_basis'
+            'name', 'feature', 'stopwords', 'score_basis', 'freq_basis',
+            'max_distance', 'distance_basis'
         },
         'greek_to_latin': {
             'name', 'greek_stopwords', 'latin_stopwords', 'freq_basis',
