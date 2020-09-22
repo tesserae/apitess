@@ -142,6 +142,7 @@ Filling out these options in the data we will be providing to the `/parallels/` 
     "name": "original",
     "feature": "lemmata",
     "stopwords": ... ,
+    "score_basis": "lemmata",
     "freq_basis": "texts",
     "max_distance": 999,
     "distance_basis": "frequency"
@@ -177,6 +178,7 @@ Filling in the stopwords with the results we obtained, we have the following (or
       "qui", "quis", "sum", "et", "in",
       "is", "non", "hic", "ego", "ut"
     ],
+    "score_basis": "lemmata",
     "freq_basis": "texts",
     "max_distance": 999,
     "distance_basis": "frequency"
@@ -214,6 +216,7 @@ curl -i -X POST -H "Content-Type: application/json; charset=utf-8" \
       "qui", "quis", "sum", "et", "in",
       "is", "non", "hic", "ego", "ut"
     ],
+    "score_basis": "lemmata",
     "freq_basis": "corpus",
     "max_distance": 999,
     "distance_basis": "frequency"

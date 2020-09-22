@@ -30,6 +30,7 @@ def test_multitexts(multitext_app, multitext_client):
             'name': 'original',
             'feature': 'lemmata',
             'stopwords': ['et', 'qui', 'quis'],
+            'score_basis': 'lemmata',
             'freq_basis': 'corpus',
             'max_distance': 6,
             'distance_basis': 'frequency'
@@ -185,8 +186,9 @@ def test_multitexts(multitext_app, multitext_client):
     for multiresult in data['multiresults']:
         assert 'units' in multiresult
         for unit in multiresult['units']:
-            for expected in ['unit_id', 'tag', 'snippet', 'highlight',
-                             'score']:
+            for expected in [
+                    'unit_id', 'tag', 'snippet', 'highlight', 'score'
+            ]:
                 assert expected in unit
 
     # make sure search results were cached
