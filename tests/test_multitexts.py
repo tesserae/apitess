@@ -200,6 +200,75 @@ def test_multitexts(multitext_app, multitext_client):
     assert 'Location' in response.headers
     assert multitext_results_id == response.headers['Location'].split('/')[-2]
 
+    # make sure redirect URL to cached results works
+    redirect_url = response.headers['Location']
+    response = multitext_client.get(redirect_url)
+    assert response.status_code == 200
+    data = flask.json.loads(
+        gzip.decompress(response.get_data()).decode('utf-8'))
+    assert 'multiresults' in data
+
+    # try various paging options
+    print('Retrieve everything')
+    with multitext_app.test_request_context():
+        retrieve_endpoint = flask.url_for('multitexts.retrieve_results',
+                                          results_id=multitext_results_id)
+    response = multitext_client.get(retrieve_endpoint)
+    assert response.status_code == 200
+    data = flask.json.loads(
+        gzip.decompress(response.get_data()).decode('utf-8'))
+    assert 'multiresults' in data
+    multiresults = data['multiresults']
+    assert len(multiresults) > 0
+
+    print('Retrieving by score')
+    with multitext_app.test_request_context():
+        retrieve_endpoint = flask.url_for('multitexts.retrieve_results',
+                                          results_id=multitext_results_id,
+                                          sort_by='score',
+                                          sort_order='descending',
+                                          per_page='3',
+                                          page_number='0')
+    response = multitext_client.get(retrieve_endpoint)
+    assert response.status_code == 200
+    data = flask.json.loads(
+        gzip.decompress(response.get_data()).decode('utf-8'))
+    assert 'multiresults' in data
+    multiresults = data['multiresults']
+
+    print('Retrieving by source_tag')
+    with multitext_app.test_request_context():
+        retrieve_endpoint = flask.url_for('multitexts.retrieve_results',
+                                          results_id=multitext_results_id,
+                                          sort_by='source_tag',
+                                          sort_order='ascending',
+                                          per_page='3',
+                                          page_number='0')
+    response = multitext_client.get(retrieve_endpoint)
+    assert response.status_code == 200
+    data = flask.json.loads(
+        gzip.decompress(response.get_data()).decode('utf-8'))
+    assert 'multiresults' in data
+    multiresults = data['multiresults']
+    distinct_matches = set(mr['match_id'] for mr in multiresults)
+    assert len(distinct_matches) == 3
+
+    print('Try ridiculous page')
+    with multitext_app.test_request_context():
+        retrieve_endpoint = flask.url_for('multitexts.retrieve_results',
+                                          results_id=multitext_results_id,
+                                          sort_by='target_tag',
+                                          sort_order='descending',
+                                          per_page='999999999',
+                                          page_number='999999999')
+    response = multitext_client.get(retrieve_endpoint)
+    assert response.status_code == 200
+    data = flask.json.loads(
+        gzip.decompress(response.get_data()).decode('utf-8'))
+    assert 'multiresults' in data
+    multiresults = data['multiresults']
+    assert len(multiresults) == 0
+
 
 def test_multitext_requireds_missing(multitext_app, multitext_client):
     with multitext_app.test_request_context():

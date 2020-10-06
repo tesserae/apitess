@@ -122,11 +122,17 @@ def retrieve_results(results_id):
         response.status_code = 404
         return response
 
+    url_query_params = flask.request.args
+    page_options, err = apitess.utils.get_page_options_or_error(
+        url_query_params)
+    if err:
+        return err
+
     params = results_status_found[0].parameters
 
     multiresults = [
         mr for mr in tesserae.utils.multitext.get_results(
-            flask.g.db, results_status_found[0].id)
+            flask.g.db, results_status_found[0].id, page_options)
     ]
     response = flask.Response(
         response=gzip.compress(
