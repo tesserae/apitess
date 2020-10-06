@@ -67,9 +67,15 @@ def submit_multitext():
         response = flask.Response()
         response.status_code = 303
         response.status = '303 See Other'
-        # we want the final '/' on the URL
-        response.headers['Location'] = os.path.join(flask.request.base_url,
-                                                    results_id, '')
+        # Redirect should point to paginated results
+        response.headers['Location'] = os.path.join(
+            flask.request.base_url, results_id, '?' + '&'.join(
+                f'{a}={b}' for a, b in {
+                    'sort_by': 'score',
+                    'sort_order': 'descending',
+                    'per_page': '100',
+                    'page_number': '0'
+                }.items()))
         return response
 
     response = flask.Response()
@@ -81,7 +87,8 @@ def submit_multitext():
                                                 results_id, '')
 
     try:
-        tesserae.utils.multitext.submit_multitext(flask.g.jobqueue, results_id,
+        tesserae.utils.multitext.submit_multitext(flask.g.jobqueue, flask.g.db,
+                                                  results_id,
                                                   received['parallels_uuid'],
                                                   received['text_ids'],
                                                   received['unit_type'])
@@ -122,17 +129,31 @@ def retrieve_results(results_id):
         response.status_code = 404
         return response
 
+    url_query_params = flask.request.args
+    page_options, err = apitess.utils.get_page_options_or_error(
+        url_query_params)
+    if err:
+        return err
+
     params = results_status_found[0].parameters
 
     multiresults = [
         mr for mr in tesserae.utils.multitext.get_results(
-            flask.g.db, results_status_found[0].id)
+            flask.g.db, results_status_found[0].id, page_options)
     ]
+    search_id = tesserae.utils.search.get_id_by_uuid(flask.g.db,
+                                                     params['parallels_uuid'])
     response = flask.Response(
         response=gzip.compress(
             flask.json.dumps({
-                'data': params,
-                'multiresults': multiresults
+                'data':
+                params,
+                'max_score':
+                tesserae.utils.search.get_max_score(flask.g.db, search_id),
+                'total_count':
+                tesserae.utils.search.get_results_count(flask.g.db, search_id),
+                'multiresults':
+                multiresults
             }).encode()),
         mimetype='application/json',
     )

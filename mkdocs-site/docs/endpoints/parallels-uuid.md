@@ -16,7 +16,7 @@ If provided, the URL query string must have the following keys and values:
 
 |Key|Value|
 |---|---|
-|`sort_by`|Either `score`, `source_tag`, `target_tag`, or `matched_features`.|
+|`sort_by`|Either `score`, `source_tag`, or `target_tag`.|
 |`sort_order`|Either `ascending` or `descending`.|
 |`per_page`|Any positive integer, specifying the maximum number of results requested.|
 |`page_number`|Any non-negative integer, with the first page starting at 0.|

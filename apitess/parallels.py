@@ -12,7 +12,7 @@ import tesserae.db.entities
 from tesserae.matchers.text_options import TextOptions
 import tesserae.utils.search
 import apitess.errors
-from apitess.utils import common_retrieve_status
+from apitess.utils import common_retrieve_status, get_page_options_or_error
 
 bp = flask.Blueprint('parallels', __name__, url_prefix='/parallels')
 
@@ -137,7 +137,7 @@ def submit_search():
         response = flask.Response()
         response.status_code = 303
         response.status = '303 See Other'
-        # we want the final '/' on the URL
+        # Redirect should point to paginated results
         response.headers['Location'] = os.path.join(
             flask.request.base_url, results_id, '?' + '&'.join(
                 f'{a}={b}' for a, b in {
@@ -204,82 +204,17 @@ def retrieve_results(results_id):
         response.status_code = 404
         return response
 
-    params = results_status_found[0].parameters
     url_query_params = flask.request.args
-    if len(url_query_params) == 0:
-        page_options = tesserae.utils.search.PageOptions()
-    else:
-        requireds = {'sort_by', 'sort_order', 'per_page', 'page_number'}
-        potential_error = apitess.errors.check_requireds(
-            url_query_params, requireds)
-        if potential_error:
-            return potential_error
-        allowed_sort_by = {
-            'score', 'source_tag', 'target_tag', 'matched_features'
-        }
-        sort_by = url_query_params.get('sort_by')
-        if sort_by not in allowed_sort_by:
-            return apitess.errors.error(
-                400,
-                data=url_query_params,
-                message=(
-                    f'Specified "sort_by" value ({sort_by}) is not supported. '
-                    f'(Supported values are {list(allowed_sort_by)})'))
-        allowed_sort_order = {'ascending', 'descending'}
-        sort_order = url_query_params.get('sort_order')
-        if sort_order not in allowed_sort_order:
-            return apitess.errors.error(
-                400,
-                data=url_query_params,
-                message=(f'Specified "sort_order" value ({sort_order}) is not '
-                         'supported. Supported values are '
-                         f'{list(allowed_sort_order)})'))
-        try:
-            raw_per_page = url_query_params.get('per_page')
-            per_page = int(raw_per_page)
-        except ValueError:
-            return apitess.errors.error(
-                400,
-                data=url_query_params,
-                message=(f'Specified "per_page" value ({raw_per_page}) is not '
-                         'supported. Only positive integers are supported.'))
-        if per_page < 1:
-            return apitess.errors.error(
-                400,
-                data=url_query_params,
-                message=(f'Specified "per_page" value ({raw_per_page}) is not '
-                         'supported. Only positive integers are supported.'))
-        try:
-            raw_page_number = url_query_params.get('page_number')
-            page_number = int(raw_page_number)
-        except ValueError:
-            return apitess.errors.error(
-                400,
-                data=url_query_params,
-                message=(
-                    f'Specified "page_number" value ({raw_page_number}) is '
-                    'not supported. Only non-negative integers are supported.'
-                ))
-        if page_number < 0:
-            return apitess.errors.error(
-                400,
-                data=url_query_params,
-                message=(
-                    f'Specified "page_number" value ({raw_page_number}) is '
-                    'not supported. Only non-negative integers are supported.'
-                ))
-        page_options = tesserae.utils.search.PageOptions(
-            sort_by=sort_by,
-            sort_order=sort_order,
-            per_page=per_page,
-            page_number=page_number)
+    page_options, err = get_page_options_or_error(url_query_params)
+    if err:
+        return err
 
     search_id = results_status_found[0].id
     response = flask.Response(
         response=gzip.compress(
             flask.json.dumps({
                 'data':
-                params,
+                results_status_found[0].parameters,
                 'max_score':
                 tesserae.utils.search.get_max_score(flask.g.db, search_id),
                 'total_count':
