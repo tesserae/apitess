@@ -134,11 +134,19 @@ def retrieve_results(results_id):
         mr for mr in tesserae.utils.multitext.get_results(
             flask.g.db, results_status_found[0].id, page_options)
     ]
+    search_id = tesserae.utils.search.get_id_by_uuid(flask.g.db,
+                                                     params['parallels_uuid'])
     response = flask.Response(
         response=gzip.compress(
             flask.json.dumps({
-                'data': params,
-                'multiresults': multiresults
+                'data':
+                params,
+                'max_score':
+                tesserae.utils.search.get_max_score(flask.g.db, search_id),
+                'total_count':
+                tesserae.utils.search.get_results_count(flask.g.db, search_id),
+                'multiresults':
+                multiresults
             }).encode()),
         mimetype='application/json',
     )

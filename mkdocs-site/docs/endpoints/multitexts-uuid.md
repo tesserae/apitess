@@ -10,7 +10,20 @@ Requesting GET at `/multitexts/<uuid>/` retrieves the multitext search results a
 
 ### Request
 
-There are no special points to note about requesting multitext search results.
+It is possible to request Multitext search results either with a URL query string to restrict the results returned in the response or without a URL query string to return all results of the search.
+
+If provided, the URL query string must have the following keys and values:
+
+|Key|Value|
+|---|---|
+|`sort_by`|Either `score`, `source_tag`, or `target_tag`.|
+|`sort_order`|Either `ascending` or `descending`.|
+|`per_page`|Any positive integer, specifying the maximum number of original Tesserae results requested.|
+|`page_number`|Any non-negative integer, with the first page starting at 0.|
+
+Note that these paging options correspond to the result from the original
+Tesserae search on which this multitext search is based. For more information,
+see [`/parallels/<uuid>/`](parallels-uuid.md).
 
 ### Response
 
@@ -19,13 +32,17 @@ On success, the data payload contains a JSON object with the following keys:
 |Key|Value|
 |---|---|
 |`"data"`|The JSON object received as request data payload.|
+|`"max_score"`|The highest score of all results from the original Tesserae
+search on which this multitext search is based.|
+|`"total_count"`|The total number of parallels found in the original Tesserae
+search on which this multitext search is based.|
 |`"multiresults"`|A list of JSON objects describing multitext results found.|
 
 A JSON object in the `"multiresults"` list contains the following keys:
 
 |Key|Value|
 |---|---|
-|`"match_id"`|A string representing the object_id of a match in the search results used as the base of the multitext query.|
+|`"match"`|A JSON object representing a match in the search results used as the base of the multitext query. See [Get Response for `/parallels/<uuid>/`](parallels-uuid.md#response) for more details.|
 |`"bigram"`|A list containing two strings, which are a pair of matching words associated with the match associated with the value of `"match_id"`.|
 |`"units"`|A list of JSON objects, where each JSON object represents a unit from the corpus of texts specified in the multitext query.|
 

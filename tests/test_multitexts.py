@@ -207,6 +207,8 @@ def test_multitexts(multitext_app, multitext_client):
     data = flask.json.loads(
         gzip.decompress(response.get_data()).decode('utf-8'))
     assert 'multiresults' in data
+    assert 'max_score' in data
+    assert 'total_count' in data
 
     # try various paging options
     print('Retrieve everything')
@@ -218,6 +220,8 @@ def test_multitexts(multitext_app, multitext_client):
     data = flask.json.loads(
         gzip.decompress(response.get_data()).decode('utf-8'))
     assert 'multiresults' in data
+    assert 'max_score' in data
+    assert 'total_count' in data
     multiresults = data['multiresults']
     assert len(multiresults) > 0
 
@@ -234,6 +238,8 @@ def test_multitexts(multitext_app, multitext_client):
     data = flask.json.loads(
         gzip.decompress(response.get_data()).decode('utf-8'))
     assert 'multiresults' in data
+    assert 'max_score' in data
+    assert 'total_count' in data
     multiresults = data['multiresults']
 
     print('Retrieving by source_tag')
@@ -249,8 +255,10 @@ def test_multitexts(multitext_app, multitext_client):
     data = flask.json.loads(
         gzip.decompress(response.get_data()).decode('utf-8'))
     assert 'multiresults' in data
+    assert 'max_score' in data
+    assert 'total_count' in data
     multiresults = data['multiresults']
-    distinct_matches = set(mr['match_id'] for mr in multiresults)
+    distinct_matches = set(mr['match']['object_id'] for mr in multiresults)
     assert len(distinct_matches) == 3
 
     print('Try ridiculous page')
@@ -266,6 +274,8 @@ def test_multitexts(multitext_app, multitext_client):
     data = flask.json.loads(
         gzip.decompress(response.get_data()).decode('utf-8'))
     assert 'multiresults' in data
+    assert 'max_score' in data
+    assert 'total_count' in data
     multiresults = data['multiresults']
     assert len(multiresults) == 0
 
