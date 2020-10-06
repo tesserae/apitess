@@ -67,9 +67,15 @@ def submit_multitext():
         response = flask.Response()
         response.status_code = 303
         response.status = '303 See Other'
-        # we want the final '/' on the URL
-        response.headers['Location'] = os.path.join(flask.request.base_url,
-                                                    results_id, '')
+        # Redirect should point to paginated results
+        response.headers['Location'] = os.path.join(
+            flask.request.base_url, results_id, '?' + '&'.join(
+                f'{a}={b}' for a, b in {
+                    'sort_by': 'score',
+                    'sort_order': 'descending',
+                    'per_page': '100',
+                    'page_number': '0'
+                }.items()))
         return response
 
     response = flask.Response()

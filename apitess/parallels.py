@@ -137,7 +137,7 @@ def submit_search():
         response = flask.Response()
         response.status_code = 303
         response.status = '303 See Other'
-        # we want the final '/' on the URL
+        # Redirect should point to paginated results
         response.headers['Location'] = os.path.join(
             flask.request.base_url, results_id, '?' + '&'.join(
                 f'{a}={b}' for a, b in {
