@@ -184,12 +184,14 @@ def test_multitexts(multitext_app, multitext_client):
     assert 'multiresults' in data
     assert len(data['multiresults']) > 0
     for multiresult in data['multiresults']:
-        assert 'units' in multiresult
-        for unit in multiresult['units']:
-            for expected in [
-                    'unit_id', 'tag', 'snippet', 'highlight', 'score'
-            ]:
-                assert expected in unit
+        assert 'cross-ref' in multiresult
+        for cross_ref in multiresult['cross-ref']:
+            assert 'bigram' in cross_ref
+            for unit in cross_ref['units']:
+                for expected in [
+                        'unit_id', 'tag', 'snippet', 'highlight', 'score'
+                ]:
+                    assert expected in unit
 
     # make sure search results were cached
     print('Verifying that multitext results were cached')
@@ -258,8 +260,7 @@ def test_multitexts(multitext_app, multitext_client):
     assert 'max_score' in data
     assert 'total_count' in data
     multiresults = data['multiresults']
-    distinct_matches = set(mr['match']['object_id'] for mr in multiresults)
-    assert len(distinct_matches) == 3
+    assert len(multiresults) == 3
 
     print('Try ridiculous page')
     with multitext_app.test_request_context():

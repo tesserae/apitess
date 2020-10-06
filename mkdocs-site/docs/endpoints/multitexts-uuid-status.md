@@ -22,6 +22,15 @@ On success, the data payload contains a JSON object with the following keys:
 
 If the specified `<uuid>` could not be found in the database, a 404 error response will be given.  There are three scenarios in which a 404 error will occur:  (1) the specified `<uuid>` was incorrect, (2) the search job has not yet been queued, or (3) the search results have been deleted due to database maintenance.
 
+The `"status"` string can be one of the following:
+
+|Status|Meaning|
+|---|---|
+|`Initialized`|The server has accepted the search and will run it when resources are available.|
+|`Running`|The server is currently running the search.|
+|`Done`|The server has successfully completed running the search. The search results are now available for retrieval.|
+|`Failed`|An error occurred while the server was running the search.|
+
 ### Examples
 
 #### Retrieving the Search Status of a Successfully Completed Search Job

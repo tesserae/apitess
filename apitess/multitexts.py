@@ -81,7 +81,8 @@ def submit_multitext():
                                                 results_id, '')
 
     try:
-        tesserae.utils.multitext.submit_multitext(flask.g.jobqueue, results_id,
+        tesserae.utils.multitext.submit_multitext(flask.g.jobqueue, flask.g.db,
+                                                  results_id,
                                                   received['parallels_uuid'],
                                                   received['text_ids'],
                                                   received['unit_type'])

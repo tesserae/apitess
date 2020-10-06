@@ -32,10 +32,8 @@ On success, the data payload contains a JSON object with the following keys:
 |Key|Value|
 |---|---|
 |`"data"`|The JSON object received as request data payload.|
-|`"max_score"`|The highest score of all results from the original Tesserae
-search on which this multitext search is based.|
-|`"total_count"`|The total number of parallels found in the original Tesserae
-search on which this multitext search is based.|
+|`"max_score"`|The highest score of all results from the original Tesserae search on which this multitext search is based.|
+|`"total_count"`|The total number of parallels found in the original Tesserae search on which this multitext search is based.|
 |`"multiresults"`|A list of JSON objects describing multitext results found.|
 
 A JSON object in the `"multiresults"` list contains the following keys:
@@ -43,6 +41,12 @@ A JSON object in the `"multiresults"` list contains the following keys:
 |Key|Value|
 |---|---|
 |`"match"`|A JSON object representing a match in the search results used as the base of the multitext query. See [Get Response for `/parallels/<uuid>/`](parallels-uuid.md#response) for more details.|
+|`"cross-ref"`|A list containing JSON objects representing multitext search result information.|
+
+A JSON object in the `"cross-ref"` list contains the following keys:
+
+|Key|Value|
+|---|---|
 |`"bigram"`|A list containing two strings, which are a pair of matching words associated with the match associated with the value of `"match_id"`.|
 |`"units"`|A list of JSON objects, where each JSON object represents a unit from the corpus of texts specified in the multitext query.|
 
