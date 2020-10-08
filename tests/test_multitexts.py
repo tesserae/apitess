@@ -183,15 +183,20 @@ def test_multitexts(multitext_app, multitext_client):
         gzip.decompress(response.get_data()).decode('utf-8'))
     assert 'multiresults' in data
     assert len(data['multiresults']) > 0
+    matches_with_cross_refs = 0
     for multiresult in data['multiresults']:
         assert 'cross-ref' in multiresult
         for cross_ref in multiresult['cross-ref']:
             assert 'bigram' in cross_ref
+            assert 'units' in cross_ref
             for unit in cross_ref['units']:
                 for expected in [
                         'unit_id', 'tag', 'snippet', 'highlight', 'score'
                 ]:
                     assert expected in unit
+            if len(cross_ref['units']) > 0:
+                matches_with_cross_refs += 1
+    assert matches_with_cross_refs > 0
 
     # make sure search results were cached
     print('Verifying that multitext results were cached')
@@ -261,6 +266,20 @@ def test_multitexts(multitext_app, multitext_client):
     assert 'total_count' in data
     multiresults = data['multiresults']
     assert len(multiresults) == 3
+    matches_with_cross_refs = 0
+    for multiresult in data['multiresults']:
+        assert 'cross-ref' in multiresult
+        for cross_ref in multiresult['cross-ref']:
+            assert 'bigram' in cross_ref
+            assert 'units' in cross_ref
+            for unit in cross_ref['units']:
+                for expected in [
+                        'unit_id', 'tag', 'snippet', 'highlight', 'score'
+                ]:
+                    assert expected in unit
+            if len(cross_ref['units']) > 0:
+                matches_with_cross_refs += 1
+    assert matches_with_cross_refs == 2
 
     print('Try ridiculous page')
     with multitext_app.test_request_context():
