@@ -10,7 +10,9 @@ Requesting GET at `/multitexts/<uuid>/` retrieves the multitext search results a
 
 ### Request
 
-It is possible to request Multitext search results either with a URL query string to restrict the results returned in the response or without a URL query string to return all results of the search.
+By default, all results of the multitext search will be returned on request.
+
+To restrict the results returned (e.g., for displaying purposes), the following URL query string may be used:
 
 If provided, the URL query string must have the following keys and values:
 

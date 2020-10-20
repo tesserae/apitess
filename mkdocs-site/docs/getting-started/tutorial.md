@@ -18,9 +18,15 @@ The TIS API is built as a server that speaks according to the rules of HTTP.  Th
 
   * <https://tess-new.caset.buffalo.edu/api/texts/>
 
-When you do this, you will see a bunch of plain text with lots of curly braces, commas, quotation marks, and colons.  Unlike a server built to return webpages, the TIS API is built to return information that is more computer-friendly than human-friendly.  The format of the plain text is known as JSON, and it is easy for a computer to read the information formatted in this way.
+When you do this, you may see a bunch of plain text with lots of curly braces, commas, quotation marks, and colons.  Unlike a server built to return webpages, the TIS API is built to return information that is more computer-friendly than human-friendly.  The format of the plain text is known as JSON, and it is easy for a computer to read the information formatted in this way.
 
 If you look carefully at the plain text, you might begin to see a pattern.  Between each set of curly braces are quoted words before and after a colon, and each `<quoted-words-on-the-left>:<quoted-words-on-the-right>` pattern is separated by a comma.  One of the quoted words that appears often on the left-hand side of a colon is "author"; another is "title".  If you read the corresponding quoted words to the right of the colon, you might notice a pattern.  The information contained within each pair of curly braces is an entry for texts that the TIS API has.
+
+If your web browser is more advanced, it may recognize the response to be in
+JSON format and automatically interpret the plain text for you. This is the
+behavior, for example, in Firefox. In this case, you will not see the plain
+text but will see a representation of how the computer thinks about the
+information encoded in the plain text.
 
 ## Filtering with GET
 
@@ -35,6 +41,14 @@ asks the TIS API for information on texts that have "vergil" as an author.  Mult
   * <https://tess-new.caset.buffalo.edu/api/texts/?author=vergil&title=georgics>
 
 This URL asks the TIS API for texts that have both "vergil" as an author and "georgics" as the title.
+
+Note that it is possible to use specify a filter that will return no results.
+For example, consider:
+
+  * <https://tess-new.caset.buffalo.edu/api/texts/?author=vergil&title=maryhadalittlelamb>
+
+This URL asks the TIS API for texts that have both "vergil" as an author and "maryhadalittlelamb" as the title.
+Since the database does not contain such a work, the response will be no texts.
 
 ## Moving Forward
 
