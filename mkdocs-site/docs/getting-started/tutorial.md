@@ -42,7 +42,7 @@ asks the TIS API for information on texts that have "vergil" as an author.  Mult
 
 This URL asks the TIS API for texts that have both "vergil" as an author and "georgics" as the title.
 
-Note that it is possible to use specify a filter that will return no results.
+Note that it is possible to specify a filter that will return no results.
 For example, consider:
 
   * <https://tess-new.caset.buffalo.edu/api/texts/?author=vergil&title=maryhadalittlelamb>
