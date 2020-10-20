@@ -12,7 +12,7 @@ Requesting GET at `/parallels/<uuid>/` retrieves the Tesserae search results ass
 
 By default, all results of the search will be returned on request.
 
-To restrict the results returned (e.g., for displaying purposes), the following URL query string may be used:
+To restrict the results returned (e.g., for displaying purposes), the following URL query strings may be used:
 
 |Key|Value|
 |---|---|
@@ -21,14 +21,14 @@ To restrict the results returned (e.g., for displaying purposes), the following 
 |`per_page`|Any positive integer, specifying the maximum number of results requested.|
 |`page_number`|Any non-negative integer, with the first page starting at 0.|
 
-Note that if any one of these URL query strings is used, all the other must also be used to prevent an error response.
+Note that if any one of these URL query strings is used, all the others must also be used to prevent an error response.
 `sort_by` and `sort_order` define the ordering in which to consider the search results.
 `per_page` and `page_number` are used to navigate the results according to the previously specified ordering.
 For example, if `sort_by` were set to `score` and `sort_order` to `descending`, the results were would be ordered by score, from highest to lowest.
 Then, by setting `per_page` to `10` and `page_number` to `0`, a GET request would retrieve the 10 highest scoring results.
 Incrementing `page_number` to `1` and leaving all of the other arguments as before would retrieve the next 10 highest scoring results.
 When the combination used by `per_page` and `page_number` reaches the end of the results, the last of the results will be returned.
-If the combination of `per_page` and `page_number` requests a result beyond the end of the results, no results are returned.
+If the combination of `per_page` and `page_number` requests only results beyond the end of the results, no results are returned.
 
 ### Response
 
@@ -87,6 +87,8 @@ Content-Encoding: gzip
 
 ...
 ```
+
+(If you would like to actually download the gzipped file, try `curl -o id1.json.gz "https://tess-new.caset.buffalo.edu/api/parallels/id1/"`)
 
 #### Retrieving the Top 100 Search Results by Score
 

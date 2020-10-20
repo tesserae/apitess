@@ -12,7 +12,7 @@ Requesting GET at `/multitexts/<uuid>/` retrieves the multitext search results a
 
 By default, all results of the multitext search will be returned on request.
 
-To restrict the results returned (e.g., for displaying purposes), the following URL query string may be used:
+To restrict the results returned (e.g., for displaying purposes), the following URL query strings may be used:
 
 If provided, the URL query string must have the following keys and values:
 
@@ -23,8 +23,8 @@ If provided, the URL query string must have the following keys and values:
 |`per_page`|Any positive integer, specifying the maximum number of original Tesserae results requested.|
 |`page_number`|Any non-negative integer, with the first page starting at 0.|
 
-Note that these paging options correspond to the result from the original
-Tesserae search on which this multitext search is based. For more information,
+Note that these paging options correspond to the results from the original
+Tesserae search on which this multitext search is based. For more information on how these URL query strings are used to restrict the original search results retrieved,
 see [`/parallels/<uuid>/`](parallels-uuid.md).
 
 ### Response
@@ -87,6 +87,8 @@ Content-Encoding: gzip
 
 ...
 ```
+
+(If you would like to actually download the gzipped file, try `curl -o id1.json.gz "https://tess-new.caset.buffalo.edu/api/multitexts/id1/"`)
 
 #### Attempting to Retrieve Search Results that Do Not Exist
 
