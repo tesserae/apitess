@@ -22,6 +22,8 @@ The following fields may be used in a URL query to filter the response:
 
 Note that not all texts in the database have a CTS URN, so query by `cts_urn` may not retrieve desired results.
 
+Also note that query arguments are case-sensitive, so asking for the texts by an author named `vergil` is different from an author named `Vergil`.
+
 ### Response
 
 On success, the response includes a JSON data payload consisting of a JSON object with the key `"texts"`, associated with an array of JSON objects.  The JSON objects in the array, in turn, contain the following keys:
@@ -94,7 +96,7 @@ HTTP/1.1 200 OK
 Request:
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/texts/?language=Klingon"
+curl -i -X GET "https://tess-new.caset.buffalo.edu/api/texts/?language=klingon"
 ```
 
 Response:

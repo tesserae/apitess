@@ -10,9 +10,9 @@ Requesting GET at `/parallels/<uuid>/` retrieves the Tesserae search results ass
 
 ### Request
 
-It is possible to request Tesserae search results either with a URL query string to restrict the results returned in the response or without a URL query string to return all results of the search.
+By default, all results of the search will be returned on request.
 
-If provided, the URL query string must have the following keys and values:
+To restrict the results returned (e.g., for displaying purposes), the following URL query strings may be used:
 
 |Key|Value|
 |---|---|
@@ -20,6 +20,15 @@ If provided, the URL query string must have the following keys and values:
 |`sort_order`|Either `ascending` or `descending`.|
 |`per_page`|Any positive integer, specifying the maximum number of results requested.|
 |`page_number`|Any non-negative integer, with the first page starting at 0.|
+
+Note that if any one of these URL query strings is used, all the others must also be used to prevent an error response.
+`sort_by` and `sort_order` define the ordering in which to consider the search results.
+`per_page` and `page_number` are used to navigate the results according to the previously specified ordering.
+For example, if `sort_by` were set to `score` and `sort_order` to `descending`, the results were would be ordered by score, from highest to lowest.
+Then, by setting `per_page` to `10` and `page_number` to `0`, a GET request would retrieve the 10 highest scoring results.
+Incrementing `page_number` to `1` and leaving all of the other arguments as before would retrieve the next 10 highest scoring results.
+When the combination used by `per_page` and `page_number` reaches the end of the results, the last of the results will be returned.
+If the combination of `per_page` and `page_number` requests only results beyond the end of the results, no results are returned.
 
 ### Response
 
@@ -41,9 +50,9 @@ A JSON object in the `"parallels"` list of the successful response data payload 
 |`"target_tag"`|A string representing the text span used as the target in this parallel.|
 |`"matched_features"`|A list of strings, where each string represents a feature found in both the source span and the target span.|
 |`"score"`|A number representing the score assigned to the pair of text spans.|
-|`"source_snippet"`|The string making up the text span specified by the value of `"source"`.|
-|`"target_snippet"`|The string making up the text span specified by the value of `"target"`.|
-|`"highlight"`|Information to highlight areas on the source and target spans used to determine the score.|
+|`"source_snippet"`|The string from the source text in which this particular parallel was found.|
+|`"target_snippet"`|The string from the target text in which this particular parallel was found.|
+|`"highlight"`|A list of list of integers indicating which part of the source and target texts held matching features. In particular, the first level of the list of lists encapsulates all matches found, and the second level of the list of lists refers to a specific match found: the first integer indicates the token position in the string associated with `"source_snippet"` in which a feature was found and the second integer indicates the token position in the string associated with `"target_snippet"` in which the same feature was found.|
 
 > NB:  A successful response body will be compressed with gzip.
 
@@ -78,6 +87,8 @@ Content-Encoding: gzip
 
 ...
 ```
+
+(If you would like to actually download the gzipped file, try `curl -o id1.json.gz "https://tess-new.caset.buffalo.edu/api/parallels/id1/"`)
 
 #### Retrieving the Top 100 Search Results by Score
 

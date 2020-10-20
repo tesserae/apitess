@@ -119,13 +119,13 @@ Assuming that `<bellum_id>` is the internal identifier of *Bellum Civile*, the s
 
 Now that we have specified the source and target texts, we need to specify further options on how we would like Tesserae to search for intertexts between these two texts.
 Details on the specifics can be found in the [scoring method details](../details/methods.md).
-For this tutorial, we would like to run the Tesserae search with the following options:
+For this tutorial, we would like to run the Tesserae search with the following options (associated parameter names are in parentheses):
 
-  * search by lemma
-  * specify lemmata that shouldn't count as evidence for an intertext
-  * use frequency statistics of only the *Aeneid* and *Bellum Civile*
-  * allow the distance between matching lemmata to be unconstrained
-  * count distance based on lemma frequencies
+  * search by lemma (`"feature"`)
+  * specify lemmata that shouldn't count as evidence for an intertext (`"stopwords"`)
+  * use frequency statistics of only the *Aeneid* and *Bellum Civile* (`"freq_basis"`)
+  * allow the distance between matching lemmata to be unconstrained (`"max_distance"`)
+  * count distance based on lemma frequencies (`"distance_basis"`)
 
 Filling out these options in the data we will be providing to the `/parallels/` endpoint brings that data to the following form:
 ```json

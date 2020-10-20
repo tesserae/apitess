@@ -76,7 +76,3 @@ With all of these decisions made, the user is now ready to compose the request o
 The user now POSTs this request object to the `/parallels/` endpoint and receives an HTTP `201 Created` response.  Looking at the HTTP headers of this reponse, the user finds the `Location` header, which contains a URL.  If the URL is accessed before the search is complete, the user will find a `404 Not Found` response.  To check on the status of the search, the user could consult the [`/parallels/<uuid>/status/` endpoint](../endpoints/parallels-uuid-status.md), where the `<uuid>` portion can be determined from the URL associated with the `Location` header (which takes the form of `/parallels/<uuid>/`).  When the `/parallels/<uuid>/status/` endpoint returns that the status is "Done", the user can return to the `/parallels/<uuid>/` endpoint to find the results of the search.
 
 At this point, the user can analyze the results to see what intertextual insights can be found there.
-
-To summarize the process just described, here is the above graphic once more:
-
-![Workflow Example](../img/usecase.svg)

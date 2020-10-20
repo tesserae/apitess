@@ -4,6 +4,9 @@ The `/stopwords/` endpoint serves stopwords lists.  These lists can be useful wh
 
 Stopwords lists are typically computed using frequency information.  The reasoning is that the most frequent features are typically the least informative (consider, for example, the articles in English).
 
+Of course, depending on your needs, you may choose to exclude certain words recommended by the `/stopwords/` endpoint or include words that were not recommended.
+These decisions can be made when specifying stopwords in your application.
+
 ## GET
 
 Requesting GET at `/stopwords/` provides a JSON object containing a stopwords list.  How this stopwords list was created is dependent on the URL query fields used.
