@@ -72,7 +72,7 @@ def create_app(jobqueue, ingest_queue, test_config=None):
 
     @app.route('/')
     def helpful_root():
-        docs_url = 'https://tess-new.caset.buffalo.edu/docs/api/'
+        docs_url = 'https://tesserae.caset.buffalo.edu/docs/api/'
         response = flask.Response(
             response=('The root endpoint is undefined for this API. '
                       f'See the <a href="{docs_url}">documentation</a> for '
