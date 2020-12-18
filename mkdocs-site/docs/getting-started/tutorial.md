@@ -16,7 +16,7 @@ Now, the client has two choices to make within the rules of HTTP:  which server 
 
 The TIS API is built as a server that speaks according to the rules of HTTP.  Thus, you can use your web browser to ask the TIS API to GET certain information for you.  For example, if you wanted to see what texts the TIS API has available, you could use the following URL in your web browser to ask the TIS API to GET available texts:
 
-  * <https://tess-new.caset.buffalo.edu/api/texts/>
+  * <https://tesserae.caset.buffalo.edu/api/texts/>
 
 When you do this, you may see a bunch of plain text with lots of curly braces, commas, quotation marks, and colons.  Unlike a server built to return webpages, the TIS API is built to return information that is more computer-friendly than human-friendly.  The format of the plain text is known as JSON, and it is easy for a computer to read the information formatted in this way.
 
@@ -34,18 +34,18 @@ There are a bunch of texts the TIS API has reported when our web browser asked i
 
 The TIS API supports URL query strings on that URL to filter results.  To specify a query string, first tack on a question mark to the end of the URL, then we give it a word, follow it with an equals sign, and then give it another word.  For example,
 
-  * <https://tess-new.caset.buffalo.edu/api/texts/?author=vergil>
+  * <https://tesserae.caset.buffalo.edu/api/texts/?author=vergil>
 
 asks the TIS API for information on texts that have "vergil" as an author.  Multiple query filters can be applied, by separating each query string with an ampersand (&), as shown in the following example:
 
-  * <https://tess-new.caset.buffalo.edu/api/texts/?author=vergil&title=georgics>
+  * <https://tesserae.caset.buffalo.edu/api/texts/?author=vergil&title=georgics>
 
 This URL asks the TIS API for texts that have both "vergil" as an author and "georgics" as the title.
 
 Note that it is possible to specify a filter that will return no results.
 For example, consider:
 
-  * <https://tess-new.caset.buffalo.edu/api/texts/?author=vergil&title=maryhadalittlelamb>
+  * <https://tesserae.caset.buffalo.edu/api/texts/?author=vergil&title=maryhadalittlelamb>
 
 This URL asks the TIS API for texts that have both "vergil" as an author and "maryhadalittlelamb" as the title.
 Since the database does not contain such a work, the response will be no texts.

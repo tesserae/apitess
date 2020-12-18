@@ -39,7 +39,7 @@ On success, the response includes a JSON data payload consisting of a JSON objec
 Suppose that "lego" is the 45th Latin form and the 67th Latin lemma the database encountered.
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/features/?token=lego"
+curl -i -X GET "https://tesserae.caset.buffalo.edu/api/features/?token=lego"
 ```
 
 Response:
@@ -72,7 +72,7 @@ HTTP/1.1 200 OK
 #### Search for Feature Not Present in Database
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/features/?token=xlwbnd"
+curl -i -X GET "https://tesserae.caset.buffalo.edu/api/features/?token=xlwbnd"
 ```
 
 Response:
@@ -89,7 +89,7 @@ HTTP/1.1 200 OK
 #### Retrieve Features of a Feature Type for a Language
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/features/?feature=lemmata&language=latin"
+curl -i -X GET "https://tesserae.caset.buffalo.edu/api/features/?feature=lemmata&language=latin"
 ```
 
 Response:

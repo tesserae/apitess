@@ -74,7 +74,7 @@ Assume that the identifier `id1` is associated with a certain search result.
 Request:
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/parallels/id1/"
+curl -i -X GET "https://tesserae.caset.buffalo.edu/api/parallels/id1/"
 ```
 
 Response:
@@ -88,7 +88,7 @@ Content-Encoding: gzip
 ...
 ```
 
-(If you would like to actually download the gzipped file, try `curl -o id1.json.gz "https://tess-new.caset.buffalo.edu/api/parallels/id1/"`)
+(If you would like to actually download the gzipped file, try `curl -o id1.json.gz "https://tesserae.caset.buffalo.edu/api/parallels/id1/"`)
 
 #### Retrieving the Top 100 Search Results by Score
 
@@ -97,7 +97,7 @@ Assume that the identifier `id1` is associated with a certain search result.
 Request:
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/parallels/id1/?sort_by=score&sort_order=descending&per_page=100&page_number=0"
+curl -i -X GET "https://tesserae.caset.buffalo.edu/api/parallels/id1/?sort_by=score&sort_order=descending&per_page=100&page_number=0"
 ```
 
 Response:
@@ -118,7 +118,7 @@ Assume that the identifier `id1` is associated with a certain search result.
 Request:
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/parallels/id1/?sort_by=score&sort_order=descending&per_page=100"
+curl -i -X GET "https://tesserae.caset.buffalo.edu/api/parallels/id1/?sort_by=score&sort_order=descending&per_page=100"
 ```
 
 Response:
@@ -144,7 +144,7 @@ Assume that the identifier `id1` is associated with a certain search result.
 Request:
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/parallels/id1/?sort_by=score&sort_order=descending&per_page=100&page_number=-5"
+curl -i -X GET "https://tesserae.caset.buffalo.edu/api/parallels/id1/?sort_by=score&sort_order=descending&per_page=100&page_number=-5"
 ```
 
 Response:
@@ -171,7 +171,7 @@ Assume that the identifier `i-expired` is not associated with any search results
 Request:
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/parallels/i-expired/"
+curl -i -X GET "https://tesserae.caset.buffalo.edu/api/parallels/i-expired/"
 ```
 
 Response:

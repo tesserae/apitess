@@ -40,7 +40,7 @@ Assume that the identifier `id1` is associated with a search job that successful
 Request:
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/parallels/id1/status/"
+curl -i -X GET "https://tesserae.caset.buffalo.edu/api/parallels/id1/status/"
 ```
 
 Response:
@@ -62,7 +62,7 @@ Assume that the identifier `i-failed` is associated with a failed search job.
 Request:
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/parallels/i-failed/status/"
+curl -i -X GET "https://tesserae.caset.buffalo.edu/api/parallels/i-failed/status/"
 ```
 
 Response:
@@ -84,7 +84,7 @@ Assume that the identifier `i-expired` is not associated with any search results
 Request:
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/parallels/i-expired/status/"
+curl -i -X GET "https://tesserae.caset.buffalo.edu/api/parallels/i-expired/status/"
 ```
 
 Response:

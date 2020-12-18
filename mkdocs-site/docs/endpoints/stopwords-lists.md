@@ -21,7 +21,7 @@ On success, the response includes a JSON data payload consisting of a JSON objec
 Request:
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/stopwords/lists/"
+curl -i -X GET "https://tesserae.caset.buffalo.edu/api/stopwords/lists/"
 ```
 
 Response:
@@ -74,7 +74,7 @@ Request:
 
 ```bash
 curl -i -X POST -H "Content-Type: application/json; charset=utf-8" \
-"https://tess-new.caset.buffalo.edu/api/stopwords/lists/" \
+"https://tesserae.caset.buffalo.edu/api/stopwords/lists/" \
 --data-binary @- << EOF
 {
   "name": "new-list",
@@ -110,7 +110,7 @@ Request:
 
 ```bash
 curl -i -X POST -H "Content-Type: application/json; charset=utf-8" \
-"https://tess-new.caset.buffalo.edu/api/stopwords/lists/" \
+"https://tesserae.caset.buffalo.edu/api/stopwords/lists/" \
 --data-binary @- << EOF
 {
   "name": "latin-lemma-10",
@@ -136,7 +136,7 @@ HTTP/1.1 400 Bad Request
       "b"
     ]
   }
-  "message": "The stopwords list name provided (latin-lemma-10) already exists in the database. If you meant to update the stopwords list, try a DELETE at https://tess-new.caset.buffalo.edu/api/texts/latin-lemma-10/ first, then re-try this POST."
+  "message": "The stopwords list name provided (latin-lemma-10) already exists in the database. If you meant to update the stopwords list, try a DELETE at https://tesserae.caset.buffalo.edu/api/texts/latin-lemma-10/ first, then re-try this POST."
 }
 ```
 
@@ -146,7 +146,7 @@ Request:
 
 ```bash
 curl -i -X POST -H "Content-Type: application/json; charset=utf-8" \
-"https://tess-new.caset.buffalo.edu/api/stopwords/lists/" \
+"https://tesserae.caset.buffalo.edu/api/stopwords/lists/" \
 --data-binary @- << EOF
 {
   "stopwords": [

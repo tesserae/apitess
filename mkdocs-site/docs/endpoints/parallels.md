@@ -37,7 +37,7 @@ Request:
 
 ```bash
 curl -i -X POST -H "Content-Type: application/json; charset=utf-8" \
-"https://tess-new.caset.buffalo.edu/api/parallels/" \
+"https://tesserae.caset.buffalo.edu/api/parallels/" \
 --data-binary @- << EOF
 {
   "source": {
