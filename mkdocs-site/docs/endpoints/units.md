@@ -57,7 +57,7 @@ Suppose that `5c6c69f042facf59122418f6` is an identifier for a text in the datab
 Request:
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/units/?works=5c6c69f042facf59122418f6"
+curl -i -X GET "https://tesserae.caset.buffalo.edu/api/units/?works=5c6c69f042facf59122418f6"
 ```
 
 Response:

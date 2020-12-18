@@ -15,4 +15,4 @@ We, the maintainers of this website, are members of the Tesserae project.  We ar
 
 Our current site is available at <https://tesserae.caset.buffalo.edu/>.
 
-The API described on this site is currently served off of <https://tess-new.caset.buffalo.edu/api/>.
+The API described on this site is currently served off of <https://tesserae.caset.buffalo.edu/api/>.

@@ -25,7 +25,7 @@ On success, the response includes a data payload consisting of a JSON object wit
 Request:
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/languages/"
+curl -i -X GET "https://tesserae.caset.buffalo.edu/api/languages/"
 ```
 
 Response:

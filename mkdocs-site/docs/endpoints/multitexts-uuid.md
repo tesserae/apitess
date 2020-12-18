@@ -74,7 +74,7 @@ Assume that the identifier `id1` is associated with a certain multitext result.
 Request:
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/multitexts/id1"
+curl -i -X GET "https://tesserae.caset.buffalo.edu/api/multitexts/id1"
 ```
 
 Response:
@@ -88,7 +88,7 @@ Content-Encoding: gzip
 ...
 ```
 
-(If you would like to actually download the gzipped file, try `curl -o id1.json.gz "https://tess-new.caset.buffalo.edu/api/multitexts/id1/"`)
+(If you would like to actually download the gzipped file, try `curl -o id1.json.gz "https://tesserae.caset.buffalo.edu/api/multitexts/id1/"`)
 
 #### Attempting to Retrieve Search Results that Do Not Exist
 
@@ -97,7 +97,7 @@ Assume that the identifier `i-expired` is not associated with any multitext resu
 Request:
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/multitexts/i-expired"
+curl -i -X GET "https://tesserae.caset.buffalo.edu/api/multitexts/i-expired"
 ```
 
 Response:

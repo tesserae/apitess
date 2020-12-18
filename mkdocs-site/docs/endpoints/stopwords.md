@@ -44,7 +44,7 @@ On failure, the data payload contains error information in a JSON object with th
 Request:
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/stopwords/?language=latin"
+curl -i -X GET "https://tesserae.caset.buffalo.edu/api/stopwords/?language=latin"
 ```
 
 Response:
@@ -65,7 +65,7 @@ HTTP/1.1 200 OK
 Request:
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/stopwords/?language=latin&list_size=20"
+curl -i -X GET "https://tesserae.caset.buffalo.edu/api/stopwords/?language=latin&list_size=20"
 ```
 
 Response:
@@ -88,7 +88,7 @@ Assume that `5c6c69f042facf59122418f6` and `5c6c69f042facf59122418f8` are object
 Request:
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/stopwords/?works=5c6c69f042facf59122418f6%2C5c6c69f042facf59122418f8&list_size=15"
+curl -i -X GET "https://tesserae.caset.buffalo.edu/api/stopwords/?works=5c6c69f042facf59122418f6%2C5c6c69f042facf59122418f8&list_size=15"
 ```
 
 Response:
@@ -111,7 +111,7 @@ Suppose no text has the identifier `DEADBEEFDEADBEEFDEADBEEF`.
 Request:
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/stopwords/?works=DEADBEEFDEADBEEFDEADBEEF&list_size=15"
+curl -i -X GET "https://tesserae.caset.buffalo.edu/api/stopwords/?works=DEADBEEFDEADBEEFDEADBEEF&list_size=15"
 ```
 
 Response:

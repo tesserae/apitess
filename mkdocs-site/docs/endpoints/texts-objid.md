@@ -40,7 +40,7 @@ Suppose that `5c6c69f042facf59122418f6` is the identifier associated with Lucan'
 Request:
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/texts/5c6c69f042facf59122418f6/"
+curl -i -X GET "https://tesserae.caset.buffalo.edu/api/texts/5c6c69f042facf59122418f6/"
 ```
 
 Response:
@@ -64,7 +64,7 @@ HTTP/1.1 200 OK
 Request:
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/texts/badid/"
+curl -i -X GET "https://tesserae.caset.buffalo.edu/api/texts/badid/"
 ```
 
 Response:
@@ -86,7 +86,7 @@ Assume that no text in the database has the identifier "DEADBEEFDEADBEEFDEADBEEF
 Request:
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/texts/DEADBEEFDEADBEEFDEADBEEF/"
+curl -i -X GET "https://tesserae.caset.buffalo.edu/api/texts/DEADBEEFDEADBEEFDEADBEEF/"
 ```
 
 Response:
@@ -145,7 +145,7 @@ Assume that the following entry exists in the database:
 Request:
 
 ```bash
-curl -i -X PATCH "https://tess-new.caset.buffalo.edu/api/texts/5c6c69f042facf59122418f6/" -d '{ \
+curl -i -X PATCH "https://tesserae.caset.buffalo.edu/api/texts/5c6c69f042facf59122418f6/" -d '{ \
   "title": "Pharsalia" \
 }'
 ```
@@ -184,7 +184,7 @@ Assume that the following entry exists in the database:
 Request:
 
 ```bash
-curl -i -X PATCH "https://tess-new.caset.buffalo.edu/api/texts/5c6c69f042facf59122418f6/" -d '{ \
+curl -i -X PATCH "https://tesserae.caset.buffalo.edu/api/texts/5c6c69f042facf59122418f6/" -d '{ \
   "alternate_title": "Pharsalia" \
 }'
 ```
@@ -211,7 +211,7 @@ HTTP/1.1 200 OK
 Request:
 
 ```bash
-curl -i -X PATCH "https://tess-new.caset.buffalo.edu/api/texts/badid/" -d '{ \
+curl -i -X PATCH "https://tesserae.caset.buffalo.edu/api/texts/badid/" -d '{ \
   "fail": "this example will" \
 }'
 ```
@@ -238,7 +238,7 @@ Assume that no text in the database has the identifier "DEADBEEFDEADBEEFDEADBEEF
 Request:
 
 ```bash
-curl -i -X PATCH "https://tess-new.caset.buffalo.edu/api/texts/DEADBEEFDEADBEEFDEADBEEF/" -d '{ \
+curl -i -X PATCH "https://tesserae.caset.buffalo.edu/api/texts/DEADBEEFDEADBEEFDEADBEEF/" -d '{ \
   "fail": "this example will" \
 }'
 ```
@@ -299,7 +299,7 @@ Assume that the following entry exists in the database:
 Request:
 
 ```bash
-curl -i -X DELETE "https://tess-new.caset.buffalo.edu/api/texts/5c6c69f042facf59122418f6/"'
+curl -i -X DELETE "https://tesserae.caset.buffalo.edu/api/texts/5c6c69f042facf59122418f6/"'
 ```
 
 Response:
@@ -314,7 +314,7 @@ HTTP/1.1 204 No Content
 Request:
 
 ```bash
-curl -i -X DELETE "https://tess-new.caset.buffalo.edu/api/texts/badid/"
+curl -i -X DELETE "https://tesserae.caset.buffalo.edu/api/texts/badid/"
 ```
 
 Response:
@@ -336,7 +336,7 @@ Assume that no text in the database has the identifier "DEADBEEFDEADBEEFDEADBEEF
 Request:
 
 ```bash
-curl -i -X DELETE "https://tess-new.caset.buffalo.edu/api/texts/DEADBEEFDEADBEEFDEADBEEF/"
+curl -i -X DELETE "https://tesserae.caset.buffalo.edu/api/texts/DEADBEEFDEADBEEFDEADBEEF/"
 ```
 
 Response:

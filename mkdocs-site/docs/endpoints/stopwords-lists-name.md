@@ -30,7 +30,7 @@ Suppose that `latin-lemma-10` is the name of one of the stopwords lists in the d
 Request:
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/stopwords/lists/latin-lemma-10/"
+curl -i -X GET "https://tesserae.caset.buffalo.edu/api/stopwords/lists/latin-lemma-10/"
 ```
 
 Response:
@@ -55,7 +55,7 @@ Suppose that `i-dont-exist` does not match any stopwords list names in the datab
 Request:
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/stopwords/lists/i-dont-exist/"
+curl -i -X GET "https://tesserae.caset.buffalo.edu/api/stopwords/lists/i-dont-exist/"
 ```
 
 Response:
@@ -101,7 +101,7 @@ Assume that a stopwords list named `already-exists` already exists in the databa
 Request:
 
 ```bash
-curl -i -X DELETE "https://tess-new.caset.buffalo.edu/api/texts/already-exists"
+curl -i -X DELETE "https://tesserae.caset.buffalo.edu/api/texts/already-exists"
 ```
 
 Response:
@@ -118,7 +118,7 @@ Assume that there is no stopwords list named "i-dont-exist" in the database.
 Request:
 
 ```bash
-curl -i -X DELETE "https://tess-new.caset.buffalo.edu/api/texts/i-dont-exist"
+curl -i -X DELETE "https://tesserae.caset.buffalo.edu/api/texts/i-dont-exist"
 ```
 
 Response:

@@ -19,12 +19,12 @@ Finally, we can retrieve the results and inspect the matches Tesserae found.
 
 ## Submitting a Query at the `/parallels/` Endpoint
 
-In order to submit a Tesserae search query, we must use the URL <https://tess-new.caset.buffalo.edu/api/parallels/> (if you use your web browser to GET that URL, you'll probably see a blank page or an error message).
+In order to submit a Tesserae search query, we must use the URL <https://tesserae.caset.buffalo.edu/api/parallels/> (if you use your web browser to GET that URL, you'll probably see a blank page or an error message).
 If you were following along from [the tutorial](tutorial.md), you have probably noticed that the URL for submitting a query and for looking at the texts available through the TIS API are very similar.
 In fact, if we line up the URLS:
 
-  * <https://tess-new.caset.buffalo.edu/api/texts/>
-  * <https://tess-new.caset.buffalo.edu/api/parallels/>
+  * <https://tesserae.caset.buffalo.edu/api/texts/>
+  * <https://tesserae.caset.buffalo.edu/api/parallels/>
 
 you can see that they are identical except for the last part of the URL, where one ends in `/texts/` and the other ends in `/parallels/`.
 Thus, the TIS API has a `/texts/` endpoint for obtaining texts available through the TIS API and a `/parallels/` endpoint for submitting Tesserae search queries.
@@ -77,7 +77,7 @@ We can use the `/texts/` endpoint to query for our texts of interest, and the re
 For purposes of this tutorial, we will use placeholders to represent these internal identifiers.
 If you want the command that will be revealed later in the tutorial to correctly submit a Tesserae search query, you will have to replace the placeholders with the actual identifiers you find through the `/texts/` endpoint.
 
-So more concretely, suppose you use <https://tess-new.caset.buffalo.edu/api/texts/?author=vergil> to find information about the *Aeneid*.
+So more concretely, suppose you use <https://tesserae.caset.buffalo.edu/api/texts/?author=vergil> to find information about the *Aeneid*.
 You will find something like the following in the response:
 ```json
 {
@@ -156,9 +156,9 @@ That leaves us with filling out stopwords, which are the lemmata we would like T
 Assuming that the most common words in a language are unhelpful in identifying intertexts, we might want to include the 10 most common lemmata in Latin as stopwords.
 We can use the TIS API to query the 10 most common lemmata using the following URL:
 
-  * <https://tess-new.caset.buffalo.edu/api/stopwords/?feature=lemmata&language=latin&list_size=10>
+  * <https://tesserae.caset.buffalo.edu/api/stopwords/?feature=lemmata&language=latin&list_size=10>
 
-(Pop quiz:  How might <https://tess-new.caset.buffalo.edu/api/stopwords/?feature=lemmata&language=latin&list_size=50> be different?)
+(Pop quiz:  How might <https://tesserae.caset.buffalo.edu/api/stopwords/?feature=lemmata&language=latin&list_size=50> be different?)
 
 Filling in the stopwords with the results we obtained, we have the following (or something like it):
 ```json
@@ -198,7 +198,7 @@ This is the point where you will need a Unix terminal with `curl` installed.
 Once you've installed `curl` and have your terminal open, you can submit the query with the following command (after you've substituted `<aeneid_id>` and `<bellum_id>`):
 ```bash
 curl -i -X POST -H "Content-Type: application/json; charset=utf-8" \
-"https://tess-new.caset.buffalo.edu/api/parallels/" \
+"https://tesserae.caset.buffalo.edu/api/parallels/" \
 --data-binary @- << EOF
 {
   "source": {

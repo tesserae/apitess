@@ -40,7 +40,7 @@ Assume that the identifier `id1` is associated with a search job that successful
 Request:
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/multitexts/id1/status/"
+curl -i -X GET "https://tesserae.caset.buffalo.edu/api/multitexts/id1/status/"
 ```
 
 Response:
@@ -62,7 +62,7 @@ Assume that the identifier `i-failed` is associated with a failed multitext quer
 Request:
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/multitexts/i-failed/status/"
+curl -i -X GET "https://tesserae.caset.buffalo.edu/api/multitexts/i-failed/status/"
 ```
 
 Response:
@@ -84,7 +84,7 @@ Assume that the identifier `i-expired` is not associated with any multitext resu
 Request:
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/multitexts/i-expired/status/"
+curl -i -X GET "https://tesserae.caset.buffalo.edu/api/multitexts/i-expired/status/"
 ```
 
 Response:

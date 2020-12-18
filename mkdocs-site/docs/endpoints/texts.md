@@ -44,7 +44,7 @@ On success, the response includes a JSON data payload consisting of a JSON objec
 Request:
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/texts/?author=vergil"
+curl -i -X GET "https://tesserae.caset.buffalo.edu/api/texts/?author=vergil"
 ```
 
 Response:
@@ -69,7 +69,7 @@ HTTP/1.1 200 OK
 Request:
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/texts/?after=100&language=latin"
+curl -i -X GET "https://tesserae.caset.buffalo.edu/api/texts/?after=100&language=latin"
 ```
 
 Response:
@@ -96,7 +96,7 @@ HTTP/1.1 200 OK
 Request:
 
 ```bash
-curl -i -X GET "https://tess-new.caset.buffalo.edu/api/texts/?language=klingon"
+curl -i -X GET "https://tesserae.caset.buffalo.edu/api/texts/?language=klingon"
 ```
 
 Response:
@@ -158,7 +158,7 @@ Request:
 
 ```bash
 curl -i -X POST  -H "Content-Type: application/json; charset=utf-8" \
-"https://tess-new.caset.buffalo.edu/api/texts/" \
+"https://tesserae.caset.buffalo.edu/api/texts/" \
 --data-binary @- << EOF
 {
   "metadata": {
@@ -198,7 +198,7 @@ Request:
 
 ```bash
 curl -i -X POST -H "Content-Type: application/json; charset=utf-8" \
-"https://tess-new.caset.buffalo.edu/api/texts/" \
+"https://tesserae.caset.buffalo.edu/api/texts/" \
 --data-binary @- << EOF
 {
   "author": "lucan",
@@ -230,7 +230,7 @@ Request:
 
 ```bash
 curl -i -X POST -H "Content-Type: application/json; charset=utf-8" \
-"https://tess-new.caset.buffalo.edu/api/texts/" \
+"https://tesserae.caset.buffalo.edu/api/texts/" \
 --data-binary @- << EOF
 {
   "author": "lucan",
