@@ -1,13 +1,12 @@
 import csv
-import io
 import gzip
+import io
 import json
 import time
 
 import flask
-import werkzeug.datastructures
-
 import tesserae.db.entities
+import werkzeug.datastructures
 
 
 def test_greek_to_latin(populated_app, populated_client):
@@ -349,10 +348,17 @@ def test_search_search_retrieval(populated_app, populated_client):
     response = populated_client.get(download_endpoint)
     assert response.status_code == 200
     data = gzip.decompress(response.get_data()).decode('utf-8')
-    with io.StringIO(data) as ifh:
+    with io.StringIO(initial_value=data, newline='') as ifh:
         reader = csv.reader(ifh, delimiter='\t')
         rows = [row for row in reader]
         assert len(rows) > 0
+        row_count = 0
+        for row in rows:
+            if not row[0].startswith('#'):
+                # ignore commented rows
+                row_count += 1
+        # there are 4 results, plus a header
+        assert row_count == 5
 
 
 def test_bad_feature_search(populated_app, populated_client):
