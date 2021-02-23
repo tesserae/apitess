@@ -200,7 +200,7 @@ def download(results_id):
         response = flask.Response(response=gzip.compress(
             tesserae.utils.exports.export(
                 flask.g.db, status.id, 'csv', filepath=None,
-                delimiter='\t')).encode('utf-8'))
+                delimiter='\t').encode('utf-8')))
         response.status_code = 200
         response.status = '200 OK'
         response.headers['Content-Encoding'] = 'gzip'
