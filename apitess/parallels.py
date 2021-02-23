@@ -4,14 +4,14 @@ import os
 import queue
 import uuid
 
-from bson.objectid import ObjectId
 import flask
-from flask_cors import cross_origin
-
 import tesserae.db.entities
-from tesserae.matchers.text_options import TextOptions
-import tesserae.utils.search
 import tesserae.utils.exports
+import tesserae.utils.search
+from bson.objectid import ObjectId
+from flask_cors import cross_origin
+from tesserae.matchers.text_options import TextOptions
+
 import apitess.errors
 from apitess.utils import common_retrieve_status, get_page_options_or_error
 
@@ -204,6 +204,8 @@ def download(results_id):
         response.status_code = 200
         response.status = '200 OK'
         response.headers['Content-Encoding'] = 'gzip'
+        response.headers['Content-Disposition'] = \
+            f'attachment; filename={results_id}.tsv.gz'
         return response
     response = flask.Response('Download for these results are not yet ready')
     response.status_code = 404

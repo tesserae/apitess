@@ -341,12 +341,14 @@ def test_search_search_retrieval(populated_app, populated_client):
     parallels = data['parallels']
     assert len(parallels) == 0
 
-    # try downloading
+    print('Try downloading')
     with populated_app.test_request_context():
         download_endpoint = flask.url_for('parallels.download',
                                           results_id=search_results_id)
     response = populated_client.get(download_endpoint)
     assert response.status_code == 200
+    assert 'Content-Disposition' in response.headers
+    assert search_results_id in response.headers['Content-Disposition']
     data = gzip.decompress(response.get_data()).decode('utf-8')
     with io.StringIO(initial_value=data, newline='') as ifh:
         reader = csv.reader(ifh, delimiter='\t')
