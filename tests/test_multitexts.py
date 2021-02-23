@@ -194,6 +194,7 @@ def test_multitexts(multitext_app, multitext_client):
                         'unit_id', 'tag', 'snippet', 'highlight', 'score'
                 ]:
                     assert expected in unit
+                    print(unit['tag'])
             if len(cross_ref['units']) > 0:
                 matches_with_cross_refs += 1
     assert matches_with_cross_refs > 0

@@ -340,6 +340,18 @@ def test_search_search_retrieval(populated_app, populated_client):
     parallels = data['parallels']
     assert len(parallels) == 0
 
+    # try downloading
+    with populated_app.test_request_context():
+        download_endpoint = flask.url_for('parallels.download',
+                                          results_id=search_results_id)
+    response = populated_client.get(download_endpoint)
+    assert response.status_code == 200
+    data = gzip.decompress(response.get_data()).decode('utf-8')
+    with io.StringIO(data) as ifh:
+        reader = csv.reader(ifh, delimiter='\t')
+        rows = [row for row in reader]
+        assert len(rows) > 0
+
 
 def test_bad_feature_search(populated_app, populated_client):
     bad_feature = 'DEADBEEF'
