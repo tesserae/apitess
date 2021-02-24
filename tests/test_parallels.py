@@ -1,11 +1,12 @@
+import csv
 import gzip
+import io
 import json
 import time
 
 import flask
-import werkzeug.datastructures
-
 import tesserae.db.entities
+import werkzeug.datastructures
 
 
 def test_greek_to_latin(populated_app, populated_client):
@@ -339,6 +340,27 @@ def test_search_search_retrieval(populated_app, populated_client):
     assert 'parallels' in data
     parallels = data['parallels']
     assert len(parallels) == 0
+
+    print('Try downloading')
+    with populated_app.test_request_context():
+        download_endpoint = flask.url_for('parallels.download',
+                                          results_id=search_results_id)
+    response = populated_client.get(download_endpoint)
+    assert response.status_code == 200
+    assert 'Content-Disposition' in response.headers
+    assert search_results_id in response.headers['Content-Disposition']
+    data = gzip.decompress(response.get_data()).decode('utf-8')
+    with io.StringIO(initial_value=data, newline='') as ifh:
+        reader = csv.reader(ifh, delimiter='\t')
+        rows = [row for row in reader]
+        assert len(rows) > 0
+        row_count = 0
+        for row in rows:
+            if not row[0].startswith('#'):
+                # ignore commented rows
+                row_count += 1
+        # there are 4 results, plus a header
+        assert row_count == 5
 
 
 def test_bad_feature_search(populated_app, populated_client):

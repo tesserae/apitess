@@ -1,21 +1,23 @@
 """Global fixtures for tests"""
-from pathlib import Path
 import tempfile
-
-import flask
-import pytest
+from pathlib import Path
 
 import apitess
 import apitess.texts
+import flask
+import pytest
 from tesserae.db.entities import Text
 from tesserae.utils import ingest_text
-from tesserae.utils.ingest import IngestQueue
-from tesserae.utils.delete import obliterate
 from tesserae.utils.coordinate import JobQueue
+from tesserae.utils.delete import obliterate
+from tesserae.utils.downloads import ResultsWriter
+from tesserae.utils.ingest import IngestQueue
 from tesserae.utils.multitext import BigramWriter
 
 # Write bigram databases to temporary directory
 BigramWriter.BIGRAM_DB_DIR = tempfile.mkdtemp()
+# Write results to temporary directory
+ResultsWriter.RESULTS_DIR = tempfile.mkdtemp()
 # Write file uploads to temporary directory
 apitess.texts.FILE_UPLOAD_DIR = tempfile.mkdtemp()
 

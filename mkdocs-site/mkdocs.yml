@@ -12,6 +12,7 @@ nav:
     - '/multitexts/&ltuuid&gt/status': 'endpoints/multitexts-uuid-status.md'
     - '/parallels/': 'endpoints/parallels.md'
     - '/parallels/&ltuuid&gt/': 'endpoints/parallels-uuid.md'
+    - '/parallels/&ltuuid&gt/downloads/': 'endpoints/parallels-uuid-downloads.md'
     - '/parallels/&ltuuid&gt/status/': 'endpoints/parallels-uuid-status.md'
     - '/stopwords/': 'endpoints/stopwords.md'
     - '/stopwords/lists/': 'endpoints/stopwords-lists.md'

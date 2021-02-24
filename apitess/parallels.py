@@ -4,13 +4,15 @@ import os
 import queue
 import uuid
 
-from bson.objectid import ObjectId
 import flask
-from flask_cors import cross_origin
-
 import tesserae.db.entities
-from tesserae.matchers.text_options import TextOptions
+import tesserae.utils.exports
 import tesserae.utils.search
+from bson.objectid import ObjectId
+from flask_cors import cross_origin
+from tesserae.matchers.text_options import TextOptions
+from tesserae.utils.downloads import ResultsWriter
+
 import apitess.errors
 from apitess.utils import common_retrieve_status, get_page_options_or_error
 
@@ -181,6 +183,29 @@ def submit_search():
 def retrieve_status(results_id):
     return common_retrieve_status(flask.g.db.find, results_id,
                                   tesserae.utils.search.NORMAL_SEARCH)
+
+
+@bp.route('/<results_id>/downloads/')
+@cross_origin()
+def download(results_id):
+    results_status_found = flask.g.db.find(
+        tesserae.db.entities.Search.collection,
+        results_id=results_id,
+        search_type=tesserae.utils.search.NORMAL_SEARCH)
+    if not results_status_found:
+        response = flask.Response('Could not find results_id')
+        response.status_code = 404
+        return response
+    status = results_status_found[0]
+    status.update_last_queried()
+    flask.g.db.update(status)
+    if status.status == tesserae.db.entities.Search.DONE:
+        return flask.send_file(tesserae.utils.downloads.get_results_filename(
+            status, ResultsWriter.RESULTS_DIR),
+                               as_attachment=True)
+    response = flask.Response('Download for these results are not yet ready')
+    response.status_code = 404
+    return response
 
 
 @bp.route('/<results_id>/')

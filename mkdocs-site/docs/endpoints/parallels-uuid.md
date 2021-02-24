@@ -63,7 +63,7 @@ Failure can be due either to a mistake in the URL query string or because the re
 |`"data"`|A JSON object associating the URL query keys received with the request, along with the query values.|
 |`"message"`|An error message indicating the first mistake encountered in the URL query string.|
 
-In the case of a resource not exististing (including those which will exist in the future, but only after successful processing), a 404 error will be returned.
+In the case of a resource not existing (including those which will exist in the future, but only after successful processing), a 404 error will be returned.
 
 ### Examples
 
