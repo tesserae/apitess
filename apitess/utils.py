@@ -1,11 +1,11 @@
 """Utility function shared by multiple endpoints"""
 import urllib.parse
 
-from bson.objectid import ObjectId
 import flask
+import tesserae.db.entities
+from bson.objectid import ObjectId
 
 import apitess.errors
-import tesserae.db.entities
 
 
 def fix_id(entity_json):
@@ -72,6 +72,8 @@ def common_retrieve_status(db_find, results_id, search_type):
     if status.status != tesserae.db.entities.Search.DONE and \
             status.status != tesserae.db.entities.Search.FAILED:
         response.headers['Cache-Control'] = 'no-store'
+    status.update_last_queried()
+    flask.g.db.update(status)
     return response
 
 

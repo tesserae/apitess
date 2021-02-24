@@ -11,6 +11,7 @@ import tesserae.utils.search
 from bson.objectid import ObjectId
 from flask_cors import cross_origin
 from tesserae.matchers.text_options import TextOptions
+from tesserae.utils.downloads import ResultsWriter
 
 import apitess.errors
 from apitess.utils import common_retrieve_status, get_page_options_or_error
@@ -196,17 +197,12 @@ def download(results_id):
         response.status_code = 404
         return response
     status = results_status_found[0]
+    status.update_last_queried()
+    flask.g.db.update(status)
     if status.status == tesserae.db.entities.Search.DONE:
-        response = flask.Response(response=gzip.compress(
-            tesserae.utils.exports.export(
-                flask.g.db, status.id, 'csv', filepath=None,
-                delimiter='\t').encode('utf-8')))
-        response.status_code = 200
-        response.status = '200 OK'
-        response.headers['Content-Encoding'] = 'gzip'
-        response.headers['Content-Disposition'] = \
-            f'attachment; filename={results_id}.tsv.gz'
-        return response
+        return flask.send_file(tesserae.utils.downloads.get_results_filename(
+            status, ResultsWriter.RESULTS_DIR),
+                               as_attachment=True)
     response = flask.Response('Download for these results are not yet ready')
     response.status_code = 404
     return response
