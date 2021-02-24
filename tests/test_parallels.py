@@ -349,7 +349,7 @@ def test_search_search_retrieval(populated_app, populated_client):
     assert response.status_code == 200
     assert 'Content-Disposition' in response.headers
     assert search_results_id in response.headers['Content-Disposition']
-    data = response.get_data().decode('utf-8')
+    data = gzip.decompress(response.get_data()).decode('utf-8')
     with io.StringIO(initial_value=data, newline='') as ifh:
         reader = csv.reader(ifh, delimiter='\t')
         rows = [row for row in reader]
