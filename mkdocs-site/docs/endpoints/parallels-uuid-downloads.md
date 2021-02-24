@@ -14,6 +14,6 @@ There are no special things to do with a GET request to the `/parallels/<uuid>/d
 
 ### Response
 
-On success, the response body will be a gzip-compressed tab-delimited file containing the results of the search associated with `<uuid>`.
+On success, the response body will be a tab-delimited file containing the results of the search associated with `<uuid>`.
 
 A 404 Not Found error indicates one of two possibilities. One is that the specified `<uuid>` does not exist in the database. The other is that the results associated with `<uuid>` are not yet ready for download. In either case, the [`/parallels/<uuid>/status/`](parallels-uuid-status.md) endpoint may be helpful.
